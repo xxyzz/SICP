@@ -119,3 +119,11 @@ Give concise mathematical definitions for the functions computed by the procedur
 ; 2^(h (n - 1))
 ; 2^2^...2 (n of 2)
 ```
+
+## Exercise 1.11:
+
+A function `f` is defined by the rule that
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=f(n)=&space;\begin{cases}&space;&&space;n&space;\text{&space;if&space;}&space;n&space;<&space;3,&space;\\&space;&&space;f(n-1)&plus;2f(n-2)&plus;3f(n-3)&space;\text{&space;if&space;}&space;n&space;\geq&space;3.&space;\end{cases}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?f(n)=&space;\begin{cases}&space;&&space;n&space;\text{&space;if&space;}&space;n&space;<&space;3,&space;\\&space;&&space;f(n-1)&plus;2f(n-2)&plus;3f(n-3)&space;\text{&space;if&space;}&space;n&space;\geq&space;3.&space;\end{cases}" title="f(n)= \begin{cases} & n \text{ if } n < 3, \\ & f(n-1)+2f(n-2)+3f(n-3) \text{ if } n \geq 3. \end{cases}" /></a>
+
+Write a procedure that computes `f` by means of a recursive process. Write a procedure that computes `f` by means of an iterative process.
