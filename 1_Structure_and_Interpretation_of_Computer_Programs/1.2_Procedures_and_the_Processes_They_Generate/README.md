@@ -142,3 +142,31 @@ The following pattern of numbers is called *Pascal’s triangle*.
 ```
 
 The numbers at the edge of the triangle are all 1, and each number inside the triangle is the sum of the two numbers above it. Write a procedure that computes elements of Pascal’s triangle by means of a recursive process.
+
+## Exercise 1.13:
+
+Prove that Fib(`n`) is the closest integer to <a href="https://www.codecogs.com/eqnedit.php?latex=\phi&space;^{n}/\sqrt{5}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\phi&space;^{n}/\sqrt{5}" title="\phi ^{n}/\sqrt{5}" /></a>, where <a href="https://www.codecogs.com/eqnedit.php?latex=\phi&space;=&space;(1&plus;\sqrt{5})/2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\phi&space;=&space;(1&plus;\sqrt{5})/2" title="\phi = (1+\sqrt{5})/2" /></a>. Hint: Let <a href="https://www.codecogs.com/eqnedit.php?latex=\psi&space;=&space;(1-\sqrt{5})/2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\psi&space;=&space;(1-\sqrt{5})/2" title="\psi = (1-\sqrt{5})/2" /></a>. Use induction and the definition of the Fibonacci numbers (see Section 1.2.2) to prove that <a href="https://www.codecogs.com/eqnedit.php?latex=Fib(n)&space;=&space;(\phi&space;^{n}&space;-&space;\psi&space;^{n})&space;/&space;\sqrt{5}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Fib(n)&space;=&space;(\phi&space;^{n}&space;-&space;\psi&space;^{n})&space;/&space;\sqrt{5}" title="Fib(n) = (\phi ^{n} - \psi ^{n}) / \sqrt{5}" /></a>.
+
+Let <a href="https://www.codecogs.com/eqnedit.php?latex=f(n)&space;=&space;\frac{\varphi&space;^{n}&space;-&space;\psi&space;^{n}}{\sqrt{5}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?f(n)&space;=&space;\frac{\varphi&space;^{n}&space;-&space;\psi&space;^{n}}{\sqrt{5}}" title="f(n) = \frac{\varphi ^{n} - \psi ^{n}}{\sqrt{5}}" /></a>.
+
+When f(0) = 0, f(1) = 1.
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=f(n-1)&space;&plus;&space;f(n&space;-&space;2)&space;=&space;\frac{\varphi^{n-1}-\psi^{n-1}&plus;\varphi^{n-2}-\psi^{n-2}}{\sqrt{5}}=\frac{\varphi^{n-2}(\psi&plus;1)-\psi^{n-2}(\varphi&plus;1)}{\sqrt{5}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?f(n-1)&space;&plus;&space;f(n&space;-&space;2)&space;=&space;\frac{\varphi^{n-1}-\psi^{n-1}&plus;\varphi^{n-2}-\psi^{n-2}}{\sqrt{5}}=\frac{\varphi^{n-2}(\psi&plus;1)-\psi^{n-2}(\varphi&plus;1)}{\sqrt{5}}" title="f(n-1) + f(n - 2) = \frac{\varphi^{n-1}-\psi^{n-1}+\varphi^{n-2}-\psi^{n-2}}{\sqrt{5}}=\frac{\varphi^{n-2}(\psi+1)-\psi^{n-2}(\varphi+1)}{\sqrt{5}}" /></a>
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\varphi\psi=(\frac{1&plus;\sqrt{5}}{2})(\frac{1-\sqrt{5}}{2})=-1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\varphi\psi=(\frac{1&plus;\sqrt{5}}{2})(\frac{1-\sqrt{5}}{2})=-1" title="\varphi\psi=(\frac{1+\sqrt{5}}{2})(\frac{1-\sqrt{5}}{2})=-1" /></a>
+
+Multiple <a href="https://www.codecogs.com/eqnedit.php?latex=(\varphi\psi)^{2}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?(\varphi\psi)^{2}" title="(\varphi\psi)^{2}" /></a> to the first equation get:
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=f(n-1)&plus;f(n-2)=\frac{\varphi^{n}\psi^{2}(\varphi&plus;1)-\psi^{n}\varphi^{2}(\varphi&plus;1)}{\sqrt{5}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?f(n-1)&plus;f(n-2)=\frac{\varphi^{n}\psi^{2}(\varphi&plus;1)-\psi^{n}\varphi^{2}(\varphi&plus;1)}{\sqrt{5}}" title="f(n-1)+f(n-2)=\frac{\varphi^{n}\psi^{2}(\varphi+1)-\psi^{n}\varphi^{2}(\varphi+1)}{\sqrt{5}}" /></a>
+
+Because <a href="https://www.codecogs.com/eqnedit.php?latex=\psi^{2}(\varphi&plus;1)=(\frac{1-\sqrt{5}}{2})^{2}(\frac{1&plus;\sqrt{5}}{2}&plus;1)=1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\psi^{2}(\varphi&plus;1)=(\frac{1-\sqrt{5}}{2})^{2}(\frac{1&plus;\sqrt{5}}{2}&plus;1)=1" title="\psi^{2}(\varphi+1)=(\frac{1-\sqrt{5}}{2})^{2}(\frac{1+\sqrt{5}}{2}+1)=1" /></a>
+
+and <a href="https://www.codecogs.com/eqnedit.php?latex=\varphi^{2}(\psi&plus;1)=(\frac{1&plus;\sqrt{5}}{2})^{2}(\frac{1-\sqrt{5}}{2}&plus;1)=1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\varphi^{2}(\psi&plus;1)=(\frac{1&plus;\sqrt{5}}{2})^{2}(\frac{1-\sqrt{5}}{2}&plus;1)=1" title="\varphi^{2}(\psi+1)=(\frac{1+\sqrt{5}}{2})^{2}(\frac{1-\sqrt{5}}{2}+1)=1" /></a>
+
+so f(n) = f(n-1) + f(n-2). Thus Fib(n) = f(n).
+
+Because <a href="https://www.codecogs.com/eqnedit.php?latex=2&space;<&space;\sqrt{5}&space;<&space;3,&space;-3&space;<&space;-\sqrt{5}&space;<&space;-2,&space;-1&space;<&space;\frac{1-\sqrt{5}}{2}&space;<&space;-\frac{1}{2}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?2&space;<&space;\sqrt{5}&space;<&space;3,&space;-3&space;<&space;-\sqrt{5}&space;<&space;-2,&space;-1&space;<&space;\frac{1-\sqrt{5}}{2}&space;<&space;-\frac{1}{2}" title="2 < \sqrt{5} < 3, -3 < -\sqrt{5} < -2, -1 < \frac{1-\sqrt{5}}{2} < -\frac{1}{2}" /></a>,
+
+so <a href="https://www.codecogs.com/eqnedit.php?latex=-\frac{1}{\sqrt{5}}&space;<&space;\frac{\psi^{n}}{\sqrt{5}}&space;=&space;\frac{(\frac{1-\sqrt{5}}{2})^{n}}{\sqrt{5}}&space;<&space;\frac{1}{\sqrt{5}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?-\frac{1}{\sqrt{5}}&space;<&space;\frac{\psi^{n}}{\sqrt{5}}&space;=&space;\frac{(\frac{1-\sqrt{5}}{2})^{n}}{\sqrt{5}}&space;<&space;\frac{1}{\sqrt{5}}" title="-\frac{1}{\sqrt{5}} < \frac{\psi^{n}}{\sqrt{5}} = \frac{(\frac{1-\sqrt{5}}{2})^{n}}{\sqrt{5}} < \frac{1}{\sqrt{5}}" /></a>
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=Fib(n)-\frac{1}{\sqrt{5}}&space;<&space;Fib(n)&plus;&space;\frac{\psi^{n}}{\sqrt{5}}=&space;\frac{\varphi^{n}}{\sqrt{5}}&space;<&space;Fib(n)&plus;\frac{1}{\sqrt{5}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Fib(n)-\frac{1}{\sqrt{5}}&space;<&space;Fib(n)&plus;&space;\frac{\psi^{n}}{\sqrt{5}}=&space;\frac{\varphi^{n}}{\sqrt{5}}&space;<&space;Fib(n)&plus;\frac{1}{\sqrt{5}}" title="Fib(n)-\frac{1}{\sqrt{5}} < Fib(n)+ \frac{\psi^{n}}{\sqrt{5}}= \frac{\varphi^{n}}{\sqrt{5}} < Fib(n)+\frac{1}{\sqrt{5}}" /></a>
