@@ -127,3 +127,18 @@ A function `f` is defined by the rule that
 <a href="https://www.codecogs.com/eqnedit.php?latex=f(n)=&space;\begin{cases}&space;&&space;n&space;\text{&space;if&space;}&space;n&space;<&space;3,&space;\\&space;&&space;f(n-1)&plus;2f(n-2)&plus;3f(n-3)&space;\text{&space;if&space;}&space;n&space;\geq&space;3.&space;\end{cases}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?f(n)=&space;\begin{cases}&space;&&space;n&space;\text{&space;if&space;}&space;n&space;<&space;3,&space;\\&space;&&space;f(n-1)&plus;2f(n-2)&plus;3f(n-3)&space;\text{&space;if&space;}&space;n&space;\geq&space;3.&space;\end{cases}" title="f(n)= \begin{cases} & n \text{ if } n < 3, \\ & f(n-1)+2f(n-2)+3f(n-3) \text{ if } n \geq 3. \end{cases}" /></a>
 
 Write a procedure that computes `f` by means of a recursive process. Write a procedure that computes `f` by means of an iterative process.
+
+## Exercise 1.12:
+
+The following pattern of numbers is called *Pascal’s triangle*.
+
+```
+    1
+   1 1
+  1 2 1
+ 1 3 3 1
+1 4 6 4 1
+  . . .
+```
+
+The numbers at the edge of the triangle are all 1, and each number inside the triangle is the sum of the two numbers above it. Write a procedure that computes elements of Pascal’s triangle by means of a recursive process.
