@@ -15,9 +15,9 @@
 
 (define (exp x n) (rtl n 1 x))
 (define (rtl N Y Z)
-    (if (= (modulo N 2) 0)
+    (if (even? N)
         (rtl (quotient N 2) Y (* Z Z))
-            (if (= (quotient N 2) 0)
+            (if (zero? (quotient N 2))
                 (* Z Y)
                 (rtl (quotient N 2) (* Z Y) (* Z Z)))))
 
