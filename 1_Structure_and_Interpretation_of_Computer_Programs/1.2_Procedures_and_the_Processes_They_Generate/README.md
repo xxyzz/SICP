@@ -242,3 +242,45 @@ This algorithm takes a number of steps that is linear in `b`. Now suppose we inc
 Using the results of Exercise 1.16 and Exercise 1.17, devise a procedure that generates an iterative process for multiplying two integers in terms of adding, doubling, and halving and uses a logarithmic number of steps.
 
 ## Exercise 1.19:
+
+There is a clever algorithm for computing the Fibonacci numbers in a logarithmic number of steps. Recall the transformation of the state variables `a` and `b` in the `fib-iter` process of Section 1.2.2: `a` ← `a` + `b` and `b` ← `a`. Call this transformation `T`, and observe that applying `T` over and over again `n` times, starting with 1 and 0, produces the pair Fib(n + 1) and Fib(n). In other words, the Fibonacci numbers are produced by applying T<sup>n</sup> , the n<sup>th</sup> power of the transformation `T` , starting with the pair (1, 0). Now consider `T` to be the special case of `p` = 0 and `q` = 1 in a family of transformations T<sub>pq</sub>, where T<sub>pq</sub> transforms the pair (a,b) according to a ← bq + aq + ap and b ← bp + aq. Show according to a ← bq + aq + ap and b ← bp + aq. Show that if we apply such a transformation T<sub>pq</sub> twice, the effect is the same as using a single transformation T<sub>p′q′</sub> of the same form, and compute `p′` and `q′` in terms of `p` and `q`. This gives us an explicit way to square these transformations, and thus we can compute T<sup>n</sup> using successive squaring, as and thus we can compute T<sup>n</sup> using successive squaring, as in the `fast-expt` procedure. Put this all together to complete the following procedure, which runs in a logarithmic number of steps:
+
+```scheme
+(define (fib n)
+  (fib-iter 1 0 0 1 n))
+(define (fib-iter a b p q count)
+  (cond ((= count 0) b)
+        ((even? count)
+         (fib-iter a
+                   b
+                   ⟨??⟩ ; compute p′
+                   ⟨??⟩ ; compute q′
+                   (/ count 2)))
+        (else (fib-iter (+ (* b q) (* a q) (* a p))
+                        (+ (* b p) (* a q))
+                        p
+                        q
+                        (- count 1)))))
+```
+
+let x represents fib(n) and y represents fib(n+1). Each fibonacci transform can be seen as a linear transform:
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\binom{x}{y}=&space;\begin{pmatrix}&space;0&space;&&space;1&space;\\&space;1&space;&&space;1&space;\end{pmatrix}&space;\binom{x}{y}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\binom{x}{y}=&space;\begin{pmatrix}&space;0&space;&&space;1&space;\\&space;1&space;&&space;1&space;\end{pmatrix}&space;\binom{x}{y}" title="\binom{x}{y}= \begin{pmatrix} 0 & 1 \\ 1 & 1 \end{pmatrix} \binom{x}{y}" /></a>
+
+So the fibonacci formula can be rewritten by matrix:
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{pmatrix}&space;0&space;&&space;1&space;\\&space;1&space;&&space;1&space;\end{pmatrix}^{n}&space;\binom{x}{y}=A^{n}\binom{x}{y}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{pmatrix}&space;0&space;&&space;1&space;\\&space;1&space;&&space;1&space;\end{pmatrix}^{n}&space;\binom{x}{y}=A^{n}\binom{x}{y}" title="\begin{pmatrix} 0 & 1 \\ 1 & 1 \end{pmatrix}^{n} \binom{x}{y}=A^{n}\binom{x}{y}" /></a>
+
+That's resemble the exponentiation procedure in exercise 1.16. We need to translate this matrix multiplication into code.
+
+Matrix A can be represented by `a` and `b`:
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=A=\begin{pmatrix}&space;a&space;&&space;b&space;\\&space;b&space;&&space;a&space;&plus;&space;b&space;\end{pmatrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?A=\begin{pmatrix}&space;a&space;&&space;b&space;\\&space;b&space;&&space;a&space;&plus;&space;b&space;\end{pmatrix}" title="A=\begin{pmatrix} a & b \\ b & a + b \end{pmatrix}" /></a>
+
+A<sup>2</sup> will be `a = a * a + b * b`, `b = a * b + b * a + b * b`.
+
+And <a href="https://www.codecogs.com/eqnedit.php?latex=A\binom{x}{y}&space;=\begin{pmatrix}&space;a&space;&&space;b&space;\\&space;b&space;&&space;a&space;&plus;&space;b&space;\end{pmatrix}\binom{x}{y}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?A\binom{x}{y}&space;=\begin{pmatrix}&space;a&space;&&space;b&space;\\&space;b&space;&&space;a&space;&plus;&space;b&space;\end{pmatrix}\binom{x}{y}" title="A\binom{x}{y} =\begin{pmatrix} a & b \\ b & a + b \end{pmatrix}\binom{x}{y}" /></a>
+
+will be `x = a * x + b * y`, `y = b * x + a * y + b * y`.
+
+Read more about the algorithm at Chapter 5.2 Fibonacci(page 88) of *Programming: The Derivation of Algorithms* by Anne Kaldewaij. There's also [a video](https://www.youtube.com/watch?v=XkY2DOUCWMU&list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab&index=5&t=0s) from 3Blue1Brown explains the meaning of matrix multiplication.
