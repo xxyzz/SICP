@@ -14,7 +14,6 @@
     (= n (smallest-divisor n)))
 
 (define (timed-prime-test n count)
-    (newline)
     (start-prime-test n (* (current-inexact-milliseconds) 1000) count))
 
 (define (start-prime-test n start-time count)
@@ -23,6 +22,7 @@
         (timed-prime-test (+ n 2) count)))
 
 (define (report-prime elapsed-time n count)
+    (newline)
     (display n)
     (display " *** ")
     (display elapsed-time)
