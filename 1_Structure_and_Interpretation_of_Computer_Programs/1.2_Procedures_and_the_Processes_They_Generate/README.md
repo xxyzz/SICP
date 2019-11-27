@@ -342,3 +342,48 @@ The `smallest-divisor` procedure shown at the start of this section does lots of
 ## Exercise 1.24:
 
 Modify the `timed-prime-test` procedure of Exercise 1.22 to use `fast-prime?` (the Fermat method), and test each of the 12 primes you found in that exercise. Since the Fermat test has Θ(log *n*) growth, how would you expect the time to test primes near 1,000,000 to compare with the time needed to test primes near 1000? Do your data bear this out? Can you explain any discrepancy you find?
+
+## Exercise 1.25:
+
+Alyssa P. Hacker complains that we went to a lot of extra work in writing `expmod`. After all, she says, since we already know how to compute exponentials, we could have simply written
+
+```scheme
+(define (expmod base exp m)
+  (remainder (fast-expt base exp) m))
+```
+Is she correct? Would this procedure serve as well for our fast prime tester? Explain.
+
+`expmod` squares the remainder, but `fast-expt` keeps square huge number.
+
+## Exercise 1.26:
+
+Louis Reasoner is having great difficulty doing Exercise 1.24. His `fast-prime?` test seems to run more slowly than his `prime?` test. Louis calls his friend Eva Lu Ator over to help. When they examine Louis’s code, they find that he has rewritten the `expmod` procedure to use an explicit multiplication, rather than calling `square`:
+
+```scheme
+(define (expmod base exp m)
+    (cond [(= exp 0) 1]
+          [(even? exp)
+               (remainder (* (expmod base (/ exp 2) m)
+                             (expmod base (/ exp 2) m))
+                          m)]
+          [else
+               (remainder (* base
+                              (expmod base (- exp 1) m))
+                          m)]))
+```
+
+“I don’t see what difference that could make,” says Louis. “I do.” says Eva. “By writing the procedure like that, you have transformed the Θ(log `n`) process into a Θ(`n`) process.” Explain.
+
+The applicative order is evaluated first then apply. `expomd` is evaluated twice. That changes the program from linear recursive to tree recursive.
+
+n   | steps
+--- | ---
+2   | 5
+4   | 11
+8   | 23
+
+That's 3n - 1 steps, Louis does turn a logarithm code into linear growth.
+
+## Exercise 1.27:
+
+Demonstrate that the Carmichael numbers listed in Footnote 1.47 really do fool the Fermat test. That is, write a procedure that takes an integer *n* and tests whether *a<sup>n</sup>* is congruent to *a* modulo *n* for every *a* < *n*, and try your procedure on the given Carmichael numbers.

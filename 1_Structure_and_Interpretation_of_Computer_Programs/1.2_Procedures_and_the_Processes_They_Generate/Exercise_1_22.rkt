@@ -29,6 +29,7 @@
     (when (< count 2)
         (timed-prime-test (+ n 2) (add1 count))))
 
+; find the three smallest primes larger than n
 (define (search-for-primes n)
     (if (even? n)
         (timed-prime-test (add1 n) 0)
