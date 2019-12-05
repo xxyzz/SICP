@@ -20,3 +20,12 @@ The `sum` procedure above generates a linear recursion. The procedure can be rew
             (iter ⟨??⟩ ⟨??⟩)))
         (iter ⟨??⟩ ⟨??⟩))
 ```
+
+## Exercise 1.31:
+
+a. The `sum` procedure is only the simplest of a vast number of similar abstractions that can be captured as higher-order procedures. Write an analogous procedure called `product` that returns the product of the values of a function at points over a given range. Show how to define `factorial` in terms of `product`. Also use `product` to compute approximations to *π* using the formula
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\pi}{4}=\frac{2&space;\cdot&space;4&space;\cdot&space;4&space;\cdot&space;6&space;\cdot&space;6&space;\cdot&space;8&space;\cdot&space;\cdot&space;\cdot&space;}{3&space;\cdot&space;3&space;\cdot&space;5&space;\cdot&space;5&space;\cdot&space;7&space;\cdot&space;7&space;\cdot&space;\cdot&space;\cdot&space;}." target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\pi}{4}=\frac{2&space;\cdot&space;4&space;\cdot&space;4&space;\cdot&space;6&space;\cdot&space;6&space;\cdot&space;8&space;\cdot&space;\cdot&space;\cdot&space;}{3&space;\cdot&space;3&space;\cdot&space;5&space;\cdot&space;5&space;\cdot&space;7&space;\cdot&space;7&space;\cdot&space;\cdot&space;\cdot&space;}." title="\frac{\pi}{4}=\frac{2 \cdot 4 \cdot 4 \cdot 6 \cdot 6 \cdot 8 \cdot \cdot \cdot }{3 \cdot 3 \cdot 5 \cdot 5 \cdot 7 \cdot 7 \cdot \cdot \cdot }." /></a>
+
+b. If your `product` procedure generates a recursive process, write one that generates an iterative process. If it generates an iterative process, write one that generates a recursive process.
+
