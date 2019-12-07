@@ -50,3 +50,33 @@ You can obtain an even more general version of `accumulate` (Exercise 1.32) by i
 a. the sum of the squares of the prime numbers in the interval *a* to *b* (assuming that you have a `prime?` predicate already written)
 
 b. the product of all the positive integers less than *n* that are relatively prime to *n* (i.e., all positive integers *i* < *n* such that `GCD(i,n) = 1`).
+
+## Exercise 1.34:
+
+Suppose we define the procedure
+
+```scheme
+(define (f g) (g 2))
+```
+
+Then we have
+
+```scheme
+(f square)
+; 4
+(f (lambda (z) (* z (+ z 1)))) 
+; 6
+```
+
+What happens if we (perversely) ask the interpreter to evaluate the combination `(f f)`? Explain.
+
+You will get not this error:
+
+```
+application: not a procedure;
+ expected a procedure that can be applied to arguments
+  given: 2
+  arguments...:
+```
+
+`g` needs to be a procedure which can take `2` as argument. But you can't put a `2` in `f`, because `f` needs a procedure.
