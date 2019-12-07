@@ -88,3 +88,26 @@ Show that the golden ratio *φ* (Section 1.2.2) is a fixed point of the transfor
 ## Exercise 1.36:
 
 Modify `fixed-point` so that it prints the sequence of approximations it generates, using the `newline` and `display` primitives shown in Exercise 1.22. Then find a solution to x<sup>x</sup> = 1000 by finding a fixed point of x → log(1000)/ log(`x`). (Use Scheme’s primitive `log` procedure, which computes natural logarithms.) Compare the number of steps this takes with and without average damping. (Note that you cannot start `fixed-point` with a guess of 1, as this would cause division by log(1) = 0.)
+
+## Exercise 1.37:
+
+a. An infinite *continued* fraction is an expression of the form
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\dpi{200}&space;f&space;=&space;\frac{N_{1}}{D_{1}&space;&plus;&space;\frac{N_{2}}{D_{2}&space;&plus;&space;\frac{N_{3}}{D_{3}&space;&plus;&space;...}}}." target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dpi{200}&space;f&space;=&space;\frac{N_{1}}{D_{1}&space;&plus;&space;\frac{N_{2}}{D_{2}&space;&plus;&space;\frac{N_{3}}{D_{3}&space;&plus;&space;...}}}." title="f = \frac{N_{1}}{D_{1} + \frac{N_{2}}{D_{2} + \frac{N_{3}}{D_{3} + ...}}}." /></a>
+
+As an example, one can show that the infinite continued fraction expansion with the N<sub>i</sub> and the D<sub>i</sub> all equal to 1 produces 1/φ, where φ is the golden ratio (described in Section 1.2.2). One way to approximate an infinite continued fraction is to truncate the expansion after a given number of terms. Such a truncation--a so-called *k-term finite continued fraction*—-has the form
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\dpi{200}&space;\frac{N_{1}}{D_{1}&space;&plus;&space;\frac{N_{2}}{...&space;&plus;&space;\frac{N_{k}}{D_{k}&space;&plus;&space;...}}}." target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dpi{200}&space;\frac{N_{1}}{D_{1}&space;&plus;&space;\frac{N_{2}}{...&space;&plus;&space;\frac{N_{k}}{D_{k}&space;&plus;&space;...}}}." title="\frac{N_{1}}{D_{1} + \frac{N_{2}}{... + \frac{N_{k}}{D_{k} + ...}}}." /></a>
+
+Suppose that `n` and `d` are procedures of one argument (the term index *i*) that return the N<sub>i</sub> and D<sub>i</sub> of the terms of the continued fraction. Define a procedure `cont-frac` such that evaluating `(cont-frac n d k)` computes the value of the *k*-term finite continued fraction. Check your procedure by approximating 1/φ using
+
+```scheme
+(cont-frac (lambda (i) 1.0)
+           (lambda (i) 1.0)
+           k)
+```
+
+for successive values of `k`. How large must you make `k` in order to get an approximation that is accurate to 4 decimal places?
+
+b. If your `cont-frac` procedure generates are cursive process, write one that generates an iterative process. If it generates an iterative process, write one that generates a recursive process.
+
