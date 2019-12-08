@@ -111,3 +111,6 @@ for successive values of `k`. How large must you make `k` in order to get an app
 
 b. If your `cont-frac` procedure generates are cursive process, write one that generates an iterative process. If it generates an iterative process, write one that generates a recursive process.
 
+## Exercise 1.38:
+
+In 1737, the Swiss mathematician Leonhard Euler published a memoir *De Fractionibus Continuis*, which included a continued fraction expansion for e − 2, where e is the base of the natural logarithms. In this fraction, the N<sub>i</sub> are all 1, and the D<sub>i</sub> are successively 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, . . .. Write a program that uses your `cont-frac` procedure from Exercise 1.37 to approximate e, based on Euler’s expansion.

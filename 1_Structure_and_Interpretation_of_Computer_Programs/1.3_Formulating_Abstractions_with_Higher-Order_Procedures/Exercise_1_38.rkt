@@ -16,12 +16,10 @@
             (iter (/ (n m) (+ (d m) result)) (sub1 m)))) ; wow!
 (iter (/ (n k) (d k)) (sub1 k)))
 
-(cont-frac (lambda (i) 1.0)
-           (lambda (i) 1.0)
-           10)
-; 0.6179775280898876
-
-(cont-frac (lambda (i) 1.0)
-           (lambda (i) 1.0)
-           11)
-; 0.6180555555555556
+(+ 2 (cont-frac  (lambda (i) 1.0)
+                 (lambda (i)
+                    (if (= (modulo (add1 i) 3) 0)
+                        (* 2 (/ (add1 i) 3))
+                        1))
+                 10))
+; 2.7182817182817183
