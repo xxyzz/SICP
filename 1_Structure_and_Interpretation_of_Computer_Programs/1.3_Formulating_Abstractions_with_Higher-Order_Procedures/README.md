@@ -114,3 +114,11 @@ b. If your `cont-frac` procedure generates are cursive process, write one that g
 ## Exercise 1.38:
 
 In 1737, the Swiss mathematician Leonhard Euler published a memoir *De Fractionibus Continuis*, which included a continued fraction expansion for e − 2, where e is the base of the natural logarithms. In this fraction, the N<sub>i</sub> are all 1, and the D<sub>i</sub> are successively 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, . . .. Write a program that uses your `cont-frac` procedure from Exercise 1.37 to approximate e, based on Euler’s expansion.
+
+## Exercise 1.39:
+
+A continued fraction representation of the tangent function was published in 1770 by the German mathematician J.H. Lambert:
+
+![\tan x = \frac{x}{1 - \frac{x^{2}}{3 - \frac{x^{2}}{5 - ...}}},](https://quicklatex.com/cache3/eb/ql_eaff4635062c2c5e2b915e8d56f1f5eb_l3.png)
+
+where *x* is in radians. Define a procedure `(tan-cf x k)` that computes an approximation to the tangent function based on Lambert’s formula. `k` specifies the number of terms to compute, as in Exercise 1.37.
