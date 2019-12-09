@@ -122,3 +122,41 @@ A continued fraction representation of the tangent function was published in 177
 ![\tan x = \frac{x}{1 - \frac{x^{2}}{3 - \frac{x^{2}}{5 - ...}}},](https://quicklatex.com/cache3/eb/ql_eaff4635062c2c5e2b915e8d56f1f5eb_l3.png)
 
 where *x* is in radians. Define a procedure `(tan-cf x k)` that computes an approximation to the tangent function based on Lambert’s formula. `k` specifies the number of terms to compute, as in Exercise 1.37.
+
+## Exercise 1.40:
+
+Define a procedure `cubic` that can be used together with the `newtons-method` procedure in expressions of the form
+
+```scheme
+(newtons-method (cubic a b c) 1)
+```
+
+to approximate zeros of the cubic x<sup>3</sup> + ax<sup>2</sup> + bx + c.
+
+## Exercise 1.41:
+
+Define a procedure `double` that takes a procedure of one argument as argument and returns a procedure that applies the original procedure twice. For example, if `inc` is a procedure that adds 1 to its argument, then `(double inc)` should be a procedure that adds 2. What value is returned by
+
+```scheme
+(((double (double double)) inc) 5)
+```
+
+## Exercise 1.42:
+
+Let *f* and *g* be two one-argument functions. The *composition* *f* after *g* is defined to be the function *x → f(g(x))*. Define a procedure `compose` that implements composition. For example, if `inc` is a procedure that adds 1 to its argument,
+
+```scheme
+((compose square inc) 6)
+; 49
+```
+
+## Exercise 1.43:
+
+If *f* is a numerical function and n is a positive integer, then we can form the n<sup>th</sup> repeated application of *f* , which is defined to be the function whose value at x is f(f(...(f(x))...)). For example, if *f* is the function x → x + 1, then the n<sup>th</sup> repeated application of *f* is the function x → x + n. If *f* is the operation of squaring a number, then the n<sup>th</sup> repeated application of *f* is the function that raises its argument to the 2<sup>n</sup>-th power. Write a procedure that takes as inputs a procedure that computes *f* and a positive integer *n* and returns the procedure that computes the n<sup>th</sup> repeated application of *f* . Your procedure should be able to be used as follows:
+
+```scheme
+((repeated square 2) 5)
+; 625
+```
+
+Hint: You may find it convenient to use `compose` from Exercise 1.42.
