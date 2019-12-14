@@ -7,3 +7,7 @@
     - 1.2 Procedures and the Processes They Generate
 
     - 1.3 Formulating Abstractions with Higher-Order Procedures
+
+2. Building Abstractions with Data
+
+    - 2.1 Introduction to Data Abstraction
