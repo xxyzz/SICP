@@ -21,3 +21,20 @@ Consider the problem of representing line segments in a plane. Each segment is r
 ## Exercise 2.3:
 
 Implement a representation for rectangles in a plane. (Hint: You may want to make use of Exercise 2.2.) In terms of your constructors and selectors, create procedures that compute the perimeter and the area of a given rectangle. Now implement a different representation for rectangles. Can you design your system with suitable abstraction barriers, so that the same perimeter and area procedures will work using either representation?
+
+## Exercise 2.4:
+
+Here is an alternative procedural representation of pairs. For this representation, verify that `(car (cons x y))` yields `x` for any objects `x` and `y`.
+
+```scheme
+(define (cons x y)
+    (lambda (m) (m x y)))
+(define (car z)
+    (z (lambda (p q) p)))
+```
+
+What is the corresponding definition of `cdr`? (Hint: To verify that this works, make use of the substitution model of Section 1.1.5.)
+
+## Exercise 2.5:
+
+Show that we can represent pairs of nonnegative integers using only numbers and arithmetic operations if we represent the pair *a* and *b* as the integer that is the product 2<sup>a</sup>3<sup>b</sup>. Give the corresponding definitions of the procedures `cons`, `car`, and `cdr`.
