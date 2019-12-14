@@ -1,7 +1,7 @@
 #lang racket/base
 
-(define (make-segment a b)
-    (cons a b))
+(define (make-segment start-point end-point)
+    (cons start-point end-point))
 
 (define (start-segment segment)
     (car segment))
