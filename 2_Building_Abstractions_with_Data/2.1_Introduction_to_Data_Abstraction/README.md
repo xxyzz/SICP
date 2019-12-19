@@ -78,3 +78,21 @@ Ben Bitdiddle, an expert systems programmer, looks over Alyssa’s shoulder and 
 ## Exercise 2.11:
 
 In passing, Ben also cryptically comments: “By testing the signs of the endpoints of the intervals, it is possible to break `mul-interval` into nine cases, only one of which requires more than two multiplications.” Rewrite this procedure using Ben’s suggestion.
+
+## Exercise 2.12:
+
+Define a constructor `make-center-percent` that takes a center and a percentage tolerance and produces the desired interval. You must also define a selector `percent` that produces the percentage tolerance for a given interval. The `center` selector is the same as the one shown above.
+
+## Exercise 2.13:
+
+Show that under the assumption of small percentage tolerances there is a simple formula for the approximate percentage tolerance of the product of two intervals in terms of the tolerances of the factors. You may simplify the problem by assuming that all numbers are positive.
+
+```
+interval A: center: a, percent p1, (a(1-p1), a(1+p1))
+interval B: center: b, percent p2, (b(1-p2), b(1+p2))
+
+product width:   (ab(1+p1)(1+p2) - ab(1-p1)(1-p2))/2
+product center:  (ab(1+p1)(1+p2) + ab(1-p1)(1-p2))/2
+product percent: (ab(1+p1)(1+p2) - ab(1-p1)(1-p2)) / (ab(1+p1)(1+p2) + ab(1-p1)(1-p2))
+                 = (p1 + p2) / (1 + p1p2) ≈ p1 + p2
+```
