@@ -96,3 +96,11 @@ product center:  (ab(1+p1)(1+p2) + ab(1-p1)(1-p2))/2
 product percent: (ab(1+p1)(1+p2) - ab(1-p1)(1-p2)) / (ab(1+p1)(1+p2) + ab(1-p1)(1-p2))
                  = (p1 + p2) / (1 + p1p2) ≈ p1 + p2
 ```
+
+## Exercise 2.14:
+
+Demonstrate that Lem is right. Investigate the behavior of the system on a variety of arithmetic expressions. Make some intervals A and B, and use them in computing the expressions A/A and A/B. You will get the most insight by using intervals whose width is a small percentage of the center value. Examine the results of the computation in center-percent form (see Exercise 2.12).
+
+## Exercise 2.15:
+
+Eva Lu Ator, another user, has also noticed the different intervals computed by different but algebraically equivalent expressions. She says that a formula to compute with intervals using Alyssa’s system will produce tighter error bounds if it can be written in such a form that no variable that represents an uncertain number is repeated. Thus, she says, `par2` is a “better” program for parallel resistances than `par1`. Is she right? Why?
