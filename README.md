@@ -11,3 +11,5 @@
 2. Building Abstractions with Data
 
     - 2.1 Introduction to Data Abstraction
+
+    - 2.2 Hierarchical Data and the Closure Property
