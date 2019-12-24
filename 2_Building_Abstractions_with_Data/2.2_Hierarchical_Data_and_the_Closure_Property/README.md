@@ -67,3 +67,83 @@ Use this notation to write a procedure `same-parity` that takes one or more inte
 (same-parity 2 3 4 5 6 7)
 ; (2 4 6)
 ```
+
+## Exercise 2.21:
+
+The procedure `square-list` takes a list of numbers as argument and returns a list of the squares of those numbers.
+
+```scheme
+(square-list (list 1 2 3 4))
+; (1 4 9 16)
+```
+
+Here are two different definitions of `square-list`. Complete both of them by filling in the missing expressions:
+
+```scheme
+(define (square-list items)
+    (if (null? items)
+        nil
+        (cons ⟨??⟩ ⟨??⟩)))
+(define (square-list items)
+    (map ⟨??⟩ ⟨??⟩))
+```
+
+## Exercise 2.22:
+
+Louis Reasoner tries to rewrite the first `square-list` procedure of Exercise 2.21 so that it evolves an iterative process:
+
+```scheme
+(define (square-list items)
+    (define (iter things answer)
+        (if (null? things)
+            answer
+            (iter (cdr things)
+                (cons (square (car things))
+                      answer))))
+    (iter items nil))
+```
+
+Unfortunately, defining `square-list` this way produces the answer list in the reverse order of the one desired. Why?
+
+Louis then tries to fix his bug by interchanging the arguments to `cons`:
+
+```scheme
+(define (square-list items)
+    (define (iter things answer)
+        (if (null? things)
+            answer
+            (iter (cdr things)
+                (cons answer
+                      (square (car things))))))
+    (iter items nil))
+```
+
+This doesn’t work either. Explain.
+
+The first version add squared value to the front, so the result list is reversed.
+
+The second version is filed because of `cons` works this way:
+
+```scheme
+(cons 1 (list 2 3))
+; '(1 2 3)
+(cons (list 1 2) 3)
+; '((1 2) . 3)
+```
+
+## Exercise 2.23:
+
+The procedure `for-each` is similar to `map`. It takes as arguments a procedure and a list of elements. However, rather than forming a list of the results, `for-each` just applies the procedure to each of the elements in turn, from left to right. The values returned by applying the procedure to the elements are not used at all—`for-each` is used with procedures that perform an action, such as printing. For example,
+
+```scheme
+(for-each (lambda (x)
+            (newline)
+            (display x))
+          (list 57 321 88))
+
+; 57
+; 321
+; 88
+```
+
+The value returned by the call to `for-each` (not illustrated above) can be something arbitrary, such as true. Give an implementation of `for-each`.
