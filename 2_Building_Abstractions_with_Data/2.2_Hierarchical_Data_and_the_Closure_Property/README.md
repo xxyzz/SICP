@@ -147,3 +147,48 @@ The procedure `for-each` is similar to `map`. It takes as arguments a procedure 
 ```
 
 The value returned by the call to `for-each` (not illustrated above) can be something arbitrary, such as true. Give an implementation of `for-each`.
+
+## Exercise 2.24
+
+Suppose we evaluate the expression `(list 1 (list 2 (list 3 4)))`. Give the result printed by the interpreter, the corresponding box-and-pointer structure, and the interpretation of this as a tree (as in Figure 2.6).
+
+## Exercise 2.25:
+
+Give combinations of `car`s and `cdr`s that will pick 7 from each of the following lists:
+
+```scheme
+(1 3 (5 7) 9)
+((7))
+(1 (2 (3 (4 (5 (6 7))))))
+```
+
+## Exercise 2.26:
+
+Suppose we define `x` and `y` to be two lists:
+
+```scheme
+(define x (list 1 2 3))
+(define y (list 4 5 6))
+```
+
+What result is printed by the interpreter in response to evaluating each of the following expressions:
+
+```scheme
+(append x y)
+(cons x y)
+(list x y)
+```
+
+## Exercise 2.27:
+
+Modify your reverse procedure of Exercise 2.18 to produce a `deep-reverse` procedure that takes a list as argument and returns as its value the list with its elements reversed and with all sublists `deep-reversed` as well. For example,
+
+```scheme
+(define x (list (list 1 2) (list 3 4)))
+x
+; '((1 2) (3 4))
+(reverse x)
+; '((3 4) (1 2))
+(deep-reverse x)
+; '((4 3) (2 1))
+```
