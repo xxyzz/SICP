@@ -192,3 +192,35 @@ x
 (deep-reverse x)
 ; '((4 3) (2 1))
 ```
+
+## Exercise 2.28:
+
+Write a procedure fringe that takes as argument a tree (represented as a list) and returns a list whose elements are all the leaves of the tree arranged in left-to-right order. For example,
+
+```scheme
+(define x (list (list 1 2) (list 3 4)))
+(fringe x)
+; (1 2 3 4)
+(fringe (list x x))
+; (1 2 3 4 1 2 3 4)
+```
+
+## Exercise 2.29:
+
+A binary mobile consists of two branches, a left branch and a right branch. Each branch is a rod of a certain length, from which hangs either a weight or another binary mobile. We can represent a binary mobile using compound data by constructing it from two branches (for example, using `list`):
+
+```scheme
+(define (make-mobile left right)
+    (list left right))
+```
+
+A branch is constructed from a `length` (which must be a number) together with a `structure`, which may be either a number (representing a simple weight) or another mobile:
+
+```scheme
+(define (make-branch length structure)
+    (list length structure))
+```
+
+a. Write the corresponding selectors `left-branch` and `right-branch`, which return the branches of a mobile, and `branch-length` and `branch-structure`, which return the components of a branch.
+
+b. Using your selectors, define a procedure `total-weight` that returns the total weight of a mobile.
