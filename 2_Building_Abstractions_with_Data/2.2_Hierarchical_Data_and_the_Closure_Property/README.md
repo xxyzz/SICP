@@ -236,3 +236,24 @@ d. Suppose we change the representation of mobiles so that the constructors are
 ```
 
 How much do you need to change your programs to convert to the new representation?
+
+## Exercise 2.30:
+
+Define a procedure `square-tree` analogous to the `square-list` procedure of Exercise 2.21. That is, `square-tree` should behave as follows:
+
+```scheme
+(square-tree (list 1
+             (list 2 (list 3 4) 5)
+             (list 6 7)))
+; (1 (4 (9 16) 25) (36 49))
+```
+
+Define `square-tree` both directly (i.e., without using any higher-order procedures) and also by using `map` and recursion.
+
+## Exercise 2.31:
+
+Abstract your answer to Exercise 2.30 to produce a procedure `tree-map` with the property that `square-tree` could be defined as
+
+```scheme
+(define (square-tree tree) (tree-map square tree))
+```
