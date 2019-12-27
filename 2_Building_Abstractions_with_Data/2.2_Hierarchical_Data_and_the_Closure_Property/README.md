@@ -269,3 +269,52 @@ We can represent a set as a list of distinct elements, and we can represent the 
         (let ((rest (subsets (cdr s))))
             (append rest (map ⟨??⟩ rest)))))
 ```
+
+## Exercise 2.33:
+
+Fill in the missing expressions to complete the following definitions of some basic list-manipulation operations as accumulations:
+
+```scheme
+(define (map p sequence)
+    (accumulate (lambda (x y) ⟨??⟩) nil sequence))
+(define (append seq1 seq2)
+    (accumulate cons ⟨??⟩ ⟨??⟩))
+(define (length sequence)
+    (accumulate ⟨??⟩ 0 sequence))
+```
+
+## Exercise 2.34:
+
+Evaluating a polynomial in *x* at a given value of *x* can be formulated as an accumulation. We evaluate the polynomial
+
+a<sub>n</sub>*x*<sup>n</sup> + a<sub>n-1</sub>*x*<sup>n-1</sup> + ... + a<sub>1</sub>*x* + a<sub>0</sub>
+
+using a well-known algorithm called *Horner’s rule*, which structures the computation as
+
+(...(a<sub>n</sub>*x* + a<sub>n-1</sub>)*x* + ... + a<sub>1</sub>)*x* + a<sub>0</sub>.
+
+In other words, we start with a<sub>n</sub>, multiply by *x*, add a<sub>n-1</sub>, multiply by *x*, and so on, until we reach a<sub>0</sub>.
+
+Fill in the following template to produce a procedure that evaluates a polynomial using Horner’s rule. Assume that the coefficients of the polynomial are arranged in a sequence, from a<sub>0</sub> through a<sub>n</sub>.
+
+```scheme
+(define (horner-eval x coefficient-sequence)
+    (accumulate (lambda (this-coeff higher-terms) ⟨??⟩)
+        0
+        coefficient-sequence))
+```
+
+For example, to compute 1 + 3*x* + 5*x*<sup>3</sup> + *x*<sup>5</sup> at *x* = 2 you would evaluate
+
+```scheme
+(horner-eval 2 (list 1 3 0 5 0 1))
+```
+
+## Exercise 2.35:
+
+Redefine `count-leaves` from Section 2.2.2 as an accumulation:
+
+```scheme
+(define (count-leaves t)
+    (accumulate ⟨??⟩ ⟨??⟩ (map ⟨??⟩ ⟨??⟩)))
+```

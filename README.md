@@ -1,4 +1,13 @@
-# Structure and Interpretation of Computer Programs
+# Structure and Interpretation of Computer Programs(SICP)
+
+Exercises of the *[Wizard Book](https://mitpress.mit.edu/sites/default/files/sicp/index.html)*.
+
+Download [Racket](https://racket-lang.org) with your favorite package manager or from [https://download.racket-lang.org](https://download.racket-lang.org) before you getting started.
+
+```
+// Homebrew
+$ brew cask install racket
+```
 
 1. Building Abstractions with Procedures
 
