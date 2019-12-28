@@ -318,3 +318,93 @@ Redefine `count-leaves` from Section 2.2.2 as an accumulation:
 (define (count-leaves t)
     (accumulate ⟨??⟩ ⟨??⟩ (map ⟨??⟩ ⟨??⟩)))
 ```
+
+## Exercise 2.36:
+
+The procedure `accumulate-n` is similar to `accumulate` except that it takes as its third argument a sequence of sequences, which are all assumed to have the same number of elements. It applies the designated accumulation procedure to combine all the first elements of the sequences, all the second elements of the sequences, and so on, and returns a sequence of the results. For instance, if s is a sequence containing four sequences, `((1 2 3) (4 5 6) (7 8 9) (10 11 12))`, then the value of `(accumulate-n + 0 s)` should be the sequence `(22 26 30)`. Fill in the missing expressions in the following definition of `accumulate-n`:
+
+```scheme
+(define (accumulate-n op init seqs)
+    (if (null? (car seqs))
+        nil
+        (cons (accumulate op init ⟨??⟩)
+              (accumulate-n op init ⟨??⟩))))
+```
+
+## Exercise 2.37:
+
+Suppose we represent vectors **v** = (*v*<sub>*i*</sub>) as sequences of numbers, and matrices **m** = (*m*<sub>*ij*</sub>) as sequences of vectors (the rows of the matrix). For example, the matrix
+
+```
+1 2 3 4
+4 5 6 6
+6 7 8 9
+```
+
+is represented as the sequence `((1 2 3 4) (4 5 6 6) (6 7 8 9))`. With this representation, we can use sequence operations to concisely express the basic matrix and vector operations. These operations (which are described in any book on matrix algebra) are the following:
+
+(dot-product v w)      returns the sum Σ<sub>*i*</sub>v<sub>*i*</sub>w<sub>*i*</sub>;
+
+(matrix-*-vector m v)  returns the vector **t**,
+                       where t<sub>*i*</sub> =Σ<sub>*j*</sub>m<sub>*ij*</sub>v<sub>*j*</sub>;
+
+(matrix-*-matrix m n)  returns the matrix **p**,
+                       where p<sub>*ij*</sub> =Σ<sub>*k*</sub>m<sub>*ik*</sub>n<sub>*kj*</sub>;
+
+(transpose m)          returns the matrix **n**,
+                       where n<sub>*ij*</sub> =m<sub>*ij*</sub>.
+
+We can define the dot product as
+
+```scheme
+(define (dot-product v w)
+    (accumulate + 0 (map * v w)))
+```
+
+Fill in the missing expressions in the following procedures for computing the other matrix operations. (The procedure `accumulate-n` is defined in Exercise 2.36.)
+
+```scheme
+(define (matrix-*-vector m v)
+    (map ⟨??⟩ m))
+(define (transpose mat)
+    (accumulate-n ⟨??⟩ ⟨??⟩ mat))
+(define (matrix-*-matrix m n)
+    (let ((cols (transpose n)))
+        (map ⟨??⟩ m)))
+```
+
+## Exercise 2.38:
+
+The `accumulate` procedure is also known as `fold-right`, because it combines the first element of the sequence with the result of combining all the elements to the right. There is also a `fold-left`, which is similar to `fold-right`, except that it combines elements working in the opposite direction:
+
+```scheme
+(define (fold-left op initial sequence)
+    (define (iter result rest)
+        (if (null? rest)
+            result
+            (iter (op result (car rest))
+                (cdr rest))))
+    (iter initial sequence))
+```
+
+What are the values of
+
+```scheme
+(fold-right / 1 (list 1 2 3))
+(fold-left / 1 (list 1 2 3))
+(fold-right list nil (list 1 2 3))
+(fold-left list nil (list 1 2 3))
+```
+
+Give a property that `op` should satisfy to guarantee that `fold-right` and `fold-left` will produce the same values for any sequence.
+
+## Exercise 2.39:
+
+Complete the following definitions of `reverse` (Exercise 2.18) in terms of `fold-right` and `fold-left` from Exercise 2.38:
+
+```scheme
+(define (reverse sequence)
+    (fold-right (lambda (x y) ⟨??⟩) nil sequence))
+(define (reverse sequence)
+    (fold-left (lambda (x y) ⟨??⟩) nil sequence))
+```
