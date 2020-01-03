@@ -412,3 +412,7 @@ Complete the following definitions of `reverse` (Exercise 2.18) in terms of `fol
 ## Exercise 2.40:
 
 Define a procedure `unique-pairs` that, given an integer *n*, generates the sequence of pairs (*i*, *j*) with 1 ≤ *j* < *i* ≤ *n*. Use `unique-pairs` to simplify the definition of `prime-sum-pairs` given above.
+
+## Exercise 2.41:
+
+Write a procedure to find all ordered triples of distinct positive integers *i*, *j*, and *k* less than or equal to a given integer *n* that sum to a given integer *s*.
