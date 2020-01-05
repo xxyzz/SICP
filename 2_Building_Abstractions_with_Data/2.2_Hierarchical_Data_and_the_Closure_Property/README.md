@@ -416,3 +416,39 @@ Define a procedure `unique-pairs` that, given an integer *n*, generates the sequ
 ## Exercise 2.41:
 
 Write a procedure to find all ordered triples of distinct positive integers *i*, *j*, and *k* less than or equal to a given integer *n* that sum to a given integer *s*.
+
+## Exercise 2.42:
+
+See page 169 of the book
+
+## Exercise 2.43:
+
+Louis Reasoner is having a terrible time doing Exercise 2.42. His `queens` procedure seems to work, but it runs extremely slowly. (Louis never does manage to wait long enough for it to solve even the 6 × 6 case.) When Louis asks Eva Lu Ator for help, she points out that he has interchanged the order of the nested mappings in the `flatmap`, writing it as
+
+```scheme
+(flatmap
+    (lambda (new-row)
+        (map (lambda (rest-of-queens)
+                 (adjoin-position new-row k rest-of-queens))
+             (queen-cols (- k 1))))
+    (enumerate-interval 1 board-size))
+```
+
+Explain why this interchange makes the program run slowly. Estimate how long it will take Louis’s program to solve the eight-queens puzzle, assuming that the program in Exercise 2.42 solves the puzzle in time *T*.
+
+In this code, `(queen-cols (- k 1))` run `new-row * rest-of-queens` (same as `board-size * (board-size - 1)`) times. In Exercise 2.42, it only run once. Therefore the program needs `board-size * (board-size - 1) * T`.
+
+## Exercise 2.44:
+
+Define the procedure `up-split` used by `corner-split`. It is similar to `right-split`, except that it switches the roles of below and beside.
+
+## Exercise 2.45:
+
+`right-split` and `up-split` can be expressed as instances of a general splitting operation. Define a procedure split with the property that evaluating
+
+```scheme
+(define right-split (split beside below))
+(define up-split (split below beside))
+```
+
+produces procedures `right-split` and `up-split` with the same behaviors as the ones already defined.
