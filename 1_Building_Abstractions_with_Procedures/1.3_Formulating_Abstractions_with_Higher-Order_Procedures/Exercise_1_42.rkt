@@ -8,3 +8,5 @@
 (define (inc x) (+ x 1))
 
 ((compose square inc) 6)
+; (* (+ 6 1) (+ 6 1))
+; 49
