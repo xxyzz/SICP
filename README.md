@@ -22,3 +22,5 @@ $ brew cask install racket
     - 2.1 [Introduction to Data Abstraction](./2_Building_Abstractions_with_Data/2.1_Introduction_to_Data_Abstraction)
 
     - 2.2 [Hierarchical Data and the Closure Property](./2_Building_Abstractions_with_Data/2.2_Hierarchical_Data_and_the_Closure_Property)
+
+    - 2.3 [Symbolic Data](./2_Building_Abstractions_with_Data/2.3_Symbolic_Data)
