@@ -64,3 +64,11 @@ Suppose we want to modify the differentiation program so that it works with ordi
 a. Show how to do this in order to differentiate algebraic expressions presented in infix form, such as `(x + (3 * (x + (y + 2))))`. To simplify the task, assume that + and * always take two arguments and that expressions are fully parenthesized.
 
 b. The problem becomes substantially harder if we allow standard algebraic notation, such as `(x + 3 * (x + y + 2))`, which drops unnecessary parentheses and assumes that multiplication is done before addition. Can you design appropriate predicates, selectors, and constructors for this notation such that our derivative program still works?
+
+## Exercise 2.59:
+
+Implement the `union-set` operation for the unordered-list representation of sets.
+
+## Exercise 2.60:
+
+We specified that a set would be represented as a list with no duplicates. Now suppose we allow duplicates. For instance, the set `{1, 2, 3}` could be represented as the list `(2 3 2 1 3 2 2)`. Design procedures `element-of-set?`, `adjoin-set`, `union-set`, and `intersection-set` that operate on this representation. How does the efficiency of each compare with the corresponding procedure for the non-duplicate representation? Are there applications for which you would use this representation in preference to the non-duplicate one?
