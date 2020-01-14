@@ -72,3 +72,11 @@ Implement the `union-set` operation for the unordered-list representation of set
 ## Exercise 2.60:
 
 We specified that a set would be represented as a list with no duplicates. Now suppose we allow duplicates. For instance, the set `{1, 2, 3}` could be represented as the list `(2 3 2 1 3 2 2)`. Design procedures `element-of-set?`, `adjoin-set`, `union-set`, and `intersection-set` that operate on this representation. How does the efficiency of each compare with the corresponding procedure for the non-duplicate representation? Are there applications for which you would use this representation in preference to the non-duplicate one?
+
+## Exercise 2.61:
+
+Give an implementation of `adjoin-set` using the ordered representation. By analogy with `element-of-set?` show how to take advantage of the ordering to produce a procedure that requires on the average about half as many steps as with the unordered representation.
+
+## Exercise 2.62:
+
+Give a Θ(n) implementation of `union-set` for sets represented as ordered lists.
