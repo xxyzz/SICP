@@ -7,7 +7,7 @@
     (list entry left right))
 
 (define (tree->list-1 tree)
-    (display "tree->list-1")
+    (display "tree->list-1\n")
     (if (null? tree)
         '()
         (append (tree->list-1 (left-branch tree))
@@ -16,7 +16,7 @@
 
 (define (tree->list-2 tree)
     (define (copy-to-list tree result-list)
-        (display "copy-to-list")
+        (display "copy-to-list\n")
         (if (null? tree)
             result-list
             (copy-to-list (left-branch tree)
