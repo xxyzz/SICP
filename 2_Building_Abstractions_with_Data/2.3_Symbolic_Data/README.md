@@ -119,3 +119,7 @@ b. What is the order of growth in the number of steps required by `list->tree` t
 
 Use the results of Exercise 2.63 and Exercise 2.64 to give Θ(n) implementations of `union-set` and
 `intersection-set` for sets implemented as (balanced) binary trees.
+
+## Exercise 2.66:
+
+Implement the `lookup` procedure for the case where the set of records is structured as a binary tree, ordered by the numerical values of the keys.
