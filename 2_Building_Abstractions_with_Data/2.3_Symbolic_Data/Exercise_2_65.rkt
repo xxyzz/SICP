@@ -6,11 +6,18 @@
 (define (make-tree entry left right)
     (list entry left right))
 
+(define (tree->list tree)
+    (if (null? tree)
+        '()
+        (append (tree->list (left-branch tree))
+                (cons (entry tree)
+                      (tree->list (right-branch tree))))))
+
 (define (list->tree elements)
     (car (partial-tree elements (length elements))))
 
 (define (partial-tree elts n)
-    (display "partial-tree\n")
+    (display "partial-tree")
     (if (= n 0)
         (cons '() elts)
         (let ([left-size (quotient (- n 1) 2)])
@@ -30,26 +37,30 @@
                                               right-tree)
                                    remaining-elts))))))))
 
-(list->tree (list 1 3 5 7 9 11))
-; partical-tree
-; partical-tree
-; partical-tree
-; partical-tree
-; partical-tree
-; partical-tree
-; partical-tree
-; partical-tree
-; partical-tree
-; partical-tree
-; partical-tree
-; partical-tree
-; partical-tree
-; '(5 (1 () (3 () ())) (9 (7 () ()) (11 () ())))
+(define (adjoin-set x set)              
+    (cond [(null? set) (list x)]
+          [(< x (car set)) (cons x set)]
+          [(> x (car set)) (cons (car set) (adjoin-set x (cdr set)))]
+          [else set]))
 
-;     5
-;   /  \
-;  1    9  
-;  \   / \
-;  3  7   11
+(define (union-set set1 set2)
+  (cond [(null? set1) set2]
+        [(null? set2) set1]
+        [else (let ([x1 (car set1)]
+                    [x2 (car set2)])
+                (cond [(< x1 x2) (cons x1 (union-set (cdr set1) set2))]
+                      [(> x1 x2) (cons x2 (union-set set1 (cdr set2)))]
+                      [else (cons x1 (union-set (cdr set1) (cdr set2)))]))]))
 
-; 2n + 1 steps
+(define (adjoin-tree-set x set)
+    (list->tree (adjoin-set x (tree->list set))))
+
+(define (union-tree-set set1 set2)
+    (list->tree (union-set (tree->list set1)
+                           (tree->list set2))))
+
+(adjoin-tree-set 3 '(2 (1 () ()) (4 () ())))
+; '(2 (1 () ()) (3 () (4 () ())))
+
+(union-tree-set '(4 (2 () ()) (6 () ())) '(3 (1 () ()) (5 () ())))
+; '(3 (1 () (2 () ())) (5 (4 () ()) (6 () ())))

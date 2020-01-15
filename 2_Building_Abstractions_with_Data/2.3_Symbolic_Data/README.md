@@ -114,3 +114,8 @@ The following procedure `list->tree` converts an ordered list to a balanced bina
 a. Write a short paragraph explaining as clearly as you can how `partial-tree` works. Draw the tree produced by `list->tree` for the list `(1 3 5 7 9 11)`.
 
 b. What is the order of growth in the number of steps required by `list->tree` to convert a list of *n* elements?
+
+## Exercise 2.65:
+
+Use the results of Exercise 2.63 and Exercise 2.64 to give Θ(n) implementations of `union-set` and
+`intersection-set` for sets implemented as (balanced) binary trees.
