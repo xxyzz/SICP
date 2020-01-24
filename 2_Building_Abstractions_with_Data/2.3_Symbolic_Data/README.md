@@ -204,3 +204,7 @@ Order of growth is Θ(n^2)
 ## Exercise 2.73:
 
 See page 248.
+
+## Exercise 2.74:
+
+See page 250.
