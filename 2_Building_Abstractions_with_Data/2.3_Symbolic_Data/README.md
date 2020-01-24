@@ -200,11 +200,3 @@ The most frequent: n(search list) + 1(encode-symbol-1). Order of growth is Θ(n)
 
 The least frequent: ((n) + (n - 1) + (n - 2) + ... + (1)) + n(encode-symbol-1) = n(n+1)/2 + n.
 Order of growth is Θ(n^2)
-
-## Exercise 2.73:
-
-See page 248.
-
-## Exercise 2.74:
-
-See page 250.

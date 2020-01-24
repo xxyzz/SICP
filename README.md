@@ -24,3 +24,5 @@ $ brew cask install racket
     - 2.2 [Hierarchical Data and the Closure Property](./2_Building_Abstractions_with_Data/2.2_Hierarchical_Data_and_the_Closure_Property)
 
     - 2.3 [Symbolic Data](./2_Building_Abstractions_with_Data/2.3_Symbolic_Data)
+
+    - 2.4 [Multiple Representations for Abstract Data](./2_Building_Abstractions_with_Data/2.4_Multiple_Representations_for_Abstract_Data)
