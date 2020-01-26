@@ -8,7 +8,7 @@
 
 (define (attach-tag type-tag contents)
   (cond [(number? contents) contents]
-        [(symbol? contents) (cons type-tag contents)]))
+        [else (cons type-tag contents)]))
 
 (define (type-tag datum)
   (cond [(number? datum) 'scheme-number]

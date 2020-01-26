@@ -26,3 +26,5 @@ $ brew cask install racket
     - 2.3 [Symbolic Data](./2_Building_Abstractions_with_Data/2.3_Symbolic_Data)
 
     - 2.4 [Multiple Representations for Abstract Data](./2_Building_Abstractions_with_Data/2.4_Multiple_Representations_for_Abstract_Data)
+
+    - 2.5 [Systems with Generic Operations](./2_Building_Abstractions_with_Data/2.5_Systems_with_Generic_Operations)
