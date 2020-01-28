@@ -60,3 +60,7 @@ What happens if we call `exp` with two complex numbers as arguments?
 b. Is Louis correct that something had to be done about coercion with arguments of the same type, or does `apply-generic `work correctly as is?
 
 c. Modify `apply-generic` so that it doesn’t try coercion if the two arguments have the same type.
+
+## Exercise 2.82:
+
+Show how to generalize `apply-generic` to handle coercion in the general case of multiple arguments. One strategy is to attempt to coerce all the arguments to the type of the first argument, then to the type of the second argument, and so on. Give an example of a situation where this strategy (and likewise the two-argument version given above) is not sufficiently general. (Hint: Consider the case where there are some suitable mixed-type operations present in the table that will not be tried.)
