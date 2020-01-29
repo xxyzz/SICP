@@ -150,11 +150,7 @@
                 rational->real)
 
   (define (real->complex z)
-    (let ([type (type-tag z)]
-          [content (contents z)])
-      (if (eq? type 'scheme-number)
-          (make-complex-from-real-imag content 0)
-          (make-complex-from-real-imag (/ (numer content) (denom content)) 0))))
+    (make-complex-from-real-imag z 0))
   (put-coercion 'real
                 'complex
                 real->complex)

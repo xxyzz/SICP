@@ -21,24 +21,12 @@
 (define (type-tag datum)
   (cond [(number? datum) 'scheme-number]
         [(pair? datum) (car datum)]
-        [else (error "Bad tagged datum: TYPE-TAG" datum)]))
+        [else null]))
 
 (define (contents datum)
   (cond [(number? datum) datum]
         [(pair? datum) (cdr datum)]
         [else (error "Bad tagged datum: CONTENTS" datum)]))
-
-(define (raise z)
-  (let ([raise-proc (get 'raise (type-tag z))])
-    (if (null? raise-proc)
-        null
-        (raise-proc (contents z)))))
-
-(define (try-raise arg target-type)
-  (let ([converted-arg (raise arg)])
-    (cond [(null? converted-arg) null] ; can't raise any more
-          [(eq? target-type (type-tag converted-arg)) converted-arg]
-          [else (try-raise converted-arg target-type)])))
 
 (define (no-method-error op type-tags)
   (error "No method for these types"
@@ -64,7 +52,7 @@
                 (iter-types (cdr type-list))))))     ; can't convert to the same type
     (let ([proc (get op type-tags)])
       (if (not (null? proc))
-          (apply proc (map contents args))
+          (drop (apply proc (map contents args)))
           (if (null? (filter (lambda (type)
                                (not (eq? type (car type-tags))))
                              type-tags))
@@ -181,6 +169,8 @@
 (define (install-coercion-package)
   (define (numer x) (car x))
   (define (denom x) (cdr x))
+
+  ; raise
   (define (scheme-number->rational z) (make-rational z 1))
   (put-coercion 'scheme-number
                 'rational
@@ -197,6 +187,25 @@
   (put-coercion 'real
                 'complex
                 real->complex)
+
+  ; drop
+  (define (complex->real z)
+    (make-real (real-part z)))
+  (put-coercion 'complex
+                'real
+                complex->real)
+
+  (define (real->rational z)
+    (make-rational z 1))
+  (put-coercion 'real
+                'rational
+                real->rational)
+
+  (define (rational->integer z)
+    (make-scheme-number (/ (numer z) (denom z))))
+  (put-coercion 'rational
+                'scheme-number
+                rational->integer)
   'done)
 
 (install-coercion-package)
@@ -213,11 +222,75 @@
   (put 'raise 'real raise-real)
   'done)
 
+(define (raise z)
+  (let ([raise-proc (get 'raise (type-tag z))])
+    (if (null? raise-proc)
+        null
+        (raise-proc (contents z)))))
+
+(define (try-raise arg target-type)
+  (let ([converted-arg (raise arg)])
+    (cond [(null? converted-arg) null] ; can't raise any more
+          [(eq? target-type (type-tag converted-arg)) converted-arg]
+          [else (try-raise converted-arg target-type)])))
+
 (install-raise-package)
 
-(define a (make-scheme-number 1))
-(define b (make-rational 1 2))
-(define c (make-complex-from-real-imag 1 0))
-(define d (make-complex-from-mag-ang 1 0))
-(add a b c d)
-; '(complex rectangular 3 1/2 . 0)
+(define (install-equality-package)
+  (define (numer x) (car x))
+  (define (denom x) (cdr x))
+  (define (eqn-ordinary? x y)
+    (= x y))
+  (define (eqn-rational? x y)
+    (and (= (numer x) (numer y))
+         (= (denom x) (denom y))))
+  (define (eqn-complex? x y)
+    (and (= (real-part x) (real-part y))
+         (= (imag-part x) (imag-part y))))
+  (put 'eqn? '(scheme-number scheme-number) eqn-ordinary?)
+  (put 'eqn? '(rational rational) eqn-rational?)
+  (put 'eqn? '(real real) eqn-ordinary?)
+  (put 'eqn? '(complex complex) eqn-complex?))
+
+(install-equality-package)
+
+(define (eqn? x y)
+  (let ([type-a (type-tag x)]
+        [type-b (type-tag y)])
+    (if (eq? type-a type-b)
+        (apply-generic 'eqn? x y)
+        #f)))
+
+(define (install-project-package)
+  (define (project-complex z)
+    ((get-coercion 'complex 'real) z))
+  (define (project-real z)
+    ((get-coercion 'real 'rational) z))
+  (define (project-rational z)
+    ((get-coercion 'rational 'scheme-number) z))
+  (put 'project 'complex project-complex)
+  (put 'project 'real project-real)
+  (put 'project 'rational project-rational))
+
+(define (drop z)
+  (let ([drop-proc (get 'project (type-tag z))])
+    (if (null? drop-proc)
+        z
+        (let* ([droped (drop-proc (contents z))]
+               [drop-then-raise (raise droped)])
+          (if (eqn? z drop-then-raise)
+              (drop droped)
+              z)))))
+
+(install-project-package)
+
+(define a (make-complex-from-real-imag 1 0))
+
+(drop a)
+; 1
+
+(add a a a a)
+; 4
+
+(drop (make-complex-from-real-imag 1.5 0))
+; '(rational 3.0 . 2.0)
