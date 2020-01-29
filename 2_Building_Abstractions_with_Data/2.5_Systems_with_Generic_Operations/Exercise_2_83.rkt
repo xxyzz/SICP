@@ -45,7 +45,7 @@
 
 (define (install-scheme-number-package)
   (define (tag x) (attach-tag 'scheme-number x))
-  (put 'make 'scheme-number (lambda (x) (tag x)))
+  (put 'make 'scheme-number (lambda (x) (tag (round x))))
   'done)
 
 (define (make-scheme-number n)
@@ -72,23 +72,14 @@
 (install-rational-package)
 
 (define (install-real-package)
-  ;; imported procedures from scheme number and rational packages
-  (define (make-from-integer n)
-    ((get 'make 'scheme-number) n))
-  (define (make-from-rational n d)
-    ((get 'make 'rational) n d))
   ;; interface to rest of the system
   (define (tag z) (attach-tag 'real z))
-  (put 'make 'make-real-from-integer
-       (lambda (n) (tag (make-from-integer n))))
-  (put 'make 'make-real-from-rational
-       (lambda (n d) (tag (make-from-rational n d))))
+  (put 'make 'make-real
+       (lambda (x) (tag x)))
   'done)
 
-(define (make-real-from-integer n)
-  ((get 'make 'make-real-from-integer) n))
-(define (make-real-from-rational n d)
-  ((get 'make 'make-real-from-rational) n d))
+(define (make-real n)
+  ((get 'make 'make-real) n))
 
 (install-real-package)
 
@@ -153,7 +144,7 @@
                 scheme-number->rational)
 
   (define (rational->real z)
-    (make-real-from-rational (numer z) (denom z)))
+    (make-real (/ (numer z) (denom z))))
   (put-coercion 'rational
                 'real
                 rational->real)
@@ -191,10 +182,7 @@
 ; '(rational 1 . 1)
 
 (raise (make-rational 1 2))
-; '(real rational 1 . 2)
+; '(real . 1/2)
 
-(raise (make-real-from-integer 1))
+(raise (make-real 1))
 ; '(complex rectangular 1 . 0)
-
-(raise (make-real-from-rational 1 2))
-; '(complex rectangular 1/2 . 0)
