@@ -15,7 +15,9 @@
 (define (square x) (* x x))
 
 (define (attach-tag type-tag contents)
-  (cond [(number? contents) contents]
+  (cond [(and (eq? type-tag 'scheme-number)
+              (number? contents))
+         contents]
         [else (cons type-tag contents)]))
 
 (define (type-tag datum)
