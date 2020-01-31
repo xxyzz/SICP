@@ -41,6 +41,8 @@
        (lambda (x y) (tag (* x y))))
   (put 'div '(scheme-number scheme-number)
        (lambda (x y) (tag (/ x y))))
+  (put 'invert '(scheme-number)
+       (lambda (x) (tag (- x))))
   (put 'make 'scheme-number (lambda (x) (tag x)))
   'done)
 
@@ -53,6 +55,7 @@
 (define (sub x y) (apply-generic 'sub x y))
 (define (mul x y) (apply-generic 'mul x y))
 (define (div x y) (apply-generic 'div x y))
+(define (invert x) (apply-generic 'invert x))
 
 (define (install-zero?-package)
   (define (numer x) (car x))
@@ -112,6 +115,18 @@
                                      (add (coeff t1) (coeff t2)))
                           (add-terms (rest-terms L1) (rest-terms L2)))]))]))
 
+  (define (sub-poly p1 p2)
+    (add-poly p1 (invert-poly p2)))
+
+  (define (invert-poly p)
+    (define (invert-terms terms)
+      (if (empty-termlist? terms)
+          terms
+          (let ([current-term (first-term terms)])
+            (adjoin-term (make-term (order current-term) (invert (coeff current-term)))
+                         (invert-terms (rest-terms terms))))))
+    (make-poly (variable p) (invert-terms (term-list p))))
+
   (define (mul-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
         (make-poly (variable p1)
@@ -149,6 +164,10 @@
   (put 'make 'polynomial
        (lambda (var terms) (tag (make-poly var terms))))
   (put '=zero? '(polynomial) =zero?-poly)
+  (put 'invert '(polynomial)
+       (lambda (p) (tag (invert-poly p))))
+  (put 'sub '(polynomial polynomial)
+       (lambda (p1 p2) (tag (sub-poly p1 p2))))
   'done)
 
 (install-polynomial-package)
@@ -159,9 +178,8 @@
 (define poly-a (make-polynomial 'x '((100 1) (2 2) (0 1))))
 ; '(polynomial x (100 1) (2 2) (0 1))
 ; x^100 + 2x^2 + 1
-(add poly-a poly-a)
-; '(polynomial x (100 2) (2 4) (0 2))
-; 2x^100 + 4x^2 + 2
+(sub poly-a poly-a)
+; '(polynomial x)
 
 (define poly-b (make-polynomial 'y '((1 1) (0 1))))
 ; '(polynomial y (1 1) (0 1))
@@ -175,6 +193,9 @@
 ; '(polynomial x (2 1) (1 2) (0 1))
 ; x^2 + 2x + 1
 
-(add poly-c poly-c)
-; '(polynomial x (2 2) (1 (polynomial y (1 2) (0 2))) (0 10))
-; 2x^2 + (2y + 2)x + 10
+(sub poly-c poly-c)
+; '(polynomial x)
+
+(sub poly-a poly-d)
+; '(polynomial x (100 1) (2 1) (1 -2))
+; x^100 + x^2 - 2x

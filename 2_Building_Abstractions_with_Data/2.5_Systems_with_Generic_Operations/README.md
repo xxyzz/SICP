@@ -84,3 +84,7 @@ Suppose we want to handle complex numbers whose real parts, imaginary parts, mag
 ## Exercise 2.87:
 
 Install `=zero?` for polynomials in the generic arithmetic package. This will allow `adjoin-term` to work for polynomials with coefficients that are themselves polynomials.
+
+## Exercise 2.88:
+
+Extend the polynomial system to include subtraction of polynomials. (Hint: You may find it helpful to define a generic negation operation.)
