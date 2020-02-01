@@ -4,7 +4,7 @@
 (define (put op type item)
   (hash-set! table (list op type) item))
 (define (get op type)
-  (hash-ref table (list op type)))
+  (hash-ref! table (list op type) null))
 
 (define (square x) (* x x))
 
@@ -76,9 +76,9 @@
 (install-polar-package)
 
 (define (apply-generic op . args)
-  (let ((type-tags (map type-tag args)))
-    (let ((proc (get op type-tags)))
-      (if proc
+  (let ([type-tags (map type-tag args)])
+    (let ([proc (get op type-tags)])
+      (if (not (null? proc))
           (apply proc (map contents args))
           (error
            "No method for these types: APPLY-GENERIC"

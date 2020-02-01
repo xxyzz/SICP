@@ -88,3 +88,7 @@ Install `=zero?` for polynomials in the generic arithmetic package. This will al
 ## Exercise 2.88:
 
 Extend the polynomial system to include subtraction of polynomials. (Hint: You may find it helpful to define a generic negation operation.)
+
+## Exercise 2.89:
+
+Define procedures that implement the term-list representation described above as appropriate for dense polynomials.
