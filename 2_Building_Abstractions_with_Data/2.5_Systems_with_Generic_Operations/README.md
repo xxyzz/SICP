@@ -92,3 +92,7 @@ Extend the polynomial system to include subtraction of polynomials. (Hint: You m
 ## Exercise 2.89:
 
 Define procedures that implement the term-list representation described above as appropriate for dense polynomials.
+
+## Exercise 2.90:
+
+Suppose we want to have a polynomial system that is efficient for both sparse and dense polynomials. One way to do this is to allow both kinds of term-list representations in our system. The situation is analogous to the complex-number example of Section 2.4, where we allowed both rectangular and polar representations. To do this we must distinguish different types of term lists and make the operations on term lists generic. Redesign the polynomial system to implement this generalization. This is a major effort, not a local change.
