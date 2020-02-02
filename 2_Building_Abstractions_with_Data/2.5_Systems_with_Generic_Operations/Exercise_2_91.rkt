@@ -68,6 +68,54 @@
 
 (define (=zero? x) (apply-generic '=zero? x))
 
+(define (install-dense-term-list-package)
+  (define (make-term order coeff) (list order coeff))
+  (define (order term) (car term))
+  (define (coeff term) (cadr term))
+
+  (define (first-dense-term term-list)
+    (make-term (sub1 (length term-list)) (car term-list)))
+  (define (adjoin-dense-term term term-list)
+    (if (=zero? (coeff term))
+        term-list
+        (if (= (order term) (length term-list))
+            (cons (coeff term) term-list)
+            (adjoin-dense-term term (cons 0 term-list)))))
+  (define (tag x) (attach-tag 'dense-term-list x))
+  (put 'empty-termlist? '(dense-term-list) null?)
+  (put 'first-term '(dense-term-list) first-dense-term)
+  (put 'rest-terms '(dense-term-list)
+       (lambda (term-list) (tag (cdr term-list))))
+  (put 'adjoin-term 'dense-term-list
+       (lambda (term term-list) (tag (adjoin-dense-term term (contents term-list))))))
+
+(install-dense-term-list-package)
+
+(define (install-sparse-term-list-package)
+  (define (order term) (car term))
+  (define (coeff term) (cadr term))
+
+  (define (first-sparse-term term-list) (car term-list))
+  (define (adjoin-sparse-term term term-list)
+    (if (=zero? (coeff term))
+        term-list
+        (cons term term-list)))
+  (define (tag x) (attach-tag 'sparse-term-list x))
+  (put 'empty-termlist? '(sparse-term-list) null?)
+  (put 'first-term '(sparse-term-list) first-sparse-term)
+  (put 'rest-terms '(sparse-term-list)
+       (lambda (term-list) (tag (cdr term-list))))
+  (put 'adjoin-term 'sparse-term-list
+       (lambda (term term-list) (tag (adjoin-sparse-term term (contents term-list))))))
+
+(install-sparse-term-list-package)
+
+(define (empty-termlist? term-list) (apply-generic 'empty-termlist? term-list))
+(define (first-term term-list) (apply-generic 'first-term term-list))
+(define (rest-terms term-list) (apply-generic 'rest-terms term-list))
+(define (adjoin-term term term-list)
+  ((get 'adjoin-term (type-tag term-list)) term term-list))
+
 (define (install-polynomial-package)
   ;; internal procedures
   ;; representation of poly
@@ -80,17 +128,7 @@
     (and (variable? v1) (variable? v2) (eq? v1 v2)))
 
   ; representation of terms and term lists
-  (define (adjoin-term term term-list)
-    (if (=zero? (coeff term))
-        term-list
-        (if (= (order term) (length term-list))
-            (cons (coeff term) term-list)
-            (adjoin-term term (cons 0 term-list)))))
   (define (the-empty-termlist) '())
-  (define (first-term term-list)
-    (make-term (sub1 (length term-list)) (car term-list)))
-  (define (rest-terms term-list) (cdr term-list))
-  (define (empty-termlist? term-list) (null? term-list))
   (define (make-term order coeff) (list order coeff))
   (define (order term) (car term))
   (define (coeff term) (cadr term))
@@ -105,29 +143,31 @@
     (cond [(empty-termlist? L1) L2]
           [(empty-termlist? L2) L1]
           [else
-           (let ([t1 (first-term L1)]
-                 [t2 (first-term L2)])
-             (cond [(> (order t1) (order t2))
+           (let* ([t1 (first-term L1)]
+                  [t2 (first-term L2)]
+                  [t1-order (order t1)]
+                  [t2-order (order t2)])
+             (cond [(> t1-order t2-order)
                     (adjoin-term
                      t1 (add-terms (rest-terms L1) L2))]
-                   [(< (order t1) (order t2))
+                   [(< t1-order t2-order)
                     (adjoin-term
                      t2 (add-terms L1 (rest-terms L2)))]
                    [else (adjoin-term
-                          (make-term (order t1)
+                          (make-term t1-order
                                      (add (coeff t1) (coeff t2)))
                           (add-terms (rest-terms L1) (rest-terms L2)))]))]))
 
   (define (sub-poly p1 p2)
     (add-poly p1 (invert-poly p2)))
 
+  (define (invert-terms terms)
+    (if (empty-termlist? terms)
+        terms
+        (let ([current-term (first-term terms)])
+          (adjoin-term (make-term (order current-term) (invert (coeff current-term)))
+                       (invert-terms (rest-terms terms))))))
   (define (invert-poly p)
-    (define (invert-terms terms)
-      (if (empty-termlist? terms)
-          terms
-          (let ([current-term (first-term terms)])
-            (adjoin-term (make-term (order current-term) (invert (coeff current-term)))
-                         (invert-terms (rest-terms terms))))))
     (make-poly (variable p) (invert-terms (term-list p))))
 
   (define (mul-poly p1 p2)
@@ -158,6 +198,36 @@
                (check-terms (rest-terms terms)))))
     (check-terms (term-list x)))
 
+  (define (div-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+        (let* ([div-result-terms (div-terms (term-list p1) (term-list p2))]
+               [quotient-term-list (car div-result-terms)]
+               [remainder-term-list (cadr div-result-terms)])
+          (list (make-poly (variable p1) quotient-term-list)
+                (make-poly (variable p1) remainder-term-list)))
+        (error "Polys not in same var: MUL-POLY" (list p1 p2))))
+
+  (define (div-terms L1 L2)
+    (if (empty-termlist? L1)
+        (list L1 L1)
+        (let* ([t1 (first-term L1)]
+               [t2 (first-term L2)]
+               [t1-order (order t1)]
+               [t2-order (order t2)])
+          (if (> t2-order t1-order)
+              (list (attach-tag (type-tag L1) (the-empty-termlist)) L1)
+              (let* ([new-c (div (coeff t1) (coeff t2))]
+                     [new-o (- t1-order t2-order)]
+                     [first-term (make-term new-o new-c)]
+                     [rest-of-result
+                      (div-terms
+                       (add-terms L1
+                                  (invert-terms
+                                   (mul-term-by-all-terms first-term L2)))
+                       L2)])
+                (list (adjoin-term first-term (car rest-of-result))
+                      (cadr rest-of-result)))))))
+
   ;; interface to rest of the system
   (define (tag p) (attach-tag 'polynomial p))
   (put 'add '(polynomial polynomial)
@@ -171,6 +241,10 @@
        (lambda (p) (tag (invert-poly p))))
   (put 'sub '(polynomial polynomial)
        (lambda (p1 p2) (tag (sub-poly p1 p2))))
+  (put 'div '(polynomial polynomial)
+       (lambda (p1 p2)
+         (let ([result (div-poly p1 p2)])
+           (list (tag (car result)) (tag (cadr result))))))
   'done)
 
 (install-polynomial-package)
@@ -178,20 +252,19 @@
 (define (make-polynomial var terms)
   ((get 'make 'polynomial) var terms))
 
-(define poly-a (make-polynomial 'y '(1 1)))
-; '(polynomial y 1 1)
-; y + 1
+(define p1 (make-polynomial 'x '(sparse-term-list (5 1) (0 -1))))
+(define p2 (make-polynomial 'x '(sparse-term-list (2 1) (0 -1))))
 
-(define poly-b (make-polynomial 'x (list 1 poly-a 5)))
-; '(polynomial x 1 (polynomial y 1 1) 5)
-; x^2 + (y + 1)x + 5
+(div p1 p2)
+; '((polynomial x sparse-term-list (3 1) (1 1)) (polynomial x sparse-term-list (1 1) (0 -1)))
 
-(define poly-c (make-polynomial 'x '(1 2 1)))
-; '(polynomial x 1 2 1)
-; x^2 + 2x + 1
-
-(add poly-a poly-a)
-; '(polynomial y 2 2)
-
-(sub poly-c poly-c)
-; '(polynomial x)
+; long division:
+;                 x^3 + x
+;          -----------
+; x^2 - 1 | x^5 - 1
+;         | x^5 - x^3
+;         ------------
+;                 x^3 - 1
+;                 x^3 - x
+;                 -------
+;                       x - 1
