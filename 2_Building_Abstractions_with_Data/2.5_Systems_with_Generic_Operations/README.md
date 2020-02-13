@@ -100,3 +100,32 @@ Suppose we want to have a polynomial system that is efficient for both sparse an
 ## Exercise 2.91:
 
 See page 284.
+
+## Exercise 2.92:
+
+By imposing an ordering on variables, extend the polynomial package so that addition and multiplication of polynomials works for polynomials in different variables. (This is not easy!)
+
+TODO
+
+## Exercise 2.93:
+
+Modify the rational-arithmetic package to use generic operations, but change `make-rat` so that it does not attempt to reduce fractions to lowest terms. Test your system by calling `make-rational` on two polynomials to produce a rational function:
+
+```scheme
+(define p1 (make-polynomial 'x '((2 1) (0 1))))
+(define p2 (make-polynomial 'x '((3 1) (0 1))))
+(define rf (make-rational p2 p1))
+```
+
+## Exercise 2.94:
+
+Using `div-terms`, implement the procedure `remainder-terms` and use this to define `gcd-terms` as above. Now write a procedure `gcd-poly` that computes the polynomial GCD of two polys. (The procedure should signal an error if the two polys are not in the same variable.) Install in the system a generic operation `greatest-common-divisor` that reduces to `gcd-poly` for polynomials and to ordinary `gcd` for ordinary numbers. As a test, try
+
+```scheme
+(define p1 (make-polynomial
+            'x '((4 1) (3 -1) (2 -2) (1 2))))
+(define p2 (make-polynomial 'x '((3 1) (1 -1))))
+(greatest-common-divisor p1 p2)
+```
+
+and check your result by hand.

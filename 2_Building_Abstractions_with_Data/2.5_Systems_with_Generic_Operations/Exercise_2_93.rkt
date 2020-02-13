@@ -43,6 +43,8 @@
        (lambda (x y) (tag (/ x y))))
   (put 'invert '(scheme-number)
        (lambda (x) (tag (- x))))
+  (put 'greatest-common-divisor '(scheme-number scheme-number)
+       (lambda (x y) (tag (gcd x y))))
   (put 'make 'scheme-number (lambda (x) (tag x)))
   'done)
 
@@ -56,6 +58,47 @@
 (define (mul x y) (apply-generic 'mul x y))
 (define (div x y) (apply-generic 'div x y))
 (define (invert x) (apply-generic 'invert x))
+(define (greatest-common-divisor x y) (apply-generic 'greatest-common-divisor x y))
+
+(define (install-rational-package)
+  ;; internal procedures
+  (define (numer x) (car x))
+  (define (denom x) (cdr x))
+  (define (make-rat n d)
+    (let ([g (greatest-common-divisor n d)])
+      (cons (div n g) (div d g))))
+  (define (add-rat x y)
+    (make-rat (add (mul (numer x) (denom y))
+                   (mul (numer y) (denom x)))
+              (mul (denom x) (denom y))))
+  (define (sub-rat x y)
+    (make-rat (sub (mul (numer x) (denom y))
+                   (mul (numer y) (denom x)))
+              (mul (denom x) (denom y))))
+  (define (mul-rat x y)
+    (make-rat (mul (numer x) (numer y))
+              (mul (denom x) (denom y))))
+  (define (div-rat x y)
+    (make-rat (mul (numer x) (denom y))
+              (mul (denom x) (numer y))))
+  ;; interface to rest of the system
+  (define (tag x) (attach-tag 'rational x))
+  (put 'add '(rational rational)
+       (lambda (x y) (tag (add-rat x y))))
+  (put 'sub '(rational rational)
+       (lambda (x y) (tag (sub-rat x y))))
+  (put 'mul '(rational rational)
+       (lambda (x y) (tag (mul-rat x y))))
+  (put 'div '(rational rational)
+       (lambda (x y) (tag (div-rat x y))))
+  (put 'make 'rational
+       (lambda (n d) (tag (make-rat n d))))
+  'done)
+
+(define (make-rational n d)
+  ((get 'make 'rational) n d))
+
+(install-rational-package)
 
 (define (install-zero?-package)
   (define (numer x) (car x))
@@ -67,54 +110,6 @@
 (install-zero?-package)
 
 (define (=zero? x) (apply-generic '=zero? x))
-
-(define (install-dense-term-list-package)
-  (define (make-term order coeff) (list order coeff))
-  (define (order term) (car term))
-  (define (coeff term) (cadr term))
-
-  (define (first-dense-term term-list)
-    (make-term (sub1 (length term-list)) (car term-list)))
-  (define (adjoin-dense-term term term-list)
-    (if (=zero? (coeff term))
-        term-list
-        (if (= (order term) (length term-list))
-            (cons (coeff term) term-list)
-            (adjoin-dense-term term (cons 0 term-list)))))
-  (define (tag x) (attach-tag 'dense-term-list x))
-  (put 'empty-termlist? '(dense-term-list) null?)
-  (put 'first-term '(dense-term-list) first-dense-term)
-  (put 'rest-terms '(dense-term-list)
-       (lambda (term-list) (tag (cdr term-list))))
-  (put 'adjoin-term 'dense-term-list
-       (lambda (term term-list) (tag (adjoin-dense-term term (contents term-list))))))
-
-(install-dense-term-list-package)
-
-(define (install-sparse-term-list-package)
-  (define (order term) (car term))
-  (define (coeff term) (cadr term))
-
-  (define (first-sparse-term term-list) (car term-list))
-  (define (adjoin-sparse-term term term-list)
-    (if (=zero? (coeff term))
-        term-list
-        (cons term term-list)))
-  (define (tag x) (attach-tag 'sparse-term-list x))
-  (put 'empty-termlist? '(sparse-term-list) null?)
-  (put 'first-term '(sparse-term-list) first-sparse-term)
-  (put 'rest-terms '(sparse-term-list)
-       (lambda (term-list) (tag (cdr term-list))))
-  (put 'adjoin-term 'sparse-term-list
-       (lambda (term term-list) (tag (adjoin-sparse-term term (contents term-list))))))
-
-(install-sparse-term-list-package)
-
-(define (empty-termlist? term-list) (apply-generic 'empty-termlist? term-list))
-(define (first-term term-list) (apply-generic 'first-term term-list))
-(define (rest-terms term-list) (apply-generic 'rest-terms term-list))
-(define (adjoin-term term term-list)
-  ((get 'adjoin-term (type-tag term-list)) term term-list))
 
 (define (install-polynomial-package)
   ;; internal procedures
@@ -128,7 +123,14 @@
     (and (variable? v1) (variable? v2) (eq? v1 v2)))
 
   ; representation of terms and term lists
+  (define (adjoin-term term term-list)
+    (if (=zero? (coeff term))
+        term-list
+        (cons term term-list)))
   (define (the-empty-termlist) '())
+  (define (first-term term-list) (car term-list))
+  (define (rest-terms term-list) (cdr term-list))
+  (define (empty-termlist? term-list) (null? term-list))
   (define (make-term order coeff) (list order coeff))
   (define (order term) (car term))
   (define (coeff term) (cadr term))
@@ -143,20 +145,21 @@
     (cond [(empty-termlist? L1) L2]
           [(empty-termlist? L2) L1]
           [else
-           (let* ([t1 (first-term L1)]
-                  [t2 (first-term L2)]
-                  [t1-order (order t1)]
-                  [t2-order (order t2)])
-             (cond [(> t1-order t2-order)
+           (let ([t1 (first-term L1)]
+                 [t2 (first-term L2)])
+             (cond [(> (order t1) (order t2))
                     (adjoin-term
                      t1 (add-terms (rest-terms L1) L2))]
-                   [(< t1-order t2-order)
+                   [(< (order t1) (order t2))
                     (adjoin-term
                      t2 (add-terms L1 (rest-terms L2)))]
-                   [else (adjoin-term
-                          (make-term t1-order
-                                     (add (coeff t1) (coeff t2)))
-                          (add-terms (rest-terms L1) (rest-terms L2)))]))]))
+                   [else
+                    (if (zero? (add (coeff t1) (coeff t2)))
+                        (add-terms (rest-terms L1) (rest-terms L2))
+                        (adjoin-term
+                         (make-term (order t1)
+                                    (add (coeff t1) (coeff t2)))
+                         (add-terms (rest-terms L1) (rest-terms L2))))]))]))
 
   (define (sub-poly p1 p2)
     (add-poly p1 (invert-poly p2)))
@@ -199,6 +202,51 @@
                (check-terms (rest-terms terms)))))
     (check-terms (term-list x)))
 
+  (define (div-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+        (let* ([div-result-terms (div-terms (term-list p1) (term-list p2))]
+               [quotient-term-list (car div-result-terms)]
+               [remainder-term-list (cadr div-result-terms)])
+          (list (make-poly (variable p1) quotient-term-list)
+                (make-poly (variable p1) remainder-term-list)))
+        (error "Polys not in same var: DIV-POLY" (list p1 p2))))
+
+  (define (div-terms L1 L2)
+    (if (empty-termlist? L1)
+        (list L1 L1)
+        (let* ([t1 (first-term L1)]
+               [t2 (first-term L2)]
+               [t1-order (order t1)]
+               [t2-order (order t2)])
+          (if (> t2-order t1-order)
+              (list (the-empty-termlist) L1)
+              (let* ([new-c (div (coeff t1) (coeff t2))]
+                     [new-o (- t1-order t2-order)]
+                     [first-term (make-term new-o new-c)]
+                     [rest-of-result
+                      (div-terms
+                       (add-terms L1
+                                  (invert-terms
+                                   (mul-term-by-all-terms first-term L2)))
+                       L2)])
+                (list (adjoin-term first-term (car rest-of-result))
+                      (cadr rest-of-result)))))))
+
+  (define (gcd-terms a b)
+    (if (empty-termlist? b)
+        a
+        (gcd-terms b (remainder-terms a b))))
+
+  (define (remainder-terms a b)
+    (cadr (div-terms a b)))
+
+  (define (gcd-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+        (make-poly (variable p1)
+                   (gcd-terms (term-list p1)
+                              (term-list p2)))
+        (error "Polys not in same var: GCD-POLY" (list p1 p2))))
+
   ;; interface to rest of the system
   (define (tag p) (attach-tag 'polynomial p))
   (put 'add '(polynomial polynomial)
@@ -212,6 +260,16 @@
        (lambda (p) (tag (invert-poly p))))
   (put 'sub '(polynomial polynomial)
        (lambda (p1 p2) (tag (sub-poly p1 p2))))
+  (put 'div '(polynomial polynomial)
+       (lambda (p1 p2)
+         (let* ([result (div-poly p1 p2)]
+                [quotient (car result)]
+                [remainder (cadr result)])
+           (if (=zero?-poly remainder)
+               (tag quotient)
+               (list (tag (car result)) (tag (cadr result)))))))
+  (put 'greatest-common-divisor '(polynomial polynomial)
+       (lambda (p1 p2) (tag (gcd-poly p1 p2))))
   'done)
 
 (install-polynomial-package)
@@ -219,42 +277,25 @@
 (define (make-polynomial var terms)
   ((get 'make 'polynomial) var terms))
 
-(define poly-a (make-polynomial 'y '(dense-term-list 1 1)))
-poly-a
-; '(polynomial y dense-term-list 1 1)
-; y + 1
+(define p1 (make-polynomial 'x '((2 1) (0 1))))
+(define p2 (make-polynomial 'x '((3 1) (0 1))))
 
-(define poly-b (make-polynomial 'x (list 'dense-term-list 1 poly-a 5)))
-poly-b
-; ''(polynomial x dense-term-list 1 (polynomial y dense-term-list 1 1) 5)
-; x^2 + (y + 1)x + 5
+(greatest-common-divisor p2 p1)
+; '(polynomial x (0 2))
 
-(define poly-c (make-polynomial 'x '(dense-term-list 1 2 1)))
-poly-c
-; '(polynomial x dense-term-list 1 2 1)
-; x^2 + 2x + 1
+(define rf (make-rational p2 p1))
+rf
+; '(rational (polynomial x (3 1/2) (0 1/2)) polynomial x (2 1/2) (0 1/2))
 
-(add poly-a poly-a)
-; '(polynomial y dense-term-list 2 2)
-; 2y + 2
+(add rf rf)
+; (rational (polynomial x (3 1) (0 1)) polynomial x (2 1/2) (0 1/2))
 
-(sub poly-c poly-c)
-; '(polynomial x dense-term-list)
+; exercise 2.93:
+(define p1 (make-polynomial
+            'x '((4 1) (3 -1) (2 -2) (1 2))))
+(define p2 (make-polynomial 'x '((3 1) (1 -1))))
+(greatest-common-divisor p1 p2)
+; '(polynomial x (2 -1) (1 1))
 
-(define poly-d (make-polynomial 'x '(sparse-term-list (100 1) (2 2) (0 1))))
-poly-d
-; '(polynomial x sparse-term-list (100 1) (2 2) (0 1))
-; x^100 + 2x^2 + 1
-
-(sub poly-c poly-d)
-; '(polynomial x sparse-term-list (100 -1) (2 -1) (1 2))
-; -x^100 - 2x^2 + 2x
-
-(define poly-e (make-polynomial 'x '(sparse-term-list (4 1) (2 1) (0 2))))
-poly-e
-; '(polynomial x sparse-term-list (4 1) (2 1) (0 2))
-; x^4 + x^2 + 2
-
-(add poly-d poly-e)
-; '(polynomial x sparse-term-list (100 1) (4 1) (2 3) (0 3))
-; x^100 + x^4 + 3x^2 + 3
+; x^4 - x^3 - 2x^2 + 2x = (-x^2 + x)(-x^2 + 2)
+; x^3 - x = (-x^2 + x)(-x - 1)

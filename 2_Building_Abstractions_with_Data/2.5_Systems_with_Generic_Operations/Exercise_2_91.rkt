@@ -167,6 +167,7 @@
         (let ([current-term (first-term terms)])
           (adjoin-term (make-term (order current-term) (invert (coeff current-term)))
                        (invert-terms (rest-terms terms))))))
+
   (define (invert-poly p)
     (make-poly (variable p) (invert-terms (term-list p))))
 
@@ -205,7 +206,7 @@
                [remainder-term-list (cadr div-result-terms)])
           (list (make-poly (variable p1) quotient-term-list)
                 (make-poly (variable p1) remainder-term-list)))
-        (error "Polys not in same var: MUL-POLY" (list p1 p2))))
+        (error "Polys not in same var: DIV-POLY" (list p1 p2))))
 
   (define (div-terms L1 L2)
     (if (empty-termlist? L1)
