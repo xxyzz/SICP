@@ -28,3 +28,7 @@ $ brew cask install racket
     - 2.4 [Multiple Representations for Abstract Data](./2_Building_Abstractions_with_Data/2.4_Multiple_Representations_for_Abstract_Data)
 
     - 2.5 [Systems with Generic Operations](./2_Building_Abstractions_with_Data/2.5_Systems_with_Generic_Operations)
+
+3. [Modularity, Objects, and State](./3_Modularity_Objects_and_State)
+
+    - 3.1 [Assignment and Local State](./3_Modularity_Objects_and_State/3.1_Assignment_and_Local_State)
