@@ -290,7 +290,7 @@ rf
 (add rf rf)
 ; (rational (polynomial x (3 1) (0 1)) polynomial x (2 1/2) (0 1/2))
 
-; exercise 2.93:
+; exercise 2.94:
 (define p1 (make-polynomial
             'x '((4 1) (3 -1) (2 -2) (1 2))))
 (define p2 (make-polynomial 'x '((3 1) (1 -1))))

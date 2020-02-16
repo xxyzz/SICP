@@ -58,3 +58,21 @@
 ; '(polynomial x (2 1458) (1 -2916) (0 1458))
 
 ; b:
+(define (gcd-terms a b)
+  (if (empty-termlist? b)
+    (let* ([coeff-list (map (lambda (term) (coeff term)) a)]
+           [coeff-gcd (apply gcd coeff-list)])
+      (map (lambda (term)
+              (make-term (order term)
+                         (/ (coeff term) coeff-gcd)))
+              a))
+    (gcd-terms b (pseudoremainder-terms a b))))
+
+(greatest-common-divisor q1 q2)
+; '(polynomial x (2 1) (1 -2) (0 1))
+
+(define p1 (make-polynomial 'x '((2 1) (0 1))))
+(define p2 (make-polynomial 'x '((3 1) (0 1))))
+
+(greatest-common-divisor p2 p1)
+; '(polynomial x (0 1))
