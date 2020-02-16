@@ -32,6 +32,9 @@
            (list op type-tags))))))
 
 (define (install-scheme-number-package)
+  (define (reduce-integers n d)
+    (let ([g (gcd n d)])
+      (list (/ n g) (/ d g))))
   (define (tag x) (attach-tag 'scheme-number x))
   (put 'add '(scheme-number scheme-number)
        (lambda (x y) (tag (+ x y))))
@@ -46,6 +49,10 @@
   (put 'greatest-common-divisor '(scheme-number scheme-number)
        (lambda (x y) (tag (gcd x y))))
   (put 'make 'scheme-number (lambda (x) (tag x)))
+  (put 'reduce '(scheme-number scheme-number)
+       (lambda (x y)
+         (let ([result (reduce-integers x y)])
+           (list (tag (car result)) (tag (cadr result))))))
   'done)
 
 (define (make-scheme-number n)
@@ -59,14 +66,15 @@
 (define (div x y) (apply-generic 'div x y))
 (define (invert x) (apply-generic 'invert x))
 (define (greatest-common-divisor x y) (apply-generic 'greatest-common-divisor x y))
+(define (reduce x y) (apply-generic 'reduce x y))
 
 (define (install-rational-package)
   ;; internal procedures
   (define (numer x) (car x))
   (define (denom x) (cdr x))
   (define (make-rat n d)
-    (let ([g (greatest-common-divisor n d)])
-      (cons (div n g) (div d g))))
+    (let ([reduce-result (reduce n d)])
+      (cons (car reduce-result) (cadr reduce-result))))
   (define (add-rat x y)
     (make-rat (add (mul (numer x) (denom y))
                    (mul (numer y) (denom x)))
@@ -212,12 +220,6 @@
         (error "Polys not in same var: DIV-POLY" (list p1 p2))))
 
   (define (div-terms L1 L2)
-    (display "div-term L1 ")
-    (display L1)
-    (display "\n")
-    (display "div-term L2 ")
-    (display L2)
-    (display "\n\n")
     (if (empty-termlist? L1)
         (list L1 L1)
         (let* ([t1 (first-term L1)]
@@ -239,18 +241,22 @@
                       (cadr rest-of-result)))))))
 
   (define (gcd-terms a b)
-    (display "gcd-terms a ")
-    (display a)
-    (display "\n")
-    (display "gcd-terms b ")
-    (display b)
-    (display "\n\n")
     (if (empty-termlist? b)
-        a
-        (gcd-terms b (remainder-terms a b))))
+        (let* ([coeff-list (map (lambda (term) (coeff term)) a)]
+               [coeff-gcd (apply gcd coeff-list)])
+          (map (lambda (term)
+                 (make-term (order term)
+                            (/ (coeff term) coeff-gcd)))
+               a))
+        (gcd-terms b (pseudoremainder-terms a b))))
 
-  (define (remainder-terms a b)
-    (cadr (div-terms a b)))
+  (define (pseudoremainder-terms a b)
+    (let* ([O1 (order (first-term a))]
+           [O2 (order (first-term b))]
+           [c (coeff (first-term b))]
+           [int-factor (expt c (add1 (- O1 O2)))]
+           [new-a (mul-term-by-all-terms (make-term 0 int-factor) a)])
+      (cadr (div-terms new-a b))))
 
   (define (gcd-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
@@ -258,6 +264,36 @@
                    (gcd-terms (term-list p1)
                               (term-list p2)))
         (error "Polys not in same var: GCD-POLY" (list p1 p2))))
+
+  (define (coeff-list term-list)
+    (map coeff term-list))
+
+  (define (div-gcd g term-list)
+    (map (lambda (term)
+           (make-term (order term)
+                      (/ (coeff term) g)))
+         term-list))
+
+  (define (reduce-terms n d)
+    (let* ([g (gcd-terms n d)]
+           [c (coeff (first-term g))]
+           [O1 (max (order (first-term n)) (order (first-term d)))]
+           [O2 (order (first-term g))]
+           [int-factor-term (make-term 0 (expt c (add1 (- O1 O2))))]
+           [nn (car (div-terms (mul-term-by-all-terms int-factor-term n) g))]
+           [dd (car (div-terms (mul-term-by-all-terms int-factor-term d) g))]
+           [list-gcd (apply gcd (coeff-list (append nn dd)))])
+      (list (div-gcd list-gcd nn) (div-gcd list-gcd dd))))
+
+  (define (reduce-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+        (let ([v (variable p1)]
+              [reduced-term-list
+               (reduce-terms (term-list p1)
+                             (term-list p2))])
+          (list (make-poly v (car reduced-term-list))
+                (make-poly v (cadr reduced-term-list))))
+        (error "Polys not in same var: REDUCE-POLY" (list p1 p2))))
 
   ;; interface to rest of the system
   (define (tag p) (attach-tag 'polynomial p))
@@ -282,6 +318,10 @@
                (list (tag (car result)) (tag (cadr result)))))))
   (put 'greatest-common-divisor '(polynomial polynomial)
        (lambda (p1 p2) (tag (gcd-poly p1 p2))))
+  (put 'reduce '(polynomial polynomial)
+       (lambda (p1 p2)
+         (let ([result (reduce-poly p1 p2)])
+           (list (tag (car result)) (tag (cadr result))))))
   'done)
 
 (install-polynomial-package)
@@ -289,38 +329,21 @@
 (define (make-polynomial var terms)
   ((get 'make 'polynomial) var terms))
 
-(define p1 (make-polynomial 'x '((2 1) (1 -2) (0 1))))
-(define p2 (make-polynomial 'x '((2 11) (0 7))))
-(define p3 (make-polynomial 'x '((1 13) (0 5))))
-(define q1 (mul p1 p2))
-(define q2 (mul p1 p3))
+(define p1 (make-polynomial 'x '((1 1) (0 1))))
+(define p2 (make-polynomial 'x '((3 1) (0 -1))))
+(define p3 (make-polynomial 'x '((1 1))))
+(define p4 (make-polynomial 'x '((2 1) (0 -1))))
+(define rf1 (make-rational p1 p2))
+rf1
+; '(rational (polynomial x (1 -1) (0 -1)) polynomial x (3 -1) (0 1))
+(define rf2 (make-rational p3 p4))
+rf2
+; '(rational (polynomial x (1 1)) polynomial x (2 1) (0 -1))
+(add rf1 rf2)
+; '(rational (polynomial x (3 -1) (2 -2) (1 -3) (0 -1)) polynomial x (4 -1) (3 -1) (1 1) (0 1))
 
-(greatest-common-divisor q1 q2)
-; gcd-terms a ((4 11) (3 -22) (2 18) (1 -14) (0 7))
-; gcd-terms b ((3 13) (2 -21) (1 3) (0 5))
-
-; div-term L1 ((4 11) (3 -22) (2 18) (1 -14) (0 7))
-; div-term L2 ((3 13) (2 -21) (1 3) (0 5))
-
-; div-term L1 ((3 -55/13) (2 201/13) (1 -237/13) (0 7))
-; div-term L2 ((3 13) (2 -21) (1 3) (0 5))
-
-; div-term L1 ((2 1458/169) (1 -2916/169) (0 1458/169))
-; div-term L2 ((3 13) (2 -21) (1 3) (0 5))
-
-; gcd-terms a ((3 13) (2 -21) (1 3) (0 5))
-; gcd-terms b ((2 1458/169) (1 -2916/169) (0 1458/169))
-
-; div-term L1 ((3 13) (2 -21) (1 3) (0 5))
-; div-term L2 ((2 1458/169) (1 -2916/169) (0 1458/169))
-
-; div-term L1 ((2 5) (1 -10) (0 5))
-; div-term L2 ((2 1458/169) (1 -2916/169) (0 1458/169))
-
-; div-term L1 ()
-; div-term L2 ((2 1458/169) (1 -2916/169) (0 1458/169))
-
-; gcd-terms a ((2 1458/169) (1 -2916/169) (0 1458/169))
-; gcd-terms b ()
-
-; '(polynomial x (2 8 106/169) (1 -17 43/169) (0 8 106/169))
+(define p1 (make-polynomial
+            'x '((4 1) (3 -1) (2 -2) (1 2))))
+(define p2 (make-polynomial 'x '((3 1) (1 -1))))
+(make-rational p1 p2)
+; '(rational (polynomial x (2 1) (0 -2)) polynomial x (1 1) (0 1))
