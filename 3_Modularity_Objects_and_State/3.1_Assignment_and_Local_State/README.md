@@ -23,3 +23,32 @@ In software-testing applications, it is useful to be able to count the number of
 (s 'how-many-calls?)
 ; 1
 ```
+
+## Exercise 3.3:
+
+Modify the `make-account` procedure so that it creates `password-protected` accounts. That is, `make-account` should take a symbol as an additional argument, as in
+
+```scheme
+(define acc (make-account 100 'secret-password))
+```
+
+The resulting account object should process a request only if it is accompanied by the password with which the account was created, and should otherwise return a complaint:
+
+```scheme
+((acc 'secret-password 'withdraw) 40)
+; 60
+((acc 'some-other-password 'deposit) 50)
+; "Incorrect password"
+```
+
+## Exercise 3.4:
+
+Modify the `make-account` procedure of Exercise 3.3 by adding another local state variable so that, if an account is accessed more than seven consecutive times with an incorrect password, it invokes the procedure `call-the-cops`.
+
+## Exercise 3.5:
+
+Page 309.
+
+## Exercise 3.6:
+
+It is useful to be able to reset a `random-number` generator to produce a sequence starting from a given value. Design a new rand procedure that is called with an argument that is either the symbol `generate` or the symbol reset and behaves as follows: `(rand 'generate)` produces a new random number; `((rand 'reset) ⟨new-value⟩)` resets the internal state variable to the designated `⟨new-value⟩`. Thus, by resetting the state, one can generate repeatable sequences. These are very handy to have when testing and debugging programs that use random numbers.
