@@ -34,3 +34,5 @@ $ brew cask install racket
     - 3.1 [Assignment and Local State](./3_Modularity_Objects_and_State/3.1_Assignment_and_Local_State)
 
     - 3.2 [The Environment Model of Evaluation](/3_Modularity_Objects_and_State/3.2_The_Environment_Model_of_Evaluation)
+
+    - 3.3 [Modeling with Mutable Data](/3_Modularity_Objects_and_State/3.3_Modeling_with_Mutable_Data)
