@@ -20,6 +20,15 @@
 z
 ; (a b c d)
 ; (mcons 'a (mcons 'b (mcons 'c (mcons 'd '()))))
+
+; 🛑 is null
+; x -> ⬛⬛->⬛🛑   y -> ⬛⬛->⬛🛑
+;      |     |            |     |
+;      a     b            c     d
+
+; z -> ⬛⬛->⬛⬛->⬛⬛->⬛🛑
+;      |     |     |     |
+;      a     b     c     d
 (mcdr x)
 ; (b)
 ; (mcons 'b '())
@@ -27,6 +36,12 @@ z
 w
 ; (a b c d)
 ; (mcons 'a (mcons 'b (mcons 'c (mcons 'd '()))))
+
+;                      y
+;                      |
+; w, x -> ⬛⬛->⬛⬛->⬛⬛->⬛🛑
+;         |     |     |     |
+;         a     b     c     d
 (mcdr x)
 ; (b c d)
 ; (mcons 'b (mcons 'c (mcons 'd '())))
