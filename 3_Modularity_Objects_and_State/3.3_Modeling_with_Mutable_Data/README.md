@@ -83,3 +83,21 @@ Devise a correct version of the `count-pairs` procedure of Exercise 3.16 that re
 ## Exercise 3.18:
 
 Write a procedure that examines a list and determines whether it contains a cycle, that is, whether a program that tried to find the end of the list by taking successive `cdrs` would go into an infinite loop. Exercise 3.13 constructed such lists.
+
+## Exercise 3.19:
+
+Redo Exercise 3.18 using an algorithm that takes only a constant amount of space. (This requires a very clever idea.)
+
+## Exercise 3.20:
+
+Draw environment diagrams to illustrate the evaluation of the sequence of expressions
+
+```scheme
+(define x (cons 1 2))
+(define z (cons x x))
+(set-car! (cdr z) 17)
+(car x)
+; 17
+```
+
+using the procedural implementation of pairs given above. (Compare Exercise 3.11.)
