@@ -101,3 +101,7 @@ Draw environment diagrams to illustrate the evaluation of the sequence of expres
 ```
 
 using the procedural implementation of pairs given above. (Compare Exercise 3.11.)
+
+## Exercise 3.21:
+
+Page 359
