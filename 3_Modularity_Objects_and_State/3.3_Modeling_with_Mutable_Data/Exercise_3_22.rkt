@@ -11,7 +11,7 @@
       (null? front-ptr))
 
     (define (queue)
-      (cons front-ptr rear-ptr))
+      (mcons front-ptr rear-ptr))
 
     (define (front-queue)
       (if (empty-queue?)
@@ -59,21 +59,21 @@
 
 (define q1 (make-queue))
 ((q1 'insert-queue!) 'a)
-; (cons (mcons 'a '()) (mcons 'a '()))
+; (mcons (mcons 'a '()) (mcons 'a '()))
 (q1 'print-queue)
 ; '(a)
 
 ((q1 'insert-queue!) 'b)
-; (cons (mcons 'a (mcons 'b '())) (mcons 'b '()))
+; (mcons (mcons 'a (mcons 'b '())) (mcons 'b '()))
 (q1 'print-queue)
 ; '(a b)
 
 (q1 'delete-queue!)
-; (cons (mcons 'b '()) (mcons 'b '()))
+; (mcons (mcons 'b '()) (mcons 'b '()))
 (q1 'print-queue)
 ; '(b)
 
 (q1 'delete-queue!)
-; (cons '() (mcons 'b '()))
+; (mcons '() (mcons 'b '()))
 (q1 'print-queue)
 ; '()
