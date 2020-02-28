@@ -124,3 +124,7 @@ Complete the definition of `make-queue` and provide implementations of the queue
 ## Exercise 3.23:
 
 A *deque* (“double-ended queue”) is a sequence in which items can be inserted and deleted at either the front or the rear. Operations on deques are the constructor `make-deque`, the predicate `empty-deque?`, selectors `front-deque` and `rear-deque`, mutators `front-insert-deque!`, `rear-insert-deque!`, `front-delete-deque!`, and `rear-delete-deque!`. Show how to represent deques using pairs, and give implementations of the operations. should be accomplished in Θ(1) steps.
+
+## Exercise 3.24:
+
+In the table implementations above, the keys are tested for equality using `equal?` (called by `assoc`). This is not always the appropriate test. For instance, we might have a table with numeric keys in which we don’t need an exact match to the number we’re looking up, but only a number within some tolerance of it. Design a table constructor `make-table` that takes as an argument a `same-key?` procedure that will be used to test “equality” of keys. `make-table` should return a dispatch procedure that can be used to access appropriate `lookup` and `insert!` procedures for a local table.
