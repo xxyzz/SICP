@@ -154,3 +154,17 @@ Another way to construct an `or-gate` is as a compound digital logic device, bui
 ## Exercise 3.30:
 
 Page 376
+
+## Exercise 3.31:
+
+The internal procedure `accept-action-procedure!` defined in `make-wire` specifies that when a new action procedure is added to a wire, the procedure is immediately run. Explain why this initialization is necessary. In particular, trace through the half-adder example in the paragraphs above and say how the system’s response would differ if we had defined `accept-action-procedure!` as
+
+```scheme
+(define (accept-action-procedure! proc)
+  (set! action-procedures
+        (cons proc action-procedures)))
+```
+
+## Exercise 3.32:
+
+The procedures to be run during each time segment of the agenda are kept in a queue. Thus, the procedures for each segment are called in the order in which they were added to the agenda (first in, first out). Explain why this order must be used. In particular, trace the behavior of an and-gate whose inputs change from 0, 1 to 1, 0 in the same segment and say how the behavior would differ if we stored a segment’s procedures in an ordinary list, adding and removing procedures only at the front (last in, first out).
