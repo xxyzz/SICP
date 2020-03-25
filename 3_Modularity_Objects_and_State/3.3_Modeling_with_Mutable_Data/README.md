@@ -172,3 +172,43 @@ The procedures to be run during each time segment of the agenda are kept in a qu
 ## Exercise 3.33:
 
 Using primitive multiplier, adder, and constant constraints, define a procedure `averager` that takes three connectors `a`, `b`, and `c` as inputs and establishes the constraint that the value of `c` is the average of the values of `a` and `b`.
+
+## Exercise 3.34:
+
+Louis Reasoner wants to build a squarer, a constraint device with two terminals such that the value of connector `b` on the second terminal will always be the square of the value `a` on the first terminal. He proposes the following simple device made from a multiplier:
+
+```scheme
+(define (squarer a b)
+  (multiplier a a b))
+```
+
+There is a serious flaw in this idea. Explain.
+
+It's can't set `b` to get `a`. Multiplier needs two values to calculate the other value, here it only has one value `b`.
+
+## Exercise 3.35:
+
+Ben Bitdiddle tells Louis that one way to avoid the trouble in Exercise 3.34 is to define a squarer as a new primitive constraint. Fill in the missing portions in Ben’s outline for a procedure to implement such a constraint:
+
+```scheme
+(define (squarer a b)
+  (define (process-new-value)
+    (if (has-value? b)
+      (if (< (get-value b) 0)
+          (error "square less than 0: SQUARER"
+                 (get-value b))
+          ⟨alternative1⟩)
+      ⟨alternative2⟩))
+  (define (process-forget-value) ⟨body1⟩)
+  (define (me request) ⟨body2⟩)
+  ⟨rest of definition⟩
+  me)
+```
+
+## Exercise 3.36:
+
+Page 399.
+
+## Exercise 3.37:
+
+Page 399.
