@@ -63,8 +63,8 @@
 
 (define (probe name connector)
   (define (print-probe value)
-    (newline) (display "Probe: ") (display name)
-    (display " = ") (display value))
+    (display "Probe: ") (display name)
+    (display " = ") (display value) (newline))
   (define (process-new-value)
     (print-probe (get-value connector)))
   (define (process-forget-value) (print-probe "?"))
@@ -154,8 +154,34 @@
 (define b (make-connector))
 (define c (make-connector))
 (averager a b c)
+; 'ok
 (probe "a" a)
+; #<procedure:me>
 (probe "b" b)
+; #<procedure:me>
 (probe "c" c)
+; #<procedure:me>
 (set-value! a 42 'user)
+; Probe: a = 42
+; 'done
 (set-value! b -42 'user)
+; Probe: b = -42
+; Probe: c = 0
+; 'done
+(forget-value! b 'user)
+; Probe: b = ?
+; Probe: c = ?
+; 'done
+(set-value! c 314 'user)
+; Probe: c = 314
+; Probe: b = 586
+; 'done
+
+(define (test)
+  'a
+  'b
+  'c)
+
+(test)
+; 'c
+; that's why the 'done in connect not printed
