@@ -236,3 +236,30 @@ Explain what is wrong with Louis’s reasoning. In particular, consider what hap
 ```
 
 That will serialize twice.
+
+## Exercise 3.46:
+
+Suppose that we implement `test-and-set!` using an ordinary procedure as shown in the text, without attempting to make the operation atomic. Draw a timing diagram like the one in Figure 3.29 to demonstrate how the mutex implementation can fail by allowing two processes to acquire the mutex at the same time.
+
+```scheme
+(define (test-and-set! cell)
+  (if (car cell) true (begin (set-car! cell true) false)))
+```
+
+```
+P1           mutex     P2
+             false
+access mutex           access mutex
+set true               set true
+return false true      return false
+
+both process acquire the mutex
+```
+
+## Exercise 3.47:
+
+A semaphore (of size *n*) is a generalization of a mutex. Like a mutex, a semaphore supports acquire and release operations, but it is more general in that up to *n* processes can acquire it concurrently. Additional processes that attempt to acquire the semaphore must wait for release operations. Give implementations of semaphores
+
+a. in terms of mutexes
+
+b. in terms of atomic `test-and-set!` operations.
