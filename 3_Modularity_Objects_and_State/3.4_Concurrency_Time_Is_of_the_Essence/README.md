@@ -263,3 +263,11 @@ A semaphore (of size *n*) is a generalization of a mutex. Like a mutex, a semaph
 a. in terms of mutexes
 
 b. in terms of atomic `test-and-set!` operations.
+
+## Exercise 3.48:
+
+Explain in detail why the deadlock-avoidance method described above, (i.e., the accounts are numbered, and each process attempts to acquire the smaller-numbered account first) avoids deadlock in the exchange problem. Rewrite `serialized-exchange` to incorporate this idea. (You will also need to modify `make-account` so that each account is created with a number, which can be accessed by sending an appropriate message.)
+
+## Exercise 3.49:
+
+Give a scenario where the deadlock-avoidance mechanism described above does not work. (Hint: In the exchange problem, each process knows in advance which accounts it will need to get access to. Consider a situation where a process must get access to some shared resources before it can know which additional shared resources it will require.)
