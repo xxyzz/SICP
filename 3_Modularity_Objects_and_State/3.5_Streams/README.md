@@ -60,3 +60,12 @@ Without running the program, describe the elements of the stream defined by
 ```scheme
 (define s (cons-stream 1 (add-streams s s)))
 ```
+
+## Exercise 3.54:
+
+Define a procedure `mul-streams`, analogous to `add-streams`, that produces the elementwise product of its two input streams. Use this together with the stream of `integers` to complete the following definition of the stream whose n<sup>th</sup> element (counting from 0) is *n* + 1 factorial:
+
+```scheme
+(define factorials
+  (cons-stream 1 (mul-streams ⟨??⟩ ⟨??⟩)))
+```
