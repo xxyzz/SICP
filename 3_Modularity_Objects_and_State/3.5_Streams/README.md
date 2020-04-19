@@ -69,3 +69,7 @@ Define a procedure `mul-streams`, analogous to `add-streams`, that produces the 
 (define factorials
   (cons-stream 1 (mul-streams ⟨??⟩ ⟨??⟩)))
 ```
+
+## Exercise 3.55:
+
+Define a procedure `partial-sums` that takes as argument a stream *S* and returns the stream whose elements are S<sub>0</sub>, S<sub>0</sub>+S<sub>1</sub>, S<sub>0</sub>+S<sub>1</sub>+S<sub>2</sub>, . . .. For example, `(partial-sums integers)` should be the stream 1, 3, 6, 10, 15, . . ..
