@@ -77,3 +77,35 @@ Define a procedure `partial-sums` that takes as argument a stream *S* and return
 ## Exercise 3.56:
 
 Page 448.
+
+## Exercise 3.57:
+
+How many additions are performed when we compute the n<sup>th</sup> Fibonacci number using the definition of fibs based on the add-streams procedure? Show that the number of additions would be exponentially greater if we had implemented `(delay ⟨exp⟩)` simply as `(lambda () ⟨exp⟩)`, without using the optimization provided by the `memo-proc` procedure described in Section 3.5.1.
+
+## Exercise 3.58:
+
+Give an interpretation of the stream computed by the following procedure:
+
+```scheme
+(define (expand num den radix)
+  (cons-stream
+   (quotient (* num radix) den)
+   (expand (remainder (* num radix) den) den radix)))
+```
+
+(`quotient` is a primitive that returns the integer quotient of two integers.) What are the successive elements produced by `(expand 1 7 10)`? What is produced by `(expand 3 8 10)`?
+
+## Exercise 3.59:
+
+Page 450.
+
+## Exercise 3.60:
+
+With power series represented as streams of coefficients as in Exercise 3.59, adding series is implemented by `add-streams`. Complete the definition of the following procedure for multiplying series:
+
+```scheme
+(define (mul-series s1 s2)
+  (cons-stream ⟨??⟩ (add-streams ⟨??⟩ ⟨??⟩)))
+```
+
+You can test your procedure by verifying that sin<sup>2</sup>x + cos<sup>2</sup>x = 1, using the series from Exercise 3.59.
