@@ -109,3 +109,21 @@ With power series represented as streams of coefficients as in Exercise 3.59, ad
 ```
 
 You can test your procedure by verifying that sin<sup>2</sup>x + cos<sup>2</sup>x = 1, using the series from Exercise 3.59.
+
+## Exercise 3.61:
+
+Let S be a power series (Exercise 3.59) whose constant term is 1. Suppose we want to find the power series 1/S, that is, the series X such that SX = 1. Write S = 1+S<sub>R</sub> where S<sub>R</sub> is the part of S after the constant term. Then we can solve for X as follows:
+
+S·X = 1,
+
+(1 + S<sub>R</sub>)·X = 1,
+
+X + S<sub>R</sub>·X = 1,
+
+X = 1 - S<sub>R</sub>·X.
+
+In other words, X is the power series whose constant term is 1 and whose higher-order terms are given by the negative of S<sub>R</sub> times X. Use this idea to write a procedure `invert-unit-series` that computes 1/S for a power series S with constant term 1. You will need to use `mul-series` from Exercise 3.60.
+
+## Exercise 3.62:
+
+Use the results of Exercise 3.60 and Exercise 3.61 to define a procedure `div-series` that divides two power series. `div-series` should work for any two series, provided that the denominator series begins with a nonzero constant term. (If the denominator has a zero constant term, then div-series should signal an error.) Show how to use `div-series` together with the result of Exercise 3.59 to generate the power series for tangent.
