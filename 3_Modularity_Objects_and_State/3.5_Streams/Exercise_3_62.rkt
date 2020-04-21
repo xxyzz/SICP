@@ -47,6 +47,10 @@
 ; tan θ = sin θ / cos θ
 ; sec θ = 1 / cos θ
 ; 1 + tan^2 θ = sec^2 θ
+; https://en.wikipedia.org/wiki/List_of_trigonometric_identities#Pythagorean_identities
+; https://en.wikipedia.org/wiki/Trigonometric_functions#Power_series_expansion
+(stream->list (stream-take tangent-series 8))
+; '(0 1 0 1/3 0 2/15 0 17/315)
 (define secant-series (invert-unit-series cosine-series))
 (stream->list (stream-take (add-streams (mul-series secant-series secant-series)
                                         (scale-stream (mul-series tangent-series tangent-series) -1)) 5))
