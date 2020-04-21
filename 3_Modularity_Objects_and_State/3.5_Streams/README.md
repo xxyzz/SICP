@@ -127,3 +127,34 @@ In other words, X is the power series whose constant term is 1 and whose higher-
 ## Exercise 3.62:
 
 Use the results of Exercise 3.60 and Exercise 3.61 to define a procedure `div-series` that divides two power series. `div-series` should work for any two series, provided that the denominator series begins with a nonzero constant term. (If the denominator has a zero constant term, then div-series should signal an error.) Show how to use `div-series` together with the result of Exercise 3.59 to generate the power series for tangent.
+
+## Exercise 3.63:
+
+Louis Reasoner asks why the `sqrt-stream `procedure was not written in the following more straightforward way, without the local variable `guesses`:
+
+```scheme
+(define (sqrt-stream x) 
+  (cons-stream 1.0 (stream-map
+                    (lambda (guess)
+                      (sqrt-improve guess x))
+                    (sqrt-stream x))))
+```
+
+Alyssa P. Hacker replies that this version of the procedure is considerably less efficient because it performs redundant computation. Explain Alyssa’s answer. Would the two versions still differ in efficiency if our implementation of delay used only `(lambda () ⟨exp⟩)` without using the optimization provided by `memo-proc` (Section 3.5.1)?
+
+## Exercise 3.64:
+
+Write a procedure `stream-limit` that takes as arguments a stream and a number (the tolerance). It should examine the stream until it finds two successive elements that differ in absolute value by less than the tolerance, and return the second of the two elements. Using this, we could compute square roots up to a given tolerance by
+
+```scheme
+(define (sqrt x tolerance)
+  (stream-limit (sqrt-stream x) tolerance))
+```
+
+## Exercise 3.65:
+
+Use the series
+
+In 2 = 1 - 1/2 + 1/3 - 1/4 + ...
+
+to compute three sequences of approximations to the natural logarithm of 2, in the same way we did above for *π*. How rapidly do these sequences converge?
