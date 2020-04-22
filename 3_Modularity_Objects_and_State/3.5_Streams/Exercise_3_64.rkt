@@ -46,6 +46,32 @@
 
 (stream->list (stream-take (sqrt-stream 2) 8))
 ; '(1.0 1.5 1.4166666666666665 1.4142156862745097 1.4142135623746899 1.414213562373095 1.414213562373095 1.414213562373095)
+(sqrt-improve 1.414213562373095 2)
+; 1.414213562373095
+; can't improve anymore
 
 (stream->list (stream-take (accelerated-sequence euler-transform (sqrt-stream 2)) 8))
 ; '(1.0 1.4285714285714284 1.414213201613577 1.414213562373095 +nan.0 +nan.0 +nan.0 +nan.0)
+
+; not a number
+; https://en.wikipedia.org/wiki/NaN
+; https://docs.racket-lang.org/reference/numbers.html
+(- 0.1 0.1)
+; 0.0
+(/ 1 0.0)
+; +inf.0
+(/ +inf.0 +inf.0)
+; +nan.0
+(- +nan.0 +nan.0)
+; +nan.0
+(- +nan.0 1)
+; +nan.0
+(> +nan.0 0)
+; #f
+(= +nan.0 0)
+; #f
+(< +nan.0 0)
+; #f
+(- 1.414213562373095 1.414213201613577)
+; 3.607595178145573e-07
+; can't limit accelerated stream with tolerance 0.0000001
