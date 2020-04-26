@@ -180,3 +180,19 @@ Louis Reasoner thinks that building a stream of pairs from three parts is unnece
 ```
 
 Does this work? Consider what happens if we evaluate `(pairs integers integers)` using Louis’s definition of `pairs`.
+
+## Exercise 3.69:
+
+Write a procedure triples that takes three infinite streams, *S*, *T*, and *U*, and produces the stream of triples (*S<sub>i</sub>*, *T<sub>j</sub>*, *U<sub>k</sub>*) such that *i* ≤ *j* ≤ *k*. Use triples to generate the stream of all Pythagorean triples of positive integers, i.e., the triples (*i*, *j*, *k*) such that *i* ≤ *j* and *i<sup>2</sup>* + *j<sup>2</sup>* = *k<sup>2</sup>*.
+
+## Exercise 3.70
+
+It would be nice to be able to generate streams in which the pairs appear in some useful order, rather than in the order that results from an *ad hoc* interleaving process. We can use a technique similar to the merge procedure of Exercise 3.56, if we define a way to say that one pair of integers is “less than” another. One way to do this is to define a “weighting function” W(i, j) and stipulate that (i<sub>1</sub>, j<sub>1</sub>) is less than (i<sub>2</sub>, j<sub>2</sub>) if W(i<sub>1</sub>, j<sub>1</sub>) < W(i<sub>2</sub>, j<sub>2</sub>). Write a procedure `merge-weighted` that is like `merge`, except that `merge-weighted` takes an additional argument `weight`, which is a procedure that computes the weight of a pair, and is used to determine the order in which elements should appear in the resulting merged stream. Using this, generalize `pairs` to a procedure `weighted-pairs` that takes two streams, together with a procedure that computes a weighting function, and generates the stream of pairs, ordered according to weight. Use your procedure to generate
+
+a. the stream of all pairs of positive integers (i, j) with i ≤ j ordered according to the sum i + j,
+
+b. the stream of all pairs of positive integers (i, j) with i ≤ j, where neither i nor j is divisible by 2, 3, or 5, and the pairs are ordered according to the sum 2i + 3j + 5ij.
+
+## Exercise 3.71:
+
+Numbers that can be expressed as the sum of two cubes in more than one way are sometimes called *Ramanujan numbers*, in honor of the mathematician Srinivasa Ramanujan. Ordered streams of pairs provide an elegant solution to the problem of computing these numbers. To find a number that can be written as the sum of two cubes in two different ways, we need only generate the stream of pairs of integers (i, j) weighted according to the sum i<sup>3</sup> + j<sup>3</sup> (see Exercise 3.70), then search the stream for two consecutive pairs with the same weight. Write a procedure to generate the Ramanujan numbers. The first such number is 1,729. What are the next five?

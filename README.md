@@ -40,3 +40,7 @@ $ brew cask install racket
     - 3.4 [Concurrency: Time Is of the Essence](/3_Modularity_Objects_and_State/3.4_Concurrency_Time_Is_of_the_Essence)
 
     - 3.5 [Streams](/3_Modularity_Objects_and_State/3.5_Streams)
+
+## License
+
+This work is licensed under the GPLv3 or any later version.
