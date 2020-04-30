@@ -208,3 +208,11 @@ Page 466.
 ## Exercise 3.74:
 
 Page 467.
+
+## Exercise 3.75:
+
+Page 469.
+
+## Exercise 3.76:
+
+Page 469.
