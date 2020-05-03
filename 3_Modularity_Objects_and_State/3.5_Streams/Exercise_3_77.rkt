@@ -22,3 +22,11 @@
 ; 0.001 * 1000 = 1
 ; y = e^t
 ; 2.716923932235896
+
+; 3b1b differential equations:
+; https://www.youtube.com/playlist?list=PLZHQObOWTQDNPOjrT6KVlfJuKtYTftqH6
+
+; mathsisfun:
+; https://www.mathsisfun.com/calculus/differential-equations.html
+; https://www.mathsisfun.com/calculus/differential-equations-solution-guide.html
+; https://www.mathsisfun.com/calculus/differential-equations-homogeneous.html

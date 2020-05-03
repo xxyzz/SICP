@@ -43,3 +43,5 @@
 
 (stream-ref (solve-2nd 1 0 0.001 1 1) 1000)
 ; 2.716923932235896
+
+; https://www.mathsisfun.com/calculus/differential-equations-second-order.html
