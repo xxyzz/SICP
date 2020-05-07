@@ -3,33 +3,33 @@
 (define (square x) (* x x))
 
 (define (expmod base exp m)
-    (cond [(= exp 0) 1]
-          [(even? exp)
-              (check-nontrivial-root
-                  (expmod base (/ exp 2) m)
-                  m)]
-          [else
-              (remainder
-                  (* base (expmod base (- exp 1) m))
-                  m)]))
+  (cond [(= exp 0) 1]
+        [(even? exp)
+         (check-nontrivial-root
+          (expmod base (/ exp 2) m)
+          m)]
+        [else
+         (remainder
+          (* base (expmod base (- exp 1) m))
+          m)]))
 
 (define (check-nontrivial-root x m)
-    (if (and
-            (not (= x 1))
-            (not (= x (sub1 m)))
-            (= (remainder (square x) m) 1))
-        0
-        (remainder (square x) m)))
+  (if (and
+       (not (= x 1))
+       (not (= x (sub1 m)))
+       (= (remainder (square x) m) 1))
+      0
+      (remainder (square x) m)))
 
 (define (miller–rabin-test n)
-    (define (try-it a)
-        (= (expmod a n n) a))
-(try-it (add1 (random (sub1 n)))))
+  (define (try-it a)
+    (= (expmod a (sub1 n) n) 1))
+  (try-it (add1 (random (sub1 n))))) ; (random 1 n)
 
 (define (test-prime? n times)
-    (cond [(zero? times) #t]
-          [(miller–rabin-test n) (test-prime? n (sub1 times))]
-          [else #f]))
+  (cond [(zero? times) #t]
+        [(miller–rabin-test n) (test-prime? n (sub1 times))]
+        [else #f]))
 
 (test-prime? 3 3)
 ; #t
