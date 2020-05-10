@@ -41,6 +41,10 @@ $ brew cask install racket
 
     - 3.5 [Streams](/3_Modularity_Objects_and_State/3.5_Streams)
 
+4. [Metalinguistic Abstraction](.4_Metalinguistic_Abstraction)
+
+    - 4.1 [The Metacircular Evaluator](.4_Metalinguistic_Abstraction/4.1_The_Metacircular_Evaluator)
+
 ## License
 
 This work is licensed under the GPLv3 or any later version.
