@@ -90,8 +90,3 @@
 ; '(+ (* x y) (* y (+ x 3)))
 (deriv '(** x 4) 'x)
 ; '(* 4 (** x 3))
-
-(define (put type op item)
-  (hash-set! table (list op type) item))
-(define (get type op)
-  (hash-ref table (list op type)))
