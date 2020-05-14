@@ -31,3 +31,14 @@ Recall the definitions of the special forms `and` and `or` from Chapter 1:
 - `or`: The expressions are evaluated from left to right. If any expression evaluates to a true value, that value is returned; any remaining expressions are not evaluated. If all expressions evaluate to false, or if there are no expressions, then false is returned.
 
 Install `and` and `or` as new special forms for the evaluator by defining appropriate syntax procedures and evaluation procedures `eval-and` and `eval-or`. Alternatively, show how to implement `and` and `or` as derived expressions.
+
+### Exercise 4.5:
+
+Scheme allows an additional syntax for `cond` clauses, `(⟨test⟩ => ⟨recipient⟩)`. If `⟨test⟩` evaluates to a true value, then `⟨recipient⟩` is evaluated. Its value must be a procedure of one argument; this procedure is then invoked on the value of the `⟨test⟩`, and the result is returned as the value of the `cond` expression. For example
+
+```scheme
+(cond [(assoc 'b '((a 1) (b 2))) => cadr]
+      [else #f])
+```
+
+returns 2. Modify the handling of cond so that it supports this extended syntax.
