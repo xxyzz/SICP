@@ -5,6 +5,8 @@
   (hash-set! table (list op type) item))
 (define (get op type)
   (hash-ref table (list op type)))
+(define (has op type)
+  (hash-has-key? table (list op type)))
 
 (define (self-evaluating? exp)
   (cond [(number? exp) #t]
@@ -36,7 +38,7 @@
   (cond [(self-evaluating? exp) exp]
         [(variable? exp) (lookup-variable-value exp env)]
         [(quoted? exp) (text-of-quotation exp)]
-        [(and (pair? exp) (get 'eval (car exp))) ((get 'eval (car exp)) exp env)]
+        [(and (pair? exp) (has 'eval (car exp))) ((get 'eval (car exp)) exp env)]
         [(application? exp)
          (apply (eval (operator exp) env)
                 (list-of-values (operands exp) env))]
