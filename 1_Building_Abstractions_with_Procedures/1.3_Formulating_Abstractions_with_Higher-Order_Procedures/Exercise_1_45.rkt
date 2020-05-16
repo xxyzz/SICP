@@ -4,36 +4,36 @@
 (define tolerance 0.00001)
 
 (define (fixed-point f first-guess)
-    (define (close-enough? v1 v2)
-        (< (abs (- v1 v2))
-            tolerance))
-    (define (try guess)
-        (let ([next (f guess)])
-            (if (close-enough? guess next)
-                next
-                (try next))))
-    (try first-guess))
+  (define (close-enough? v1 v2)
+    (< (abs (- v1 v2))
+       tolerance))
+  (define (try guess)
+    (let ([next (f guess)])
+      (if (close-enough? guess next)
+          next
+          (try next))))
+  (try first-guess))
 
 (define (average x y)
-    (/ (+ x y) 2))
+  (/ (+ x y) 2))
 
 (define (average-damp f)
-    (lambda (x) (average x (f x))))
+  (lambda (x) (average x (f x))))
 
 (define (compose f g)
-    (lambda (x) (f (g x))))
+  (lambda (x) (f (g x))))
 
 (define (repeated f n)
-    (define (iter g i)
-        (if (< i 1)
-            g
-            (iter (compose f g) (sub1 i))))
-    (iter identity n))
+  (define (iter g i)
+    (if (< i 1)
+        g
+        (iter (compose f g) (sub1 i))))
+  (iter identity n))
 
 (define (test n x damp-times)
-    (fixed-point
-        ((repeated average-damp damp-times) (lambda (y) (/ x (expt y (sub1 n)))))
-        1.0))
+  (fixed-point
+   ((repeated average-damp damp-times) (lambda (y) (/ x (expt y (sub1 n)))))
+   1.0))
 
 (test 1 2 1)
 ; 1.9999923706054688
@@ -43,6 +43,8 @@
 
 (test 3 27 1)
 ; 2.9999972321057697
+(test 3 27 2)
+; 3.000001464168659
 
 (test 4 16 2)
 ; 2.0000000000021965
@@ -50,90 +52,36 @@
 (test 5 32 2)
 ; 2.000001512995761
 
-(test 6 64 1)
-; 1.9999945038915594
+(test 6 729 1)
+; 3.000006257266186
+(test 6 729 2)
+; 2.999996785898161 faster
 
 (test 7 2187 1)
 ; 2.9999957809730473
+(test 7 2187 2)
+; 3.0000041735235943 way more faster
 
-(test 8 256 1)
-; 1.9999974160272682
+(test 8 6561 1)
+; 2.999993884879518
+(test 8 6561 2) ; runs like a sloth
+(test 8 6561 3)
+; 3.0000000000173292
 
-(test 9 512 1)
-; 11.9999990833911183
+; check out this amazing post:
+; https://deltam.blogspot.com/2015/08/sicp145ex145.html
 
-(test 10 1024 1)
-; 1.999996695054027
+; try plot y = 2/x, y = x, y = 1/2(x + 1/2(x+2/x))
+; y=2/x is symmetric to y=x, that will form a loop.
+; damp to y = 1/2(x + 1/2(x+2/x)), it's asymmetric now.
 
-(test 11 2048 1)
-; 2.000007159580381
+; 1/2^k * ((2^k - 1)x + m/x^(n-1)) - m/x^(n-1)
+; = (2^k - 1)(x^n - m)/(2^k * x^(n-1))
+; when x is at left of the fixed point, damped function is lower then
+; the origin function. when x is at the right of the fixed point, demaped
+; function is higher. Thus damped function moves the lowest point to the left.
 
-(test 12 4096 1)
-; 2.0000019413977865
+; When the lowest point is on the left of y=x, it's faster
+; to find the fixed point.
 
-(test 13 8192 3)
-; 2.0000029085658984
-
-(test 14 16384 1)
-; 1.9999973437067864
-
-(test 15 32768 1)
-; 2.0000054155274496
-
-(test 16 2 1)
-; 1.0442728200734304
-
-(test 17 2 1)
-; 1.0416125324325556
-
-(test 18 2 1)
-; 1.039259985129979
-
-(test 19 2 1)
-; 1.0371605641907835
-
-(test 20 2 1)
-; 1.0352608802309868
-
-(test 21 2 1)
-; 1.0335613676400777
-
-(test 22 2 1)
-; 1.032000714580566
-
-(test 23 2 1)
-; 1.0306033457564188
-
-(test 24 2 1)
-; 1.029301395073184
-
-(test 25 2 2)
-; 1.028106088691606
-
-(test 26 2 1)
-; 1.027018729092792
-
-(test 27 2 1)
-; 1.0260006725838586
-
-(test 28 2 1)
-; 1.0250583162788254
-
-(test 29 2 1)
-; 1.0241915789058758
-
-(test 30 2 1)
-; 1.0233744348921514
-
-(test 31 2 1)
-; 1.0226031770243056
-
-(test 32 2 1)
-; 1.0218925768781886
-
-(test 32 4294967296 1)
-; 1.9999999860301616
-
-; don't know why it can't converge and don't know
-; why averge one time works most of the time(but slow).
-; TODO
+; damp-times > log2(n)
