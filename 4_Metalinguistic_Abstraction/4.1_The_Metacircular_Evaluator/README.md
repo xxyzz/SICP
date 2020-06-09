@@ -63,7 +63,7 @@ is equivalent to
 
 Implement a syntactic transformation `let->combination` that reduces evaluating `let` expressions to evaluating combinations of the type shown above, and add the appropriate clause to `eval` to handle `let` expressions.
 
-## Exercise 4.7:
+### Exercise 4.7:
 
 `let*` is similar to `let`, except that the bindings of the `let*` variables are performed sequentially from left to right, and each binding is made in an environment in which all of the preceding bindings are visible. For example
 
@@ -109,3 +109,9 @@ Many languages support a variety of iteration constructs, such as `do`, `for`, `
 ### Exercise 4.10:
 
 By using data abstraction, we were able to write an `eval` procedure that is independent of the particular syntax of the language to be evaluated. To illustrate this, design and implement a new syntax for Scheme by modifying the procedures in this section, without changing `eval` or `apply`.
+
+## 4.1.3 Evaluator Data Structures
+
+### Exercise 4.11:
+
+Instead of representing a frame as a pair of lists, we can represent a frame as a list of bindings, where each binding is a name-value pair. Rewrite the environment operations to use this alternative representation.
