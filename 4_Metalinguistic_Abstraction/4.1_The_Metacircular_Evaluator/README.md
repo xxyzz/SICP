@@ -115,3 +115,7 @@ By using data abstraction, we were able to write an `eval` procedure that is ind
 ### Exercise 4.11:
 
 Instead of representing a frame as a pair of lists, we can represent a frame as a list of bindings, where each binding is a name-value pair. Rewrite the environment operations to use this alternative representation.
+
+### Exercise 4.12:
+
+The procedures `set-variable-value!`, `define-variable!` and `lookup-variable-value` can be expressed in terms of more abstract procedures for traversing the environment structure. Define abstractions that capture the common patterns and redefine the three procedures in terms of these abstractions.
