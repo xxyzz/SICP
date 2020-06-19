@@ -7,6 +7,10 @@ Download [Racket](https://racket-lang.org) with your favorite package manager or
 ```
 // Homebrew
 $ brew cask install racket
+// pkg
+# pkg install racket
+// APT
+# apt install racket
 ```
 
 1. [Building Abstractions with Procedures](./1_Building_Abstractions_with_Procedures)
