@@ -131,3 +131,19 @@ Scheme allows us to create new bindings for variables by means of `define`, but 
 Eva Lu Ator and Louis Reasoner are each experimenting with the metacircular evaluator. Eva types in the definition of `map`, and runs some test programs that use it. They work fine. Louis, in contrast, has installed the system version of `map` as a primitive for the metacircular evaluator. When he tries it, things go terribly wrong. Explain why Louis’s `map` fails even though Eva’s works.
 
 In our implication of Scheme, a procedure is a list which the first element is an object tells what it is. `(map (lambda (x) (+ 1 x)) (list 1 2))` will transform to `(apply map (list (list 'procedure (list 'x) (+ 1 x) env) (list 1 2)))`, the Scheme implication `map` will complain that's not a valid procedure.
+
+### Exercise 4.15:
+
+Given a one-argument procedure `p` and an object `a`, `p` is said to “halt” on `a` if evaluating the expression `(p a)` returns a value (as opposed to terminating with an error message or running forever). Show that it is impossible to write a procedure `halts?` that correctly determines whether `p` halts on `a` for any procedure `p` and object `a`. Use the following reasoning: If you had such a procedure `halts?`, you could implement the following program:
+
+```scheme
+(define (run-forever) (run-forever))
+(define (try p)
+  (if (halts? p p) (run-forever) 'halted))
+```
+
+Now consider evaluating the expression `(try try)` and show that any possible outcome (either halting or running forever) violates the intended behavior of `halts?`.
+
+Assume `try` runs forever then `try` will return `'halted`. If `try` returns `'halted` it will run forever. Thus `halts?` can't exits.
+
+[Halting problem](https://en.wikipedia.org/wiki/Halting_problem#Proof_concept)
