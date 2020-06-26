@@ -161,3 +161,50 @@ a. Change `lookup-variable-value` (Section 4.1.3) to signal an error if the valu
 b. Write a procedure `scan-out-defines` that takes a procedure body and returns an equivalent one that has no internal definitions, by making the transformation described above.
 
 c. Install `scan-out-defines` in the interpreter, either in `make-procedure` or in `procedure-body` (see Section 4.1.3). Which place is better? Why?
+
+### Exercise 4.17:
+
+Draw diagrams of the environment in effect when evaluating the expression ⟨e3⟩ in the procedure in the text, comparing how this will be structured when definitions are interpreted sequentially with how it will be structured if definitions are scanned out as described. Why is there an extra frame in the transformed program? Explain why this difference in environment structure can never make a difference in the behavior of a correct program. Design a way to make the interpreter implement the “simultaneous” scope rule for internal definitions without constructing the extra frame.
+
+Add `(define var '*unassigned*)` and `(set! var value)` to the beginning of the body.
+
+### Exercise 4.18:
+
+Consider an alternative strategy for scanning out definitions that translates the example in the text to
+
+```scheme
+(lambda ⟨vars⟩
+  (let ((u '*unassigned*) (v '*unassigned*))
+    (let ((a ⟨e1⟩) (b ⟨e2⟩))
+      (set! u a)
+      (set! v b))
+    ⟨e3⟩))
+```
+
+Here `a` and `b` are meant to represent new variable names, created by the interpreter, that do not appear in the user’s program. Consider the `solve` procedure from Section 3.5.4:
+
+```scheme
+(define (solve f y0 dt)
+  (define y (integral (delay dy) y0 dt))
+  (define dy (stream-map f y))
+  y)
+```
+
+Will this procedure work if internal definitions are scanned out as shown in this exercise? What if they are scanned out as shown in the text? Explain.
+
+```scheme
+;; 4.18 not work
+(define (solve f y0 dt)
+  (let ((y '*unassigned) (dy '*unassigned))
+    (let ((a (integral (delay dy) y0 dt)) (b (stream-map f y))) ;; y is *unassigned* here
+      (set! y a)
+      (set! dy b)
+      y)))
+
+;; 4.16 this works
+(define (solve f y0 dt)
+  (let ((y '*unassigned) (dy '*unassigned))
+    (set! y (integral (delay dy) y0 dt))
+    (set! dy (stream-map f y))
+    y))
+```
