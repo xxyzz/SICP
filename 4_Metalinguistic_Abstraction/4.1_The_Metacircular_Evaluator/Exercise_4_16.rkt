@@ -27,7 +27,7 @@
     (cond [(null? b)
            (if (null? vars)
                restp
-               (make-let (map (lambda (x) (list 'define x '*unassigned*)) vars)
+               (make-let (map (lambda (x) (list x '*unassigned*)) vars)
                          (append (map (lambda (x y) (list 'set! x y)) vars vals)
                                  restp)))]
           [(and (pair? (car b))
@@ -45,7 +45,7 @@
 
 ;; test
 (scan-out-defines '((define a 1) (define b 2) (+ a b)))
-;; '(let ((define b *unassigned*) (define a *unassigned*)) (set! b 2) (set! a 1) (+ a b))
+;; '(let ((b *unassigned*) (a *unassigned*)) (set! b 2) (set! a 1) (+ a b))
 
 ;; c
 (define (make-procedure parameters body env)
