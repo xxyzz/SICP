@@ -132,6 +132,8 @@ Eva Lu Ator and Louis Reasoner are each experimenting with the metacircular eval
 
 In our implication of Scheme, a procedure is a list which the first element is an object tells what it is. `(map (lambda (x) (+ 1 x)) (list 1 2))` will transform to `(apply map (list (list 'procedure (list 'x) (+ 1 x) env) (list 1 2)))`, the Scheme implication `map` will complain that's not a valid procedure.
 
+## 4.1.5 Data as Programs
+
 ### Exercise 4.15:
 
 Given a one-argument procedure `p` and an object `a`, `p` is said to “halt” on `a` if evaluating the expression `(p a)` returns a value (as opposed to terminating with an error message or running forever). Show that it is impossible to write a procedure `halts?` that correctly determines whether `p` halts on `a` for any procedure `p` and object `a`. Use the following reasoning: If you had such a procedure `halts?`, you could implement the following program:
@@ -147,3 +149,15 @@ Now consider evaluating the expression `(try try)` and show that any possible ou
 Assume `try` runs forever then `try` will return `'halted`. If `try` returns `'halted` it will run forever. Thus `halts?` can't exits.
 
 [Halting problem](https://en.wikipedia.org/wiki/Halting_problem#Proof_concept)
+
+## 4.1.6 Internal Definitions
+
+### Exercise 4.16:
+
+In this exercise we implement the method just described for interpreting internal definitions. We assume that the evaluator supports `let` (see Exercise 4.6).
+
+a. Change `lookup-variable-value` (Section 4.1.3) to signal an error if the value it finds is the symbol `*unassigned*`.
+
+b. Write a procedure `scan-out-defines` that takes a procedure body and returns an equivalent one that has no internal definitions, by making the transformation described above.
+
+c. Install `scan-out-defines` in the interpreter, either in `make-procedure` or in `procedure-body` (see Section 4.1.3). Which place is better? Why?
