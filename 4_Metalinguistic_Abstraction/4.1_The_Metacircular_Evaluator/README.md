@@ -272,3 +272,25 @@ Amazingly, Louis’s intuition in Exercise 4.20 is correct. It is indeed possibl
 ```
 
 a. Check (by evaluating the expression) that this really does compute factorials. Devise an analogous expression for computing Fibonacci numbers.
+
+b. Consider the following procedure, which includes mutually recursive internal definitions:
+
+```scheme
+(define (f x)
+  (define (even? n)
+    (if (= n 0) true (odd? (- n 1))))
+  (define (odd? n)
+    (if (= n 0) false (even? (- n 1))))
+  (even? x))
+```
+
+Fill in the missing expressions to complete an alternative definition of `f`, which uses neither internal definitions nor `letrec`:
+
+```scheme
+(define (f x)
+  ((lambda (even? odd?) (even? even? odd? x))
+   (lambda (ev? od? n)
+     (if (= n 0) true (od? ⟨??⟩ ⟨??⟩ ⟨??⟩)))
+   (lambda (ev? od? n)
+    (if (= n 0) false (ev? ⟨??⟩ ⟨??⟩ ⟨??⟩)))))
+```
