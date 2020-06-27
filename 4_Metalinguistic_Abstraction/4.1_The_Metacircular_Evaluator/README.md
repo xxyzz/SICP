@@ -225,3 +225,50 @@ Ben Bitdiddle, Alyssa P. Hacker, and Eva Lu Ator are arguing about the desired r
 Ben asserts that the result should be obtained using the sequential rule for `define`: `b` is defined to be 11, then `a` is defined to be 5, so the result is 16. Alyssa objects that mutual recursion requires the simultaneous scope rule for internal procedure definitions, and that it is unreasonable to treat procedure names differently from other names. Thus, she argues for the mechanism implemented in Exercise 4.16. This would lead to `a` being unassigned at the time that the value for `b` is to be computed. Hence, in Alyssa’s view the procedure should produce an error. Eva has a third opinion. She says that if the definitions of `a` and `b` are truly meant to be simultaneous, then the value 5 for a should be used in evaluating `b`. Hence, in Eva’s view `a` should be 5, `b` should be 15, and the result should be 20. Which (if any) of these viewpoints do you support? Can you devise a way to implement internal definitions so that they behave as Eva prefers?
 
 In Racket, `a` is undefined at line 3. I'm with Alyssa and Racket. If `a` and `b` don't reference each other, rearrange the code will solve the problem otherwise throw an error.
+
+### Exercise 4.20:
+
+Because internal definitions look sequential but are actually simultaneous, some people prefer to avoid them entirely, and use the special form `letrec` instead. `letrec` looks like `let`, so it is not surprising that the variables it binds are bound simultaneously and have the same scope as each other. The sample procedure `f` above can be written without internal definitions, but with exactly the same meaning, as
+
+```scheme
+(define (f x)
+  (letrec
+    ((even? (lambda (n)
+              (if (= n 0) true (odd? (- n 1)))))
+     (odd? (lambda (n)
+              (if (= n 0) false (even? (- n 1))))))
+    ⟨rest of body of f⟩))
+```
+
+`letrec` expressions, which have the form
+
+```scheme
+(letrec ((⟨var1⟩ ⟨exp1⟩) . . . (⟨varn⟩ ⟨expn⟩))
+  ⟨body⟩)
+```
+
+are a variation on `let` in which the expressions ⟨exp<sub>k</sub>⟩ that provide the initial values for the variables ⟨var<sub>k</sub>⟩ are evaluated in an environment that includes all the `letrec` bindings. This permits recursion in the bindings, such as the mutual recursion of `even?` and `odd?` in the example above, or the evaluation of 10 factorial with
+
+```scheme
+(letrec
+  ((fact (lambda (n)
+           (if (= n 1) 1 (* n (fact (- n 1)))))))
+  (fact 10))
+```
+
+a. Implement `letrec` as a derived expression, by transforming a `letrec` expression into a `let` expression as shown in the text above or in Exercise 4.18. That is, the `letrec` variables should be created with a `let` and then be assigned their values with `set!`.
+
+b. Louis Reasoneris confused by all this fuss about internal definitions. The way he sees it, if you don’t like to use `define` inside a procedure, you can just use `let`. Illustrate what is loose about his reasoning by drawing an environment diagram that shows the environment in which the ⟨rest of body of `f`⟩ is evaluated during evaluation of the expression `(f 5)`, with `f` defined as in this exercise. Draw an environment diagram for the same evaluation, but with `let` in place of `letrec` in the definition of `f`.
+
+### Exercise 4.21:
+
+Amazingly, Louis’s intuition in Exercise 4.20 is correct. It is indeed possible to specify recursive procedures without using `letrec` (or even `define`), although the method for accomplishing this is much more subtle than Louis imagined. The following expression computes 10 factorial by applying a recursive factorial procedure:
+
+```scheme
+((lambda (n)
+  ((lambda (fact) (fact fact n))
+   (lambda (ft k) (if (= k 1) 1 (* k (ft ft (- k 1)))))))
+  10)
+```
+
+a. Check (by evaluating the expression) that this really does compute factorials. Devise an analogous expression for computing Fibonacci numbers.
