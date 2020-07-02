@@ -294,3 +294,9 @@ Fill in the missing expressions to complete an alternative definition of `f`, wh
    (lambda (ev? od? n)
     (if (= n 0) false (ev? ⟨??⟩ ⟨??⟩ ⟨??⟩)))))
 ```
+
+## 4.1.7 Separating Syntactic Analysis from Execution
+
+### Exercise 4.22:
+
+Extend the evaluator in this section to support the special form `let`. (See Exercise 4.6.)
