@@ -258,7 +258,7 @@ are a variation on `let` in which the expressions ⟨exp<sub>k</sub>⟩ that pro
 
 a. Implement `letrec` as a derived expression, by transforming a `letrec` expression into a `let` expression as shown in the text above or in Exercise 4.18. That is, the `letrec` variables should be created with a `let` and then be assigned their values with `set!`.
 
-b. Louis Reasoneris confused by all this fuss about internal definitions. The way he sees it, if you don’t like to use `define` inside a procedure, you can just use `let`. Illustrate what is loose about his reasoning by drawing an environment diagram that shows the environment in which the ⟨rest of body of `f`⟩ is evaluated during evaluation of the expression `(f 5)`, with `f` defined as in this exercise. Draw an environment diagram for the same evaluation, but with `let` in place of `letrec` in the definition of `f`.
+b. Louis Reasoner is confused by all this fuss about internal definitions. The way he sees it, if you don’t like to use `define` inside a procedure, you can just use `let`. Illustrate what is loose about his reasoning by drawing an environment diagram that shows the environment in which the ⟨rest of body of `f`⟩ is evaluated during evaluation of the expression `(f 5)`, with `f` defined as in this exercise. Draw an environment diagram for the same evaluation, but with `let` in place of `letrec` in the definition of `f`.
 
 ### Exercise 4.21:
 
@@ -300,3 +300,43 @@ Fill in the missing expressions to complete an alternative definition of `f`, wh
 ### Exercise 4.22:
 
 Extend the evaluator in this section to support the special form `let`. (See Exercise 4.6.)
+
+### Exercise 4.23:
+
+Alyssa P. Hacker doesn’t understand why `analyze-sequence` needs to be so complicated. All the other analysis procedures are straightforward transformations of the corresponding evaluation procedures (or `eval` clauses) in Section 4.1.1. She expected `analyze-sequence` to look like this:
+
+```scheme
+(define (analyze-sequence exps)
+  (define (execute-sequence procs env)
+    (cond ((null? (cdr procs))
+           ((car procs) env))
+          (else
+           ((car procs) env)
+           (execute-sequence (cdr procs) env))))
+  (let ((procs (map analyze exps)))
+    (if (null? procs)
+        (error "Empty sequence: ANALYZE"))
+    (lambda (env)
+      (execute-sequence procs env))))
+```
+
+Eva Lu Ator explains to Alyssa that the version in the text does more of the work of evaluating a sequence at analysis time. Alyssa’s sequence-execution procedure, rather than having the calls to the individual execution procedures built in, loops through the procedures in order to call them: In effect, although the individual expressions in the sequence have been analyzed, the sequence itself has not been.
+
+Compare the two versions of `analyze-sequence`. For example, consider the common case (typical of procedure bodies) where the sequence has just one expression. What work will the execution procedure produced by Alyssa’s program do? What about the execution procedure produced by the program in the text above? How do the two versions compare for a sequence with two expressions?
+
+```scheme
+;; text returns
+;; no needs to parse code
+(lambda (env) (proc1 env))
+(lambda (env)
+  (proc1 env) (proc2 env))
+
+;; Alyssa's code returns
+;; needs to parse code
+(lambda (env)
+  (execute procs env))
+```
+
+### Exercise 4.24:
+
+Design and carry out some experiments to compare the speed of the original metacircular evaluator with the version in this section. Use your results to estimate the fraction of time that is spent in analysis versus execution for various procedures.
