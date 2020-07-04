@@ -1,12 +1,14 @@
 #lang racket/base
+(require compatibility/mlist)
+;; https://docs.racket-lang.org/compatibility/mlists.html
 
 (define (mmap proc . args)
   (if (null? (car args))
       null
       (mcons
-       (apply proc (map mcar args))
+       (apply proc (map car args))
        (apply mmap
-              (cons proc (map mcdr args))))))
+              (cons proc (map cdr args))))))
 
 (define (enclosing-environment env) (cdr env))
 (define (first-frame env) (car env))
@@ -14,17 +16,18 @@
 
 (define (make-frame variables values)
   (mmap mcons variables values))
-(define (frame-variables frame) (mmap mcar frame))
-(define (frame-values frame) (mmap mcdr frame))
 (define (add-binding-to-frame! var val frame)
-  (set-mcar! frame (mcons (mcons var val) (mcar frame))))
+  (mappend! frame (mlist (mcons var val))))
 (define (frame-unit-variable unit) (mcar unit))
 (define (frame-unit-value unit) (mcdr unit))
 
 (define (travsersing-env end-frame-proc find-proc end-env-proc env var)
   (define (env-loop env)
     (define (scan pairs)
-      (let ([current-pair (mcar pairs)])
+      (let ([current-pair
+             (if (mpair? pairs)
+                 (mcar pairs)
+                 null)])
         (cond [(null? current-pair)
                (end-frame-proc env)]
               [(eq? var (frame-unit-variable current-pair))
@@ -32,9 +35,7 @@
               [else (scan (mcdr pairs))])))
     (if (eq? env the-empty-environment)
         (end-env-proc var)
-        (let ([frame (first-frame env)])
-          (scan (frame-variables frame)
-                (frame-values frame)))))
+        (scan (first-frame env))))
   (env-loop env))
 
 (define (set-variable-value! var val env)
