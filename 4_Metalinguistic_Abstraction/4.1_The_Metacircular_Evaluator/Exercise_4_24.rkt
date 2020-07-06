@@ -355,15 +355,17 @@
   (define analyze-start (current-inexact-milliseconds))
   (define a (analyze exp))
   (define analyze-end (current-inexact-milliseconds))
-  (display (format "analyze: ~a milliseconds" (- analyze-end analyze-start)))
-  (a env)
-  (display (format "execution: ~a milliseconds"
+  (displayln (format "analyze: ~a milliseconds" (- analyze-end analyze-start)))
+  (displayln (a env))
+  (displayln (format "execution: ~a milliseconds"
                    (- (current-inexact-milliseconds) analyze-end))))
 (analyze-eval '(define (factorial n)
                  (if (= n 1) 1 (* (factorial (- n 1)) n)))
               the-global-environment)
 ;; analyze: 0.348876953125 milliseconds
+;; ok
 ;; execution: 0.198974609375 milliseconds
 (analyze-eval '(factorial 3) the-global-environment)
 ;; analyze: 0.001953125 milliseconds
+;; 6
 ;; execution: 0.172119140625 milliseconds
