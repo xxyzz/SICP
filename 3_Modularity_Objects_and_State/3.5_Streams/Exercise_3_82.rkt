@@ -22,7 +22,7 @@
 (define (add-streams s1 s2) (stream-map + s1 s2))
 (define ones (stream-cons 1 ones))
 (define integers
-  (stream-cons 1 (add-streams ones integers)))        
+  (stream-cons 1 (add-streams ones integers)))
 
 (define (estimate-integral P x1 x2 y1 y2)
   (define bool-results (stream-map P
