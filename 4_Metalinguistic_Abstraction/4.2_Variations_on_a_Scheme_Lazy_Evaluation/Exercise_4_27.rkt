@@ -12,7 +12,7 @@
             (list-of-values (rest-operands exps) env))))
 
 (define (eval-if exp env)
-  (if (true? (eval (if-predicate exp) env))
+  (if (true? (actual-value (if-predicate exp) env))
       (eval (if-consequent exp) env)
       (eval (if-alternative exp) env)))
 
@@ -45,9 +45,9 @@
 (define (text-of-quotation exp) (cadr exp))
 
 (define (tagged-list? exp tag)
-  (if (pair? exp)
-      (eq? (car exp) tag)
-      #f))
+  (cond [(pair? exp) (eq? (car exp) tag)]
+        [(mpair? exp) (eq? (mcar exp) tag)]
+        [else #f]))
 
 (define (assignment? exp) (tagged-list? exp 'set!))
 (define (assignment-variable exp) (cadr exp))
@@ -163,20 +163,23 @@
          (eval-sequence (begin-actions exp) env)]
         [(cond? exp) (eval (cond->if exp) env)]
         [(application? exp)
-         (myapply (eval (operator exp) env)
-                  (list-of-values (operands exp) env))]
+         (myapply (actual-value (operator exp) env)
+                  (operands exp)
+                  env)]
         [else
          (error "Unknown expression type: EVAL" exp)]))
 
-(define (myapply procedure arguments)
+(define (myapply procedure arguments env)
   (cond [(primitive-procedure? procedure)
-         (apply-primitive-procedure procedure arguments)]
+         (apply-primitive-procedure
+          procedure
+          (list-of-arg-values arguments env))]
         [(compound-procedure? procedure)
          (eval-sequence
           (procedure-body procedure)
           (extend-environment
            (procedure-parameters procedure)
-           arguments
+           (list-of-delayed-args arguments env)
            (procedure-environment procedure)))]
         [else
          (error
@@ -267,105 +270,135 @@
     initial-env))
 (define the-global-environment (setup-environment))
 
-(define eval-start (current-inexact-milliseconds))
-(eval '(define (factorial n)
-         (if (= n 1) 1 (* (factorial (- n 1)) n)))
-      the-global-environment)
-;; 'ok
-(eval '(factorial 3) the-global-environment)
-;; 6
-(define eval-end (current-inexact-milliseconds))
-(display (format "eval: ~a milliseconds" (- eval-end eval-start)))
-;; eval: 1.501953125 milliseconds
+(define (actual-value exp env)
+  (force-it (eval exp env)))
+(define (force-it obj)
+  (cond [(thunk? obj)
+         (let ([result (actual-value (thunk-exp obj)
+                                     (thunk-env obj))])
+           (set-mcar! obj 'evaluated-thunk)
+           (set-mcar! (mcdr obj)
+                      result)  ;; replace exp with its value
+           (set-mcdr! (mcdr obj)
+                      '())     ;; forget unneeded env
+           result)]
+        [(evaluated-thunk? obj) (thunk-value obj)]
+        [else obj]))
+(define (delay-it exp env)
+  (mlist 'thunk exp env))
+(define (thunk? obj)
+  (tagged-list? obj 'thunk))
+(define (thunk-exp thunk) (mcar (mcdr thunk)))
+(define (thunk-env thunk) (mcar (mcdr (mcdr thunk))))
 
-;; analyze eval
-(define (analyze-self-evaluating exp) (lambda (env) exp))
-(define (analyze-quoted exp)
-  (let ([qval (text-of-quotation exp)])
-    (lambda (env) qval)))
-(define (analyze-variable exp)
-  (lambda (env) (lookup-variable-value exp env)))
-(define (analyze-assignment exp)
-  (let ([var (assignment-variable exp)]
-        [vproc (analyze (assignment-value exp))])
-    (lambda (env)
-      (set-variable-value! var (vproc env) env)
-      'ok)))
-(define (analyze-definition exp)
-  (let ([var (definition-variable exp)]
-        [vproc (analyze (definition-value exp))])
-    (lambda (env)
-      (define-variable! var (vproc env) env) 'ok)))
-(define (analyze-if exp)
-  (let ([pproc (analyze (if-predicate exp))]
-        [cproc (analyze (if-consequent exp))]
-        [aproc (analyze (if-alternative exp))])
-    (lambda (env) (if (true? (pproc env))
-                      (cproc env)
-                      (aproc env)))))
-(define (analyze-lambda exp)
-  (let ([vars (lambda-parameters exp)]
-        [bproc (analyze-sequence (lambda-body exp))])
-    (lambda (env) (make-procedure vars bproc env))))
-(define (analyze-sequence exps)
-  (define (sequentially proc1 proc2)
-    (lambda (env) (proc1 env) (proc2 env)))
-  (define (loop first-proc rest-procs)
-    (if (null? rest-procs) first-proc
-        (loop (sequentially first-proc (car rest-procs))
-              (cdr rest-procs))))
-  (let ([procs (map analyze exps)])
-    (when (null? procs) (error "Empty sequence: ANALYZE"))
-    (loop (car procs) (cdr procs))))
-(define (analyze-application exp)
-  (let ([fproc (analyze (operator exp))]
-        [aprocs (map analyze (operands exp))])
-    (lambda (env)
-      (execute-application
-       (fproc env)
-       (map (lambda (aproc) (aproc env))
-            aprocs)))))
-(define (execute-application proc args)
-  (cond [(primitive-procedure? proc)
-         (apply-primitive-procedure proc args)]
-        [(compound-procedure? proc)
-         ((procedure-body proc)
-          (extend-environment
-           (procedure-parameters proc)
-           args
-           (procedure-environment proc)))]
-        [else
-         (error "Unknown procedure type: EXECUTE-APPLICATION"
-                proc)]))
+(define (evaluated-thunk? obj)
+  (tagged-list? obj 'evaluated-thunk))
+(define (thunk-value evaluated-thunk)
+  (mcar (mcdr evaluated-thunk)))
 
-(define (analyze exp)
-  (cond [(self-evaluating? exp) (analyze-self-evaluating exp)]
-        [(quoted? exp) (analyze-quoted exp)]
-        [(variable? exp) (analyze-variable exp)]
-        [(assignment? exp) (analyze-assignment exp)]
-        [(definition? exp) (analyze-definition exp)]
-        [(if? exp) (analyze-if exp)]
-        [(lambda? exp) (analyze-lambda exp)]
-        [(begin? exp) (analyze-sequence (begin-actions exp))]
-        [(cond? exp) (analyze (cond->if exp))]
-        [(application? exp) (analyze-application exp)]
-        [else (error "Unknown expression type: ANALYZE" exp)]))
+(define (list-of-arg-values exps env)
+  (if (no-operands? exps)
+      '()
+      (cons (actual-value (first-operand exps)
+                          env)
+            (list-of-arg-values (rest-operands exps)
+                                env))))
+(define (list-of-delayed-args exps env)
+  (if (no-operands? exps)
+      '()
+      (cons (delay-it (first-operand exps)
+                      env)
+            (list-of-delayed-args (rest-operands exps)
+                                  env))))
 
-(define (analyze-eval exp env)
-  (define analyze-start (current-inexact-milliseconds))
-  (define a (analyze exp))
-  (define analyze-end (current-inexact-milliseconds))
-  (displayln (format "analyze: ~a milliseconds" (- analyze-end analyze-start)))
-  (displayln (a env))
-  (displayln (format "execution: ~a milliseconds"
-                     (- (current-inexact-milliseconds) analyze-end))))
-(analyze-eval '(define (factorial n)
-                 (if (= n 1) 1 (* (factorial (- n 1)) n)))
-              the-global-environment)
-;; analyze: 0.348876953125 milliseconds
+(define input-prompt ";;; M-Eval input:")
+(define output-prompt ";;; M-Eval value:")
+(define (driver-loop)
+  (prompt-for-input input-prompt)
+  (let* ([input (read)]
+         [output
+          (actual-value
+           input the-global-environment)])
+    (announce-output output-prompt)
+    (user-print output))
+  (driver-loop))
+(define (prompt-for-input string)
+  (newline) (newline) (display string) (newline))
+(define (announce-output string)
+  (newline) (display string) (newline))
+(define (user-print object)
+  (if (compound-procedure? object)
+      (display (list 'compound-procedure
+                     (procedure-parameters object)
+                     (procedure-body object)
+                     '<procedure-env>))
+      (display object)))
+(driver-loop)
+
+;;; M-Eval input:
+(define count 0)
+
+;;; M-Eval value:
 ;; ok
-;; execution: 0.198974609375 milliseconds
-(analyze-eval '(factorial 3) the-global-environment)
-;; analyze: 0.001953125 milliseconds
-;; 6
-;; execution: 0.172119140625 milliseconds
+
+;;; M-Eval input:
+(define (id x) (set! count (+ count 1)) x)
+
+;;; M-Eval value:
+;; ok
+
+;;; M-Eval input:
+(define w (id (id 10)))
+
+;;; M-Eval value:
+;; ok
+;; (eval-definition '(define w (id (id 10))) gl-env)
+;; (define-variable! 'w (eval '(id (id 10)) gl-env) gl-env)
+;; (define-variable! 'w (myapply (actual-value 'id gl-env) '(id 10) gl-env) gl-env)
+;; (define-variable! 'w (myapply (force-it (eval 'id gl-env)) '(id 10) gl-env) gl-env)
+;; (define-variable! 'w
+;;                   (myapply
+;;                     (list 'procedure '(x) '((set! ...) x) id-env)
+;;                     '((id 10))
+;;                     gl-env)
+;;                   gl-env)
+;; (define-variable! 'w
+;;                   (eval-sequence
+;;                     '((set! ...) x)
+;;                     (extend-environment
+;;                       '(x)
+;;                       (list (mcons 'thunk (mcons '(id 10) gl-env)))
+;;                       id-env)
+;;                   gl-env))
+;; (define-variable! 'w
+;;                   ((eval '(set! count (+ count 1)) id-env) ;; increase count to 1
+;;                    (eval 'x id-env))
+;;                   gl-env)
+;; (define-variable! 'w
+;;                   (mcons 'thunk (mcons '(id 10) gl-env))
+;;                   gl-env)
+;; now w is a thunk!
+
+;;; M-Eval input:
+count
+
+;;; M-Eval value:
+;; 1
+
+;;; M-Eval input:
+w
+
+;;; M-Eval value:
+10
+;; (actual-value 'w gl-env)
+;; (force-it (eval 'w gl-env))
+;; (force-it (mcons 'thunk (mcons '(id 10) gl-env)))
+;; (actual-value '(id 10) gl-env)
+;; (force-it (eval '(id 10) gl-env)) ;; increase count to 2
+;; 10
+
+;;; M-Eval input:
+count
+
+;;; M-Eval value:
+;; 2
