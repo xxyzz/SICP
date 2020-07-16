@@ -21,28 +21,30 @@
                           (- count 1))]))
   (fib-iter 1 0 0 1 n))
 
-(define (user-print object)
-  (define start (current-inexact-milliseconds))
-  (if (compound-procedure? object)
-      (displayln (list 'compound-procedure
-                       (procedure-parameters object)
-                       (procedure-body object)
-                       '<procedure-env>))
-      (displayln object))
-  (define end (current-inexact-milliseconds))
-  (displayln (format "ms: ~a" (- end start))))
+(define (driver-loop)
+  (prompt-for-input input-prompt)
+  (let* ([input (read)]
+         [start (current-inexact-milliseconds)]
+         [output
+          (actual-value
+           input the-global-environment)])
+    (define end (current-inexact-milliseconds))
+    (announce-output output-prompt)
+    (user-print output)
+    (displayln (format "ms: ~a" (- end start))))
+  (driver-loop))
 
 ;; no memorize
 (fib 1000)
-;; ms: 0.27294921875
+;; ms: 3381.85498046875
 (fib 10000)
 ;; wait for it if you have nothing to do
 
 ;; memorize
 (fib 1000)
-;; ms: 0.090087890625
+;; ms: 0.47607421875
 (fib 10000)
-;; ms: 0.1337890625
+;; ms: 0.51708984375
 
 (define (square x) (* x x))
 ;; square runs faster with memoization enabled
