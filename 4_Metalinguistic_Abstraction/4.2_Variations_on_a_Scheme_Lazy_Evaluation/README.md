@@ -15,7 +15,6 @@ Suppose that (in ordinary applicative-order Scheme) we define `unless` as shown 
 
 What happens if we attempt to evaluate `(factorial 5)`? Will our definitions work in a normal-order language?
 
-
 ### Exercise 4.26:
 
 Ben Bitdiddle and Alyssa P. Hacker disagree over the importance of lazy evaluation for implementing things such as `unless`. Ben points out that it’s possible to implement unless in applicative order as a special form. Alyssa counters that, if one did that, `unless` would be merely syntax, not a procedure that could be used in conjunction with higher-order procedures. Fill in the details on both sides of the argument. Show how to implement `unless` as a derived expression (like `cond` or `let`), and give an example of a situation where it might be useful to have unless available as a procedure, rather than as a special form.
@@ -52,3 +51,21 @@ count
 ### Exercise 4.28:
 
 `eval` uses `actual-value` rather than `eval` to evaluate the operator before passing it to `apply`, in order to force the value of the operator. Give an example that demonstrates the need for this forcing.
+
+### Exercise 4.29:
+
+Exhibit a program that you would expect to run much more slowly without memoization than with memoization. Also, consider the following interaction, where the `id` procedure is defined as in Exercise 4.27 and `count` starts at 0:
+
+```scheme
+(define (square x) (* x x))
+;;; L-Eval input:
+(square (id 10))
+;;; L-Eval value:
+⟨response⟩
+;;; L-Eval input:
+count
+;;; L-Eval value:
+⟨response⟩
+```
+
+Give the responses both when the evaluator memoizes and when it does not.
