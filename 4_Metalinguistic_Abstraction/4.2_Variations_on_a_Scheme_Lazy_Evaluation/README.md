@@ -73,3 +73,7 @@ Give the responses both when the evaluator memoizes and when it does not.
 ### Exercise 4.30:
 
 Page 552.
+
+### Exercise 4.31:
+
+Page 554.
