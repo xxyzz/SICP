@@ -21,30 +21,73 @@
                           (- count 1))]))
   (fib-iter 1 0 0 1 n))
 
+(define (fib2 n)
+  (define (iter a b k)
+    (if (= k 0)
+        b
+        (iter (+ a b) a (- k 1))))
+  (iter 1 0 n))
+
+(define (factorial n)
+  (if (= n 0)
+      1
+      (* n (factorial (- n 1)))))
+
+;; add even? to primitive-procedures
+
 (define (driver-loop)
   (prompt-for-input input-prompt)
-  (let* ([input (read)]
-         [start (current-inexact-milliseconds)]
-         [output
-          (actual-value
-           input the-global-environment)])
-    (define end (current-inexact-milliseconds))
-    (announce-output output-prompt)
-    (user-print output)
-    (displayln (format "ms: ~a" (- end start))))
+  (let ([input (read)])
+    (let ([start (current-inexact-milliseconds)]
+          [output
+           (actual-value
+            input the-global-environment)])
+      (define end (current-inexact-milliseconds))
+      (announce-output output-prompt)
+      (user-print output)
+      (displayln (format "ms: ~a" (- end start)))))
   (driver-loop))
 
 ;; no memorize
-(fib 1000)
-;; ms: 3381.85498046875
+;; the growth rate doesn't feel right TODO
+(fib 10)
+;; ms: 0.555908203125
+(fib 100)
+;; ms: 33.19189453125
 (fib 10000)
 ;; wait for it if you have nothing to do
+(fib2 10)
+;; ms: 0.43603515625
+(fib2 20)
+;; ms: 25.77001953125
+(fib2 40)
+;; eh
+(factorial 10)
+;; ms: 0.26318359375
+(factorial 20)
+;; ms: 0.72998046875
+(factorial 40)
+;; ms: 2.74609375
 
 ;; memorize
-(fib 1000)
-;; ms: 0.47607421875
+(fib 10)
+;; ms: 0.172119140625
+(fib 100)
+;; ms: 0.2919921875
 (fib 10000)
 ;; ms: 0.51708984375
+(fib2 10)
+;; ms: 0.1328125
+(fib2 20)
+;; ms: 0.23193359375
+(fib2 40)
+;; ms: 0.427978515625
+(factorial 10)
+;; ms: 0.10791015625
+(factorial 20)
+;; ms: 0.192138671875
+(factorial 40)
+;; ms: 0.363037109375
 
 (define (square x) (* x x))
 ;; square runs faster with memoization enabled

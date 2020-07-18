@@ -69,3 +69,7 @@ count
 ```
 
 Give the responses both when the evaluator memoizes and when it does not.
+
+### Exercise 4.30:
+
+Page 552.
