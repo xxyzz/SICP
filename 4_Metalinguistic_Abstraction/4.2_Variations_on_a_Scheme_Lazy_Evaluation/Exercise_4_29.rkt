@@ -49,7 +49,17 @@
   (driver-loop))
 
 ;; no memorize
-;; the growth rate doesn't feel right TODO
+;; take fib2 for example
+(fib2 4) ;; in fib2-env, n is (thunk 4 gl-env)
+(iter 1 0 n)
+;; a is (thunk 1 fib2-env), b is (thunk 0 fib2-env)
+;; k is (thunk n fib2-env)
+(iter (+ a b) a (- k 1))
+;; a is (thunk (+ a b) iter-env), b is (thunk a iter-env)
+;; k is (thunk (- k 1) iter-env)
+;; without memoization, evaluated each parameter will search
+;; all the way back to the beginning environment
+
 (fib 10)
 ;; ms: 0.555908203125
 (fib 100)
