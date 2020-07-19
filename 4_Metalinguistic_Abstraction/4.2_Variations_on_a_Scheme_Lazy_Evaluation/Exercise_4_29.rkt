@@ -59,6 +59,8 @@
 ;; k is (thunk (- k 1) iter-env)
 ;; without memoization, evaluated each parameter will search
 ;; all the way back to the beginning environment
+;; it turns a linear factorial code into quadratic growth
+;; and turn linear fib2 back to tree recursion
 
 (fib 10)
 ;; ms: 0.555908203125
@@ -73,11 +75,11 @@
 (fib2 40)
 ;; eh
 (factorial 10)
-;; ms: 0.26318359375
+;; ms: 0.2750244140625
 (factorial 20)
-;; ms: 0.72998046875
+;; ms: 0.84697265625
 (factorial 40)
-;; ms: 2.74609375
+;; ms: 3.0660888671875 about four times slower
 
 ;; memorize
 (fib 10)
