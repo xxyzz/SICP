@@ -46,7 +46,7 @@
 
 (define (weight-procedure x) (+ (cubic (first x)) (cubic (second x))))
 
-(define S (weighted-pairs 
+(define S (weighted-pairs
            integers
            integers
            weight-procedure))

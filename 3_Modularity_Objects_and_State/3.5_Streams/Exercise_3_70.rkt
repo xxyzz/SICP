@@ -42,10 +42,10 @@
   (stream-cons 1 (add-streams ones integers)))
 
 ; a
-(stream->list (stream-take (weighted-pairs 
+(stream->list (stream-take (weighted-pairs
                             integers
                             integers
-                            (lambda (x) (+ (first x) (second x)))) 
+                            (lambda (x) (+ (first x) (second x))))
                            10))
 ; '((1 1) (1 2) (1 3) (2 2) (1 4) (2 3) (1 5) (2 4) (3 3) (1 6))
 
@@ -55,11 +55,11 @@
                                               (divisible-by? x 3)
                                               (divisible-by? x 5))))
                          integers))
-(stream->list (stream-take (weighted-pairs 
+(stream->list (stream-take (weighted-pairs
                             S
                             S
                             (lambda (x) (+ (* (first x) 2)
                                            (* (second x) 3)
-                                           (* 5 (first x) (second x))))) 
+                                           (* 5 (first x) (second x)))))
                            10))
 ; '((1 1) (1 7) (1 11) (1 13) (1 17) (1 19) (1 23) (1 29) (1 31) (7 7))

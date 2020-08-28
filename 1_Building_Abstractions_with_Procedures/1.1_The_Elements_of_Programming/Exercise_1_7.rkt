@@ -87,10 +87,13 @@
 (exact->inexact (* (expt 2 43) (- 1 (expt 2 -53))))
 ;; 8796093022207.999
 (sqrt 8796093022207.999)
-;; 2965820.8007578608 it works!
+;; 2965820.8007578608 *bleep* yeah!
 
 ;; new good-enough?
 (sqrt 0.0001)
 ;; 0.010000000025490743
 (sqrt 8796093022208)
 ;; 2965820.801641373
+
+;; RTFM
+;; https://github.com/xxyzz/c/blob/master/2/2-1.c
