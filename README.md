@@ -51,6 +51,8 @@ $ brew cask install racket
 
     - 4.2 [Variations on a Scheme — Lazy Evaluation](.4_Metalinguistic_Abstraction/4.2_Variations_on_a_Scheme_Lazy_Evaluation)
 
+    - 4.3 [Variations on a Scheme — Nondeterministic Computing](./4_Metalinguistic_Abstraction/4.3_Variations_on_a_Scheme_Nondeterministic_Computing)
+
 ## License
 
 This work is licensed under the GPLv3 or any later version.
