@@ -34,3 +34,29 @@ Ben Bitdiddle claims that the following method for generating Pythagorean triple
           (require (integer? k))
           (list i j k))))))
 ```
+
+## 4.3.2 Examples of Nondeterministic Programs
+
+### Exercise 4.38:
+
+Modify the multiple-dwelling procedure to omit the requirement that Smith and Fletcher do not live on adjacent floors. How many solutions are there to this modified puzzle?
+
+### Exercise 4.39:
+
+Does the order of the restrictions in the multiple-dwelling procedure affect the answer? Does it affect the time to find an answer? If you think it matters, demonstrate a faster program obtained from the given one by reordering the restrictions. If you think it does not matter, argue your case.
+
+### Exercise 4.40:
+
+In the multiple dwelling problem, how many sets of assignments are there of people to floors, both before and after the requirement that floor assignments be distinct? It is very inefficient to generate all possible assignments of people to floors and then leave it to backtracking to eliminate them. For example, most of the restrictions depend on only one or two of the person-floor variables, and can thus be imposed before floors have been selected for all the people. Write and demonstrate a much more efficient nondeterministic procedure that solves this problem based upon generating only those possibilities that are not already ruled out by previous restrictions. (Hint: This will require a nest of `let` expressions.)
+
+Check out `faster-multiple-dwelling` in exercise 4.39.
+
+### Exercise 4.41:
+
+Write an ordinary Scheme program to solve the multiple dwelling puzzle.
+
+### Exercise 4.42:
+
+Solve the following “Liars” puzzle (from Phillips 1934):
+
+
