@@ -1,5 +1,5 @@
 #lang racket/base
-(require racket/list)
+(require racket/list) ;; permutations, range
 
 (define (multiple-dwelling)
   (for*/list ([fletcher '(2 3 4)]

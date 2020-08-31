@@ -1,22 +1,12 @@
 #lang racket/base
-(require racket/list)
+(require racket/list) ;; permutations, range
 
 (define (filter-rank betty ethel joan kitty marry)
-  (let ([betty-s1 (= kitty 2)]
-        [betty-s2 (= betty 3)]
-        [ethel-s1 (= ethel 1)]
-        [ethel-s2 (= joan 2)]
-        [joan-s1 (= joan 3)]
-        [joan-s2 (= ethel 5)]
-        [kitty-s1 (= kitty 2)]
-        [kitty-s2 (= marry 4)]
-        [marry-s1 (= marry 4)]
-        [marry-s2 (= betty 1)])
-    (and (not (eq? betty-s1 betty-s2))
-         (not (eq? ethel-s1 ethel-s2))
-         (not (eq? joan-s1 joan-s2))
-         (not (eq? kitty-s1 kitty-s2))
-         (not (eq? marry-s1 marry-s2)))))
+  (and (not (eq? (= kitty 2) (= betty 3)))
+       (not (eq? (= ethel 1) (= joan 2)))
+       (not (eq? (= joan 3) (= ethel 5)))
+       (not (eq? (= kitty 2) (= marry 4)))
+       (not (eq? (= marry 4) (= betty 1)))))
 
 (define (retarded-exam-rank)
   (for/list ([ranks (permutations (range 1 6))]
