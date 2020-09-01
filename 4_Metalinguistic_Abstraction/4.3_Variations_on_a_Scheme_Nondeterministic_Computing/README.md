@@ -114,3 +114,7 @@ After `lectures` is parsed, it will run into `parse-verb-phrase` infinite loop b
 ### Exercise 4.48:
 
 Extend the grammar given above to handle more complex sentences. For example, you could extend noun phrases and verb phrases to include adjectives andadverbs, or you could handle compound sentences.
+
+### Exercise 4.49:
+
+Alyssa P. Hacker is more interested in generating interesting sentences than in parsing them. She reasons that by simply changing the procedure `parse-word` so that it ignores the “input sentence” and instead always succeeds and generates an appropriate word, we can use the programs we had built for parsing to do generation instead. Implement Alyssa’s idea, and show the first half-dozen or so sentences generated.
