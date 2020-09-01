@@ -84,3 +84,33 @@ Try to write the program so that it runs efficiently (see Exercise 4.40). Also d
 ### Exercise 4.44:
 
 Exercise 2.42 described the “eight-queens puzzle” of placing queens on a chessboard so that no two attack each other. Write a nondeterministic program to solve this puzzle.
+
+### Exercise 4.45:
+
+With the grammar given above, the following sentence can be parsed in five different ways: “The professor lectures to the student in the class with the cat.” Give the five parses and explain the differences in shades of meaning among them.
+
+### Exercise 4.46:
+
+The evaluators in Section 4.1 and Section 4.2 do not determine what order operands are evaluated in. We will see that the `amb` evaluator evaluates them from left to right. Explain why our parsing program wouldn’t work if the operands were evaluated in some other order.
+
+`parse-word` walks `*unparsed*` from left to right.
+
+### Exercise 4.47:
+
+Louis Reasoner suggests that, since a verb phrase is either a verb or a verb phrase followed by a prepositional phrase, it would be much more straightforward to define the procedure `parse-verb-phrase` as follows (and similarly for noun phrases):
+
+```scheme
+(define (parse-verb-phrase)
+  (amb (parse-word verbs)
+       (list 'verb-phrase
+             (parse-verb-phrase)
+             (parse-prepositional-phrase))))
+```
+
+Does this work? Does the program’s behavior change if we interchange the order of expressions in the `amb`?
+
+After `lectures` is parsed, it will run into `parse-verb-phrase` infinite loop because "to" is not a verb.
+
+### Exercise 4.48:
+
+Extend the grammar given above to handle more complex sentences. For example, you could extend noun phrases and verb phrases to include adjectives andadverbs, or you could handle compound sentences.
