@@ -50,12 +50,11 @@
       (let ([new-queen (last positions)]
             [rest-queens (drop-right positions 1)])
         (and-accumulate
-         (map (lambda (another-queen)
-                (and (not (= new-queen another-queen)) ;; not in same column
-                     (not (= (abs (- new-queen another-queen)) ;; not in same diagonal
-                             (abs (- nth-row
-                                     (add1 (index-of rest-queens another-queen))))))))
-              rest-queens)))))
+         (for/list ([another-queen (in-list rest-queens)]
+                    [i (in-naturals)])
+           (and (not (= new-queen another-queen)) ;; not in same column
+                (not (= (abs (- new-queen another-queen)) ;; not in same diagonal
+                        (abs (- nth-row (add1 i)))))))))))
 
 (queens 4)
 ;; '((2 4 1 3) (3 1 4 2))
