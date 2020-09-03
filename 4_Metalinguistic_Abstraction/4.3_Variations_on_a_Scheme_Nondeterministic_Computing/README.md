@@ -118,3 +118,9 @@ Extend the grammar given above to handle more complex sentences. For example, yo
 ### Exercise 4.49:
 
 Alyssa P. Hacker is more interested in generating interesting sentences than in parsing them. She reasons that by simply changing the procedure `parse-word` so that it ignores the “input sentence” and instead always succeeds and generates an appropriate word, we can use the programs we had built for parsing to do generation instead. Implement Alyssa’s idea, and show the first half-dozen or so sentences generated.
+
+## 4.3.3 Implementing the amb Evaluator
+
+### Exercise 4.50:
+
+Implement a new special form `ramb` that is like `amb` except that it searches alternatives in a random order, rather than from left to right. Show how this can help with Alyssa’s problem in Exercise 4.49.
