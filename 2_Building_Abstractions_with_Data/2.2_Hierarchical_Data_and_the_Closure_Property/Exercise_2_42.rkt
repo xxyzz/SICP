@@ -37,24 +37,16 @@
       (list new-row) ;; first row
       (append rest-queens (list new-row))))
 
-;; `and` is syntax not procedure
-(define (and-accumulate sequence)
-  (if (null? sequence)
-      #t
-      (and (car sequence)
-           (and-accumulate (cdr sequence)))))
-
 (define (safe? nth-row positions)
   (if (= nth-row 1)
       #t
       (let ([new-queen (last positions)]
             [rest-queens (drop-right positions 1)])
-        (and-accumulate
-         (for/list ([another-queen (in-list rest-queens)]
-                    [i (in-naturals)])
-           (and (not (= new-queen another-queen)) ;; not in same column
-                (not (= (abs (- new-queen another-queen)) ;; not in same diagonal
-                        (abs (- nth-row (add1 i)))))))))))
+        (for/and ([another-queen (in-list rest-queens)]
+                  [i (in-naturals)])
+          (and (not (= new-queen another-queen)) ;; not in same column
+               (not (= (abs (- new-queen another-queen)) ;; not in same diagonal
+                       (abs (- nth-row (add1 i))))))))))
 
 (queens 4)
 ;; '((2 4 1 3) (3 1 4 2))

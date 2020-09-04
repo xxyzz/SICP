@@ -1,6 +1,6 @@
 #lang racket/base
 (require compatibility/mlist) ;; list->mlist
-;; https://docs.racket-lang.org/compatibility/mlists.html
+;; https://github.com/racket/compatibility/blob/master/compatibility-lib/compatibility/mlist.rkt#L68
 (require racket/list) ;; shuffle
 ;; https://github.com/racket/racket/blob/master/racket/collects/racket/list.rkt#L606
 
