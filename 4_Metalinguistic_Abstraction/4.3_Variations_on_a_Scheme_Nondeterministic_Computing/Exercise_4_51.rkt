@@ -1,8 +1,6 @@
 #lang racket/base
 (require compatibility/mlist) ;; list->mlist
 ;; https://github.com/racket/compatibility/blob/master/compatibility-lib/compatibility/mlist.rkt#L68
-(require racket/list) ;; shuffle
-;; https://github.com/racket/racket/blob/master/racket/collects/racket/list.rkt#L606
 
 (define (true? x) (not (eq? x #f)))
 (define (false? x) (eq? x #f))
@@ -10,6 +8,7 @@
 (define (self-evaluating? exp)
   (cond [(number? exp) #t]
         [(string? exp) #t]
+        [(null? exp) #t]
         [else #f]))
 
 (define (variable? exp) (symbol? exp))
@@ -106,6 +105,8 @@
         (list 'cons cons)
         (list 'null? null?)
         (list 'list list)
+        (list 'not not)
+        (list 'eq? eq?)
         (list '+ +)
         (list '- -)
         (list '* *)
@@ -189,16 +190,6 @@
       (if (< (length vars) (length vals))
           (error "Too many arguments supplied" vars vals)
           (error "Too few arguments supplied" vars vals))))
-
-(define (setup-environment)
-  (let ([initial-env
-         (extend-environment (primitive-procedure-names)
-                             (primitive-procedure-objects)
-                             the-empty-environment)])
-    (define-variable! 'true #t initial-env)
-    (define-variable! 'false #f initial-env)
-    initial-env))
-(define the-global-environment (setup-environment))
 
 (define (analyze-self-evaluating exp)
   (lambda (env succeed fail)
@@ -337,6 +328,7 @@
         [(quoted? exp) (analyze-quoted exp)]
         [(variable? exp) (analyze-variable exp)]
         [(assignment? exp) (analyze-assignment exp)]
+        [(permanent-set? exp) (analyze-permanent-set exp)]
         [(definition? exp) (analyze-definition exp)]
         [(if? exp) (analyze-if exp)]
         [(lambda? exp) (analyze-lambda exp)]
@@ -344,7 +336,6 @@
         [(cond? exp) (analyze (cond->if exp))]
         [(let? exp) (analyze (let->lambda exp))]
         [(amb? exp) (analyze-amb exp)]
-        [(ramb? exp) (analyze-ramb exp)]
         [(application? exp) (analyze-application exp)]
         [else (error "Unknown expression type: ANALYZE" exp)]))
 
@@ -353,10 +344,28 @@
 (define (ambeval exp env succeed fail)
   ((analyze exp) env succeed fail))
 
-(define (ramb? exp) (tagged-list? exp 'ramb))
-(define (ramb-choices exp) (shuffle (amb-choices exp)))
-(define (analyze-ramb exp)
-  (analyze-amb (cons 'amb (ramb-choices exp))))
+(define (permanent-set? exp) (tagged-list? exp 'permanent-set!))
+(define (analyze-permanent-set exp)
+  (let ([var (assignment-variable exp)]
+        [vproc (analyze (assignment-value exp))])
+    (lambda (env succeed fail)
+      (vproc env
+             (lambda (val fail2)        ;; *1*
+               (set-variable-value! var val env)
+               (succeed 'ok
+                        (lambda ()      ;; *2*
+                          (fail2))))
+             fail))))
+
+(define (setup-environment)
+  (let ([initial-env
+         (extend-environment (primitive-procedure-names)
+                             (primitive-procedure-objects)
+                             the-empty-environment)])
+    (define-variable! 'true #t initial-env) ;; '#t is #t
+    (define-variable! 'false #f initial-env)
+    initial-env))
+(define the-global-environment (setup-environment))
 
 (define input-prompt ";;; Amb-Eval input:")
 (define output-prompt ";;; Amb-Eval value:")
@@ -399,6 +408,25 @@
       (display object)))
 (driver-loop)
 
-;; (ramb 0 1 2 3)
+;;; Amb-Eval input:
+;; (define (require p) (if (not p) (amb)))
+;; (define (an-element-of items)
+;;   (require (not (null? items)))
+;;   (amb (car items) (an-element-of (cdr items))))
+
+;;; Amb-Eval input:
+;; (define count 0)
+;; (let ((x (an-element-of '(a b c)))
+;;       (y (an-element-of '(a b c))))
+;;   (set! count (+ count 1))
+;;   (require (not (eq? x y)))
+;;   (list x y count))
+;;; Starting a new problem
+;;; Amb-Eval value:
+;; (a b 1)
+
+;;; Amb-Eval input:
 ;; try-again
-;; internal definitions scanned out? don't think so
+
+;;; Amb-Eval value:
+;; (a c 1)

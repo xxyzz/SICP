@@ -77,7 +77,7 @@
 (define (if-alternative exp)
   (if (not (null? (cdddr exp)))
       (cadddr exp)
-      '#f))
+      'false))
 (define (make-if predicate consequent alternative)
   (list 'if predicate consequent alternative))
 
@@ -262,8 +262,8 @@
          (extend-environment (primitive-procedure-names)
                              (primitive-procedure-objects)
                              the-empty-environment)])
-    (define-variable! '#t #t initial-env)
-    (define-variable! '#f #f initial-env)
+    (define-variable! 'true #t initial-env)
+    (define-variable! 'false #f initial-env)
     initial-env))
 (define the-global-environment (setup-environment))
 

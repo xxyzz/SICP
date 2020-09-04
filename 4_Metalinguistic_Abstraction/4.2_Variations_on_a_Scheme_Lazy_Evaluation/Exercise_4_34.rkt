@@ -49,8 +49,8 @@
          (extend-environment (primitive-procedure-names)
                              (primitive-procedure-objects)
                              the-empty-environment)])
-    (define-variable! '#t #t initial-env)
-    (define-variable! '#f #f initial-env)
+    (define-variable! 'true #t initial-env)
+    (define-variable! 'false #f initial-env)
     (define-variable! 'null null initial-env)
     initial-env))
 
