@@ -53,6 +53,8 @@ $ brew cask install racket
 
     - 4.3 [Variations on a Scheme — Nondeterministic Computing](./4_Metalinguistic_Abstraction/4.3_Variations_on_a_Scheme_Nondeterministic_Computing)
 
+    - 4.4 [Logic Programming](./4_Metalinguistic_Abstraction/4.4_Logic_Programming)
+
 ## License
 
 This work is licensed under the GPLv3 or any later version.
