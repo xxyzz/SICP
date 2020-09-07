@@ -1,6 +1,6 @@
-# 4 Logic Programming
+# 4.4 Logic Programming
 
-## 4.1.1 Deductive Information Retrieval
+## 4.4.1 Deductive Information Retrieval
 
 ### Exercise 4.55:
 
@@ -84,3 +84,42 @@ she notices that each pair of people who live near each other is listed twice; f
 ```
 
 Why does this happen? Is there a way to find a list of people who live near each other, in which each pair appears only once? Explain.
+
+### Exercise 4.61:
+
+The following rules implement a `next-to` relation that finds adjacent elements of a list:
+
+```scheme
+(rule (?x next-to ?y in (?x ?y . ?u)))
+(rule (?x next-to ?y in (?v . ?z))
+      (?x next-to ?y in ?z))
+```
+
+What will the response be to the following queries?
+
+```scheme
+(?x next-to ?y in (1 (2 3) 4))
+(?x next-to  1 in (2 1 3 1))
+```
+
+### Exercise 4.62:
+
+Define rules to implement the `last-pair` operation of Exercise 2.17, which returns a list containing the last element of a nonempty list. Check your rules on queries such as (last-pair (3) ?x), (last-pair (1 2 3) ?x) and (last-pair (2 ?x) (3)). Do your rules work correctly on queries such as (last-pair ?x (3)) ?
+
+### Exercise 4.63:
+
+The following data base (see Genesis 4) traces the genealogy of the descendants of Ada back to Adam, by way of Cain:
+
+```scheme
+(son Adam Cain)
+(son Cain Enoch)
+(son Enoch Irad)
+(son Irad Mehujael)
+(son Mehujael Methushael)
+(son Methushael Lamech)
+(wife Lamech Ada)
+(son Ada Jabal)
+(son Ada Jubal)
+```
+
+Formulate rules such as “If S is the son of f, and f is the son of G, then S is the grandson of G” and “If W is the wife of M, and S is the son of W, then S is the son of M”(which was supposedly more true in biblical times than today) that will enable the query system to find the grandson of Cain; the sons of Lamech; the grandsons of Methushael. (See Exercise 4.69 for some rules to deduce more complicated relationships.)
