@@ -123,3 +123,85 @@ The following data base (see Genesis 4) traces the genealogy of the descendants 
 ```
 
 Formulate rules such as “If S is the son of f, and f is the son of G, then S is the grandson of G” and “If W is the wife of M, and S is the son of W, then S is the son of M”(which was supposedly more true in biblical times than today) that will enable the query system to find the grandson of Cain; the sons of Lamech; the grandsons of Methushael. (See Exercise 4.69 for some rules to deduce more complicated relationships.)
+
+## 4.4.2 How the Query System Works
+
+## 4.4.3 Is Logic Programming Mathematical Logic?
+
+### Exercise 4.64:
+
+Louis Reasoner mistakenly deletes the `outranked-by` rule (Section 4.4.1) from the data base. When he realizes this, he quickly reinstalls it. Unfortunately, he makes a slight change in the rule, and types it in as
+
+```scheme
+(rule (outranked-by ?staff-person ?boss)
+      (or (supervisor ?staff-person ?boss)
+          (and (outranked-by ?middle-manager ?boss)
+               (supervisor ?staff-person
+                           ?middle-manager))))
+```
+
+Just after Louis types this information into the system, DeWitt Aull comes by to find out who outranks Ben Bitdiddle. He issues the query
+
+```scheme
+(outranked-by (Bitdiddle Ben) ?who)
+```
+
+After answering, the system goes into an infinite loop. Explain why.
+
+`(outranked-by ?middle-manager ?boss)` is same as `(outranked-by ?staff-person ?boss)`.
+
+### Exercise 4.65:
+
+Cy D. Fect, looking forward to the day when he will rise in the organization, gives a query to find all the wheels (using the `wheel` rule of Section 4.4.1):
+
+```scheme
+(wheel ?who)
+```
+
+To his surprise, the system responds
+
+```scheme
+;;; Query results:
+(wheel (Warbucks Oliver))
+(wheel (Bitdiddle Ben))
+(wheel (Warbucks Oliver))
+(wheel (Warbucks Oliver))
+(wheel (Warbucks Oliver))
+```
+
+Why is Oliver Warbucks listed four times?
+
+### Exercise 4.66:
+
+Ben has been generalizing the query system to provide statistics about the company. For example, to find the total salaries of all the computer programmers one will be able to say
+
+```scheme
+(sum ?amount (and (job ?x (computer programmer))
+                  (salary ?x ?amount)))
+```
+
+In general, Ben’s new system allows expressions of the form
+
+```scheme
+(accumulation-function ⟨variable⟩ ⟨query pattern⟩)
+```
+
+where `accumulation-function` can be things like `sum`, `average`, or `maximum`. Ben reasons that it should be a cinch to implement this. He will simply feed the query pattern to `qeval`. This will produce a stream of frames. He will then pass this stream through a mapping function that extracts the value of the designated variable from each frame in the stream and feed the resulting stream of values to the accumulation function. Just as Ben completes the implementation and is about to try it out, Cy walks by, still puzzling over the `wheel` query result in Exercise 4.65. When Cy shows Ben the system’s response, Ben groans, “Oh, no, my simple accumulation scheme won’t work!”
+
+What has Ben just realized? Outline a method he can use to salvage the situation.
+
+I have no idea. TODO
+
+### Exercise 4.67:
+
+Devise a way to install a loop detector in the query system so as to avoid the kinds of simple loops illustrated in the text and in Exercise 4.64. The general idea is that the system should maintain some sort of history of its current chain of deductions and should not begin processing a query that it is already working on. Describe what kind of information (patterns and frames) is included in this history, and how the check should be made. (After you study the details of the query-system implementation in Section 4.4.4, you may want to modify the system to include your loop detector.)
+
+Track rule name and it's variables.
+
+### Exercise 4.68:
+
+Define rules to implement the `reverse` operation of Exercise 2.18, which returns a list containing the same elements as a given list in reverse order. (Hint: Use `append-to-form`.) Can your rules answer both `(reverse (1 2 3) ?x)` and `(reverse ?x (1 2 3))`?
+
+### Exercise 4.69:
+
+Beginning with the data base and the rules you formulated in Exercise 4.63, devise a rule for adding “greats” to a grandson relationship. This should enable the system to deduce that Irad is the great-grandson of Adam, or that Jabal and Jubal are the great-great-great-great-great-grandsons of Adam. (Hint: Represent the fact about Irad, for example, as `((great grandson) Adam Irad)`. Write rules that determine if a list ends in the word `grandson`. Use this to express a rule that allows one to derive the relationship `((great . ?rel) ?x ?y)`, where `?rel` is a list ending in `grandson`.) Check your rules on queries such as ((great grandson) ?g ?ggs)`` and `(?relationship Adam Irad)`.
