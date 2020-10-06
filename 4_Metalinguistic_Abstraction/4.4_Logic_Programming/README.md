@@ -2,7 +2,7 @@
 
 ## 4.4.1 Deductive Information Retrieval
 
-### Exercise 4.55:
+#### Exercise 4.55:
 
 Give simple queries that retrieve the following information from the data base:
 
@@ -12,7 +12,7 @@ Give simple queries that retrieve the following information from the data base:
 
 3. the names and addresses of all people who live in Slumerville.
 
-### Exercise 4.56:
+#### Exercise 4.56:
 
 Formulate compound queries that retrieve the following information:
 
@@ -22,7 +22,7 @@ b. all people whose salary is less than Ben Bitdiddle’s, together with their s
 
 c. all people who are supervised by someone who is not in the computer division, together with the supervisor’s name and job.
 
-### Exercise 4.57:
+#### Exercise 4.57:
 
 Define a rule that says that person 1 can replace person 2 if either person 1 does the same job as person 2 or someone who does person 1’s job can also do person 2’s job, and if person 1 and person 2 are not the same person. Using your rule, give queries that find the following:
 
@@ -30,11 +30,11 @@ a. all people who can replace Cy D. Fect;
 
 b. all people who can replace someone who is being paid more than they are, together with the two salaries.
 
-### Exercise 4.58:
+#### Exercise 4.58:
 
 Define a rule that says that a person is a “big shot” in a division if the person works in the division but does not have a supervisor who works in the division.
 
-### Exercise 4.59:
+#### Exercise 4.59:
 
 Ben Bitdiddle has missed one meeting too many. Fearing that his habit of forgetting meetings could cost him his job, Ben decides to do something about it. He adds all the weekly meetings of the firm to the Microshaft data base by asserting the following:
 
@@ -62,7 +62,7 @@ b. Alyssa P. Hacker is unimpressed. She thinks it would be much more useful to b
 
 c. Alyssa arrives at work on Wednesday morning and wonders what meetings she has to attend that day. Having defined the above rule, what query should she make to find this out?
 
-### Exercise 4.60:
+#### Exercise 4.60:
 
 By giving the query
 
@@ -85,7 +85,7 @@ she notices that each pair of people who live near each other is listed twice; f
 
 Why does this happen? Is there a way to find a list of people who live near each other, in which each pair appears only once? Explain.
 
-### Exercise 4.61:
+#### Exercise 4.61:
 
 The following rules implement a `next-to` relation that finds adjacent elements of a list:
 
@@ -102,11 +102,11 @@ What will the response be to the following queries?
 (?x next-to  1 in (2 1 3 1))
 ```
 
-### Exercise 4.62:
+#### Exercise 4.62:
 
 Define rules to implement the `last-pair` operation of Exercise 2.17, which returns a list containing the last element of a nonempty list. Check your rules on queries such as (last-pair (3) ?x), (last-pair (1 2 3) ?x) and (last-pair (2 ?x) (3)). Do your rules work correctly on queries such as (last-pair ?x (3)) ?
 
-### Exercise 4.63:
+#### Exercise 4.63:
 
 The following data base (see Genesis 4) traces the genealogy of the descendants of Ada back to Adam, by way of Cain:
 
@@ -128,7 +128,7 @@ Formulate rules such as “If S is the son of f, and f is the son of G, then S i
 
 ## 4.4.3 Is Logic Programming Mathematical Logic?
 
-### Exercise 4.64:
+#### Exercise 4.64:
 
 Louis Reasoner mistakenly deletes the `outranked-by` rule (Section 4.4.1) from the data base. When he realizes this, he quickly reinstalls it. Unfortunately, he makes a slight change in the rule, and types it in as
 
@@ -150,7 +150,7 @@ After answering, the system goes into an infinite loop. Explain why.
 
 `(outranked-by ?middle-manager ?boss)` is same as `(outranked-by ?staff-person ?boss)`.
 
-### Exercise 4.65:
+#### Exercise 4.65:
 
 Cy D. Fect, looking forward to the day when he will rise in the organization, gives a query to find all the wheels (using the `wheel` rule of Section 4.4.1):
 
@@ -171,7 +171,7 @@ To his surprise, the system responds
 
 Why is Oliver Warbucks listed four times?
 
-### Exercise 4.66:
+#### Exercise 4.66:
 
 Ben has been generalizing the query system to provide statistics about the company. For example, to find the total salaries of all the computer programmers one will be able to say
 
@@ -192,16 +192,40 @@ What has Ben just realized? Outline a method he can use to salvage the situation
 
 I have no idea. TODO
 
-### Exercise 4.67:
+#### Exercise 4.67:
 
 Devise a way to install a loop detector in the query system so as to avoid the kinds of simple loops illustrated in the text and in Exercise 4.64. The general idea is that the system should maintain some sort of history of its current chain of deductions and should not begin processing a query that it is already working on. Describe what kind of information (patterns and frames) is included in this history, and how the check should be made. (After you study the details of the query-system implementation in Section 4.4.4, you may want to modify the system to include your loop detector.)
 
 Track rule name and it's variables.
 
-### Exercise 4.68:
+#### Exercise 4.68:
 
 Define rules to implement the `reverse` operation of Exercise 2.18, which returns a list containing the same elements as a given list in reverse order. (Hint: Use `append-to-form`.) Can your rules answer both `(reverse (1 2 3) ?x)` and `(reverse ?x (1 2 3))`?
 
-### Exercise 4.69:
+#### Exercise 4.69:
 
 Beginning with the data base and the rules you formulated in Exercise 4.63, devise a rule for adding “greats” to a grandson relationship. This should enable the system to deduce that Irad is the great-grandson of Adam, or that Jabal and Jubal are the great-great-great-great-great-grandsons of Adam. (Hint: Represent the fact about Irad, for example, as `((great grandson) Adam Irad)`. Write rules that determine if a list ends in the word `grandson`. Use this to express a rule that allows one to derive the relationship `((great . ?rel) ?x ?y)`, where `?rel` is a list ending in `grandson`.) Check your rules on queries such as ((great grandson) ?g ?ggs)`` and `(?relationship Adam Irad)`.
+
+## 4.4.4 Implementing the Query System
+
+### 4.4.4.1 The Driver Loop and Instantiation
+
+### 4.4.4.2 The Evaluator
+
+### 4.4.4.3 Finding Assertions by Pattern Matching
+
+### 4.4.4.4 Rules and Unification
+
+### 4.4.4.5 Maintaining the Data Base
+
+#### Exercise 4.70:
+
+What is the purpose of the `let` bindings in the procedures `add-assertion!` and `add-rule!`? What would be wrong with the following implementation of `add-assertion!`? Hint: Recall the definition of the infinite stream of ones in Section 3.5.2: `(define ones (cons-stream 1 ones))`.
+
+```scheme
+(define (add-assertion! assertion)
+  (store-assertion-in-index assertion)
+  (set! THE-ASSERTIONS
+        (cons-stream assertion THE-ASSERTIONS))
+  'ok)
+```
