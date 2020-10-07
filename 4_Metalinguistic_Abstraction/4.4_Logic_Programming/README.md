@@ -229,3 +229,33 @@ What is the purpose of the `let` bindings in the procedures `add-assertion!` and
         (cons-stream assertion THE-ASSERTIONS))
   'ok)
 ```
+
+### 4.4.4.6 Stream Operations
+
+### 4.4.4.7 Query Syntax Procedures
+
+### 4.4.4.8 Frames and Bindings
+
+#### Exercise 4.71:
+
+Louis Reasoner wonders why the `simple-query` and `disjoin` procedures (Section 4.4.4.2) are implemented using explicit `delay` operations, rather than being defined as follows:
+
+```scheme
+(define (simple-query query-pattern frame-stream)
+  (stream-flatmap
+   (lambda (frame)
+     (stream-append
+      (find-assertions query-pattern frame)
+      (apply-rules query-pattern frame)))
+   frame-stream))
+(define (disjoin disjuncts frame-stream)
+  (if (empty-disjunction? disjuncts)
+      the-empty-stream
+      (interleave
+       (qeval (first-disjunct disjuncts)
+              frame-stream)
+       (disjoin (rest-disjuncts disjuncts)
+                frame-stream))))
+```
+
+Can you give examples of queries where these simpler definitions would lead to undesirable behavior?
