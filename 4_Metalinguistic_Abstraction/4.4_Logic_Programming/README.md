@@ -148,7 +148,7 @@ Just after Louis types this information into the system, DeWitt Aull comes by to
 
 After answering, the system goes into an infinite loop. Explain why.
 
-`(outranked-by ?middle-manager ?boss)` is same as `(outranked-by ?staff-person ?boss)`.
+`(outranked-by ?middle-manager ?boss)` is same as `(outranked-by ?staff-person ?boss)`. Apply the second rule of `and` first won't generate infinite loop because `?middle-manager` will be extended.
 
 #### Exercise 4.65:
 
@@ -259,3 +259,7 @@ Louis Reasoner wonders why the `simple-query` and `disjoin` procedures (Section 
 ```
 
 Can you give examples of queries where these simpler definitions would lead to undesirable behavior?
+
+#### Exercise 4.72:
+
+Why do `disjoin` and `stream-flatmap` interleave the streams rather than simply append them? Give examples that illustrate why interleaving works better. (Hint: Why did we use `interleave` in Section 3.5.3?)

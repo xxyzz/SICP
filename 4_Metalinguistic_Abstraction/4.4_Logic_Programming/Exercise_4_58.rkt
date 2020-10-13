@@ -6,3 +6,7 @@
                (and (supervisor ?person ?boss)
                     (not (job ?boss (?division . ?boss-position)))
                     (not (big-shot? ?boss ?division))))))
+
+;; (big-shot (Warbucks Oliver) administration)
+;; (big-shot (Scrooge Eben) accounting)
+;; (big-shot (Bitdiddle Ben) computer)
