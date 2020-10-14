@@ -21,3 +21,5 @@
 (last-pair ?x (3))
 ;;; Query results:
 ;; program can't complete
+;; it will generate infinite frames
+;; (last-pair ?1-v (?1-x)) -> (last-pair (?2-u . ?2-v) (?2-x))

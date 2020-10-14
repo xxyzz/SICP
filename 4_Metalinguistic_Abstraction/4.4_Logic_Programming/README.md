@@ -190,7 +190,7 @@ where `accumulation-function` can be things like `sum`, `average`, or `maximum`.
 
 What has Ben just realized? Outline a method he can use to salvage the situation.
 
-I have no idea. TODO
+If the query contains `wheel` then it's results will have duplicated data. Track the person from the result and remove the duplicated person.
 
 #### Exercise 4.67:
 
