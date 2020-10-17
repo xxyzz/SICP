@@ -204,7 +204,7 @@ Define rules to implement the `reverse` operation of Exercise 2.18, which return
 
 #### Exercise 4.69:
 
-Beginning with the data base and the rules you formulated in Exercise 4.63, devise a rule for adding “greats” to a grandson relationship. This should enable the system to deduce that Irad is the great-grandson of Adam, or that Jabal and Jubal are the great-great-great-great-great-grandsons of Adam. (Hint: Represent the fact about Irad, for example, as `((great grandson) Adam Irad)`. Write rules that determine if a list ends in the word `grandson`. Use this to express a rule that allows one to derive the relationship `((great . ?rel) ?x ?y)`, where `?rel` is a list ending in `grandson`.) Check your rules on queries such as ((great grandson) ?g ?ggs)`` and `(?relationship Adam Irad)`.
+Beginning with the data base and the rules you formulated in Exercise 4.63, devise a rule for adding “greats” to a grandson relationship. This should enable the system to deduce that Irad is the great-grandson of Adam, or that Jabal and Jubal are the great-great-great-great-great-grandsons of Adam. (Hint: Represent the fact about Irad, for example, as `((great grandson) Adam Irad)`. Write rules that determine if a list ends in the word `grandson`. Use this to express a rule that allows one to derive the relationship `((great . ?rel) ?x ?y)`, where `?rel` is a list ending in `grandson`.) Check your rules on queries such as `((great grandson) ?g ?ggs)` and `(?relationship Adam Irad)`.
 
 ## 4.4.4 Implementing the Query System
 
@@ -263,3 +263,72 @@ Can you give examples of queries where these simpler definitions would lead to u
 #### Exercise 4.72:
 
 Why do `disjoin` and `stream-flatmap` interleave the streams rather than simply append them? Give examples that illustrate why interleaving works better. (Hint: Why did we use `interleave` in Section 3.5.3?)
+
+#### Exercise 4.73:
+
+Why does `flatten-stream` use `delay` explicitly? What would be wrong with defining it as follows:
+
+```scheme
+(define (flatten-stream stream)
+  (if (stream-null? stream)
+      the-empty-stream
+      (interleave
+       (stream-car stream)
+       (flatten-stream (stream-cdr stream)))))
+```
+
+#### Exercise 4.74:
+
+Alyssa P. Hacker proposes to use a simpler version of `stream-flatmap` in `negate`, `lisp-value`, and `find-assertions`. She observes that the procedure that is mapped over the frame stream in these cases always produces either the empty stream or a singleton stream, so no interleaving is needed when combining these streams.
+
+a. Fill in the missing expressions in Alyssa’s program.
+
+```scheme
+(define (simple-stream-flatmap proc s)
+  (simple-flatten (stream-map proc s)))
+(define (simple-flatten stream)
+  (stream-map ⟨??⟩
+              (stream-filter ⟨??⟩ stream)))
+```
+
+b. Does the query system’s behavior change if we change it in this way?
+
+#### Exercise 4.75:
+
+Implement for the query language a new special form called `unique`. `unique` should succeed if there is precisely one item in the data base satisfying a specified query. For example,
+
+```scheme
+(unique (job ?x (computer wizard)))
+```
+
+should print the one-item stream
+
+```scheme
+(unique (job (Bitdiddle Ben) (computer wizard)))
+```
+
+since Ben is the only computer wizard, and
+
+```scheme
+(unique (job ?x (computer programmer)))
+```
+
+should print the empty stream, since there is more than one computer programmer. Moreover,
+
+```scheme
+(and (job ?x ?j) (unique (job ?anyone ?j)))
+```
+
+should list all the jobs that are filled by only one person, and the people who fill them.
+
+There are two parts to implementing `unique`. The first is to write a procedure that handles this special form, and the second is to make `qeval` dispatch to that procedure. The second part is trivial, since `qeval` does its dispatching in a data-directed way. If your procedure is called `uniquely-asserted`, all you need to do is
+
+```scheme
+(put 'unique 'qeval uniquely-asserted)
+```
+
+and `qeval` will dispatch to this procedure for every query whose `type (car)` is the symbol `unique`.
+
+The real problem is to write the procedure `uniquely-asserted`. This should take as input the `contents (cdr)` of the `unique` query, together with a stream of frames. For each frame in the stream, it should use `qeval` to find the stream of all extensions to the frame that satisfy the given query. Any stream that does not have exactly one item in it should be eliminated. The remaining streams should be passed back to be accumulated into one big stream that is the result of the `unique` query. This is similar to the implementation of the `not` special form.
+
+Test your implementation by forming a query that lists all people who supervise precisely one person.
