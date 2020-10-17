@@ -23,3 +23,6 @@
 ;; program can't complete
 ;; it will generate infinite frames
 ;; (last-pair ?1-v (?1-x)) -> (last-pair (?2-u . ?2-v) (?2-x))
+;; if we change the order of the two rules
+;; (rule (last-pair (?x) (?x))) will applied first
+;; the other rule will delayed then infinite results will printed

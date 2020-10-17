@@ -1,13 +1,13 @@
 #lang racket/base
 
-(rule (grandson ?g ?s)
-      (and (is-son-of ?f ?s)
-           (is-son-of ?g ?f)))
-
 (rule (son-of ?m ?s)
       (or (son ?m ?s)
           (and (wife ?m ?w) ;; find m's wife's son
                (son ?w ?s))))
+
+(rule (grandson ?g ?s)
+      (and (son-of ?f ?s)
+           (son-of ?g ?f)))
 
 (add-assertion! '(son Adam Cain))
 (add-assertion! '(son Cain Enoch))
