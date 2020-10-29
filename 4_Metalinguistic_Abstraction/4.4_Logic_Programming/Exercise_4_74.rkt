@@ -9,6 +9,6 @@
               (stream-filter (lambda (s)
                                (not (stream-empty? s)))
                              stream)))
-;; simple-flatten get a stream of singleton-stream
+;; simple-flatten get a stream of singleton-stream (cons s empty-stream)
 
 ;; b: not at all

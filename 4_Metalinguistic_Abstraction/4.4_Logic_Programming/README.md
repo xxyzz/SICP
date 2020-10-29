@@ -332,3 +332,13 @@ and `qeval` will dispatch to this procedure for every query whose `type (car)` i
 The real problem is to write the procedure `uniquely-asserted`. This should take as input the `contents (cdr)` of the `unique` query, together with a stream of frames. For each frame in the stream, it should use `qeval` to find the stream of all extensions to the frame that satisfy the given query. Any stream that does not have exactly one item in it should be eliminated. The remaining streams should be passed back to be accumulated into one big stream that is the result of the `unique` query. This is similar to the implementation of the `not` special form.
 
 Test your implementation by forming a query that lists all people who supervise precisely one person.
+
+#### Exercise 4.76:
+
+Our implementation of and as a series combination of queries (Figure 4.5) is elegant, but it is inefficient because in processing the second query of the and we must scan the data base for each frame produced by the first query. If the data base has n elements, and a typical query produces a number of output frames proportional to n (say n/k), then scanning the data base for each frame produced by the first query will require n<sup>2</sup>/k calls to the pattern matcher. Another approach would be to process the two clauses of the and separately, then look for all pairs of output frames that are compatible. If each query produces n/k output frames, then this means that we must perform n<sup>2</sup>/k<sup>2</sup> compatibility checks—a factor of k fewer than the number of matches required in our current method.
+
+Devise an implementation of `and` that uses this strategy. You must implement a procedure that takes two frames as inputs, checks whether the bindings in the frames are compatible, and, if so, produces a frame that merges the two sets of bindings. This operation is similar to unification.
+
+#### Exercise 4.77:
+
+In Section 4.4.3 we saw that `not` and `lisp-value` can cause the query language to give “wrong” answers if these filtering operations are applied to frames in which variables are unbound. Devise a way to fix this shortcoming. One idea is to perform the filtering in a “delayed” manner by appending to the frame a “promise” to filter that is fulfilled only when enough variables have been bound to make the operation possible. We could wait to perform filtering until all other operations have been performed. However, for efficiency’s sake, we would like to perform filtering as soon as possible so as to cut down on the number of intermediate frames generated.
