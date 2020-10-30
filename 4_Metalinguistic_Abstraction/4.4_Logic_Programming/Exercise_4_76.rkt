@@ -20,28 +20,15 @@
    s1))
 
 (define (merge-frames f1 f2)
-  (cond [(null? f1) f2]
-        [(null? f2) f1]
+  (cond [(null? f2) f1]
+        [(eq? f2 'failed) null]
+        [(null? f1) f2]
         [else
-         (let* ([binding1 (car f1)]
-                [var (binding-variable binding1)]
-                [binding2 (binding-in-frame var f2)])
-           (if binding2
-               (let ([val1 (find-final-value var f1)]
-                     [var2 (find-final-value var f2)])
-                 (if (equal? val1 var2)
-                     (merge-frames (cdr f1) (cons binding1 f2))
-                     null))
-               (merge-frames (cdr f1) (cons binding1 f2))))]))
-
-(define (find-final-value var frame)
-  (let ([binding (binding-in-frame var frame)])
-    (if binding
-        (let ([val (binding-value binding)])
-          (if (var? val)
-              (find-final-value (binding-value val) frame)
-              val))
-        null)))
+         (let* ([binding (car f1)]
+                [var (binding-variable binding)]
+                [val (binding-value binding)]
+                [frame (extend-if-possible var val f2)])
+           (merge-frames (cdr f1) frame))]))
 
 ;; tests
 (and (address ?p ?l)
@@ -52,3 +39,11 @@
 (and (address (Fect Cy D) (Cambridge (Ames Street) 3)) (job (Fect Cy D) (computer programmer)))
 (and (address (Hacker Alyssa P) (Cambridge (Mass Ave) 78)) (job (Hacker Alyssa P) (computer programmer)))
 (and (address (Bitdiddle Ben) (Slumerville (Ridge Road) 10)) (job (Bitdiddle Ben) (computer wizard)))
+
+(assert! (rule (append-to-form () ?y ?y)))
+(assert! (rule (append-to-form (?u . ?v) ?y (?u . ?z))
+               (append-to-form ?v ?y ?z)))
+(and (append-to-form (1 2) (3 4) ?x)
+     (append-to-form (1) ?y ?x))
+;;; Query results:
+(and (append-to-form (1 2) (3 4) (1 2 3 4)) (append-to-form (1) (2 3 4) (1 2 3 4)))
