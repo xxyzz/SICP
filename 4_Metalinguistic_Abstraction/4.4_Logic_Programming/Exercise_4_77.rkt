@@ -1,7 +1,7 @@
 #lang racket/base
 
-(define (make-filter-promise qproc query)
-  (list 'filter-promise qproc query))
+(define (make-filter-promise qproc query lisp-value?)
+  (list 'filter-promise qproc query lisp-value?))
 
 (define (filter-promise? frame)
   (tagged-list? frame 'filter-promise))
@@ -11,6 +11,9 @@
 
 (define (filter-promise-query promise)
   (caddr promise))
+
+(define (filter-promise-type promise)
+  (cadddr promise))
 
 (define (force-filter-promise promise frame)
   (let ([qproc (filter-promise-qproc promise)]
@@ -23,43 +26,50 @@
      (not (filter-promise? frame)))
    frame-stream))
 
-(define (filter-already-bound? exp frame-stream)
+(define (filter-already-bound? exp frame-stream lisp-value?)
   (stream-ormap
    (lambda (frame)
-     (filter-bound-in-frame? exp frame))
+     (filter-bound-in-frame? exp frame lisp-value?))
    (remove-filter-promise frame-stream)))
 
 (define (create-negate-promise operands frame-stream)
-  (if (filter-already-bound? operands frame-stream)
+  (if (filter-already-bound? operands frame-stream #f)
       (negate operands frame-stream)
-      (stream-cons (make-filter-promise negate operands)
+      (stream-cons (make-filter-promise negate operands #f)
                frame-stream)))
 (put 'not 'qeval create-negate-promise) ;; ***
 
 (define (create-lisp-value-promise call frame-stream)
-  (if (filter-already-bound? call frame-stream)
+  (if (filter-already-bound? call frame-stream #t)
       (lisp-value call frame-stream)
-      (stream-cons (make-filter-promise lisp-value call)
+      (stream-cons (make-filter-promise lisp-value call #t)
                    frame-stream)))
 (put 'lisp-value 'qeval create-lisp-value-promise) ;; ***
 
-(define (filter-bound-in-frame? exp frame)
-  (define (check exp)
+(define (filter-bound-in-frame? query frame lisp-value?)
+  (define (check exp [value? #f])
     (cond [(var? exp)
            (let ([binding (binding-in-frame exp frame)])
              (if binding
-                 (check (binding-value binding))
+                 (check (binding-value binding) #t)
                  #f))]
           [(pair? exp)
-           (and (check (car exp)) (check (cdr exp)))]
-          [else #t]))
+           (if lisp-value?
+               (and (check (car exp) value?) (check (cdr exp) value?))
+               (or (check (car exp) value?) (check (cdr exp) value?)))]
+          [value? #t]
+          [else lisp-value?]))
   (and (not (null? frame))
-       (andmap check frame)))
+       (if lisp-value?
+           (andmap check query)   ;; lisp-value needs all variables are bound
+           (ormap check query)))) ;; not filter needs at least one bound variable
 
 (define (frame-passed-filter? frame frame-stream)
   (stream-andmap
    (lambda (filter-promise)
-     (if (filter-bound-in-frame? (filter-promise-query filter-promise) frame)
+     (if (filter-bound-in-frame? (filter-promise-query filter-promise)
+                                 frame
+                                 (filter-promise-type filter-promise))
          (not (stream-empty? (force-filter-promise filter-promise frame)))
          #t))
    (stream-filter
@@ -93,14 +103,16 @@
              (remove-filter-promise (qeval q (singleton-stream '()))))) ;; ***
            (query-driver-loop)])))
 
-;; pass the damn frame-stream for filter promises
+;; pass the damn frame-stream for checking filter promises
 (define (simple-query query-pattern frame-stream)
   (stream-flatmap
    (lambda (frame)
-     (stream-append-delayed
-      (find-assertions query-pattern frame frame-stream)       ;; ***
-      (delay (apply-rules query-pattern frame frame-stream)))) ;; ***
-   (remove-filter-promise frame-stream)))                      ;; ***
+     (if (filter-promise? frame) ;; ***
+         (singleton-stream frame)
+         (stream-append-delayed
+          (find-assertions query-pattern frame frame-stream)       ;; ***
+          (delay (apply-rules query-pattern frame frame-stream))))) ;; ***
+   frame-stream))
 
 (define (find-assertions pattern frame frame-stream)
   (stream-flatmap
@@ -177,7 +189,7 @@
            'failed]
           [else (extend var val frame frame-stream)]))) ;; ***
 
-;; test
+;; test from 4.4.3
 (and (not (job ?x (computer programmer)))
      (supervisor ?x ?y))
 ;;; Query results:
@@ -190,10 +202,44 @@
 
 (and (supervisor ?x ?y)
      (not (job ?x (computer programmer))))
-;;; Query results:
-(and (supervisor (Aull DeWitt) (Warbucks Oliver)) (not (job (Aull DeWitt) (computer programmer))))
-(and (supervisor (Cratchet Robert) (Scrooge Eben)) (not (job (Cratchet Robert) (computer programmer))))
-(and (supervisor (Scrooge Eben) (Warbucks Oliver)) (not (job (Scrooge Eben) (computer programmer))))
-(and (supervisor (Bitdiddle Ben) (Warbucks Oliver)) (not (job (Bitdiddle Ben) (computer programmer))))
-(and (supervisor (Reasoner Louis) (Hacker Alyssa P)) (not (job (Reasoner Louis) (computer programmer))))
-(and (supervisor (Tweakit Lem E) (Bitdiddle Ben)) (not (job (Tweakit Lem E) (computer programmer))))
+
+;; 4.56 b
+(and (salary (Bitdiddle Ben) ?wizard-salary)
+     (salary ?person ?amount)
+     (lisp-value < ?amount ?wizard-salary))
+
+(and (salary (Bitdiddle Ben) ?wizard-salary)
+     (lisp-value < ?amount ?wizard-salary)
+     (salary ?person ?amount))
+
+(and (lisp-value < ?amount ?wizard-salary)
+     (salary (Bitdiddle Ben) ?wizard-salary)
+     (salary ?person ?amount))
+
+;; 4.56 c
+(and (supervisor ?x ?boss)
+     (not (job ?boss (computer . ?position)))
+     (job ?boss ?boss-position))
+
+(and (not (job ?boss (computer . ?position)))
+     (supervisor ?x ?boss)
+     (job ?boss ?boss-position))
+
+;; 4.57 failed
+(assert! (rule (same ?x ?x)))
+
+(assert! (rule (replace ?person-1 ?person-2)
+               (and (not (same ?person-1 ?person-2))
+                    (job ?person-1 ?person-1-job)
+                    (job ?person-2 ?person-2-job)
+                    (or (same ?person-1-job ?person-2-job)
+                        (can-do-job ?person-1-job ?person-2-job)))))
+
+;; a:
+(replace ?x (Fect Cy D))
+
+;; b:
+(and (lisp-value < ?a-salary ?b-salary)
+     (replace ?a ?b)
+     (salary ?a ?a-salary)
+     (salary ?b ?b-salary))
