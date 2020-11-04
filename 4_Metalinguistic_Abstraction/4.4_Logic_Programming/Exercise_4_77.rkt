@@ -1,7 +1,7 @@
 #lang racket/base
 
-(define (make-filter-promise qproc query lisp-value?)
-  (list 'filter-promise qproc query lisp-value?))
+(define (make-filter-promise qproc query vars)
+  (list 'filter-promise qproc query vars))
 
 (define (filter-promise? frame)
   (tagged-list? frame 'filter-promise))
@@ -12,13 +12,13 @@
 (define (filter-promise-query promise)
   (caddr promise))
 
-(define (filter-promise-type promise)
+(define (filter-promise-vars promise)
   (cadddr promise))
 
 (define (force-filter-promise promise frame)
   (let ([qproc (filter-promise-qproc promise)]
         [query (filter-promise-query promise)])
-    (qproc query (singleton-stream frame))))
+    (qproc query (singleton-stream frame) null)))
 
 (define (remove-filter-promise frame-stream)
   (stream-filter
@@ -26,52 +26,80 @@
      (not (filter-promise? frame)))
    frame-stream))
 
-(define (filter-already-bound? exp frame-stream lisp-value?)
+(define (filter-already-bound? exp frame-stream)
   (stream-ormap
    (lambda (frame)
-     (filter-bound-in-frame? exp frame lisp-value?))
+     (filter-bound-in-frame? exp frame))
    (remove-filter-promise frame-stream)))
 
-(define (create-negate-promise operands frame-stream)
-  (if (filter-already-bound? operands frame-stream #f)
-      (negate operands frame-stream)
-      (stream-cons (make-filter-promise negate operands #f)
-               frame-stream)))
+(define (find-in-query? var query)
+  (cond [(not (pair? query)) #f]
+        [(equal? var query)]
+        [else (or (find-in-query? var (car query))
+                  (find-in-query? var (cdr query)))]))
+
+(define (duplicated-var? var query)
+  (> (foldl
+      (lambda (exp result)
+        (+ (if (find-in-query? var exp)
+               1
+               0)
+           result))
+      0
+      query)
+     1))
+
+(define (not-filter-vars query full-query)
+  (define (iter exp vars)
+    (cond [(null? exp) vars]
+          [(var? exp)
+           (if (duplicated-var? exp full-query)
+               (cons exp vars)
+               vars)]
+          [(pair? exp)
+           (iter (cdr exp)
+                 (iter (car exp) vars))]
+          [else vars]))
+  (iter query null))
+
+(define (create-negate-promise operands frame-stream full-query)
+  (let ([vars (not-filter-vars operands full-query)])
+    (if (filter-already-bound? vars frame-stream)
+        (negate operands frame-stream full-query)
+        (stream-cons (make-filter-promise negate operands vars)
+                     frame-stream))))
 (put 'not 'qeval create-negate-promise) ;; ***
 
-(define (create-lisp-value-promise call frame-stream)
-  (if (filter-already-bound? call frame-stream #t)
-      (lisp-value call frame-stream)
-      (stream-cons (make-filter-promise lisp-value call #t)
+(define (create-lisp-value-promise call frame-stream full-query)
+  (if (filter-already-bound? call frame-stream)
+      (lisp-value call frame-stream null)
+      (stream-cons (make-filter-promise lisp-value call null)
                    frame-stream)))
 (put 'lisp-value 'qeval create-lisp-value-promise) ;; ***
 
-(define (filter-bound-in-frame? query frame lisp-value?)
-  (define (check exp [value? #f])
+(define (filter-bound-in-frame? query frame)
+  (define (bound? exp)
     (cond [(var? exp)
            (let ([binding (binding-in-frame exp frame)])
              (if binding
-                 (check (binding-value binding) #t)
+                 (bound? (binding-value binding))
                  #f))]
           [(pair? exp)
-           (if lisp-value?
-               (and (check (car exp) value?) (check (cdr exp) value?))
-               (or (check (car exp) value?) (check (cdr exp) value?)))]
-          [value? #t]
-          [else lisp-value?]))
+           (and (bound? (car exp)) (bound? (cdr exp)))]
+          [else #t]))
   (and (not (null? frame))
-       (if lisp-value?
-           (andmap check query)   ;; lisp-value needs all variables are bound
-           (ormap check query)))) ;; not filter needs at least one bound variable
+       (andmap bound? query)))
 
 (define (frame-passed-filter? frame frame-stream)
   (stream-andmap
    (lambda (filter-promise)
-     (if (filter-bound-in-frame? (filter-promise-query filter-promise)
-                                 frame
-                                 (filter-promise-type filter-promise))
-         (not (stream-empty? (force-filter-promise filter-promise frame)))
-         #t))
+     (let ([exp
+            (if (null? (filter-promise-vars filter-promise))
+                (filter-promise-query filter-promise)
+                (filter-promise-vars filter-promise))])
+       (if (filter-bound-in-frame? exp frame)
+           (not (stream-empty? (force-filter-promise filter-promise frame)))
+           #t)))
    (stream-filter
     filter-promise?
     frame-stream)))
@@ -100,10 +128,18 @@
                    frame
                  (lambda (v f)
                    (contract-question-mark v))))
-             (remove-filter-promise (qeval q (singleton-stream '()))))) ;; ***
+             (remove-filter-promise (qeval q
+                                           (singleton-stream '())
+                                           q)))) ;; ***
            (query-driver-loop)])))
 
-;; pass the damn frame-stream for checking filter promises
+;; pass frame-stream and full-query
+(define (qeval query frame-stream full-query)
+  (let ([qproc (get (type query) 'qeval)])
+    (if qproc
+        (qproc (contents query) frame-stream full-query) ;; ***
+        (simple-query query frame-stream))))
+
 (define (simple-query query-pattern frame-stream)
   (stream-flatmap
    (lambda (frame)
@@ -113,6 +149,46 @@
           (find-assertions query-pattern frame frame-stream)       ;; ***
           (delay (apply-rules query-pattern frame frame-stream))))) ;; ***
    frame-stream))
+
+(define (conjoin conjuncts frame-stream full-query)
+  (if (empty-conjunction? conjuncts)
+      frame-stream
+      (conjoin (rest-conjuncts conjuncts)
+               (qeval (first-conjunct conjuncts) frame-stream full-query) ;; ***
+               full-query))) ;; ***
+
+(define (disjoin disjuncts frame-stream full-query)
+  (if (empty-disjunction? disjuncts)
+      empty-stream
+      (interleave-delayed
+       (qeval (first-disjunct disjuncts) frame-stream full-query) ;; ***
+       (delay (disjoin (rest-disjuncts disjuncts) frame-stream full-query))))) ;; ***
+
+(define (negate operands frame-stream full-query)
+  (stream-flatmap
+   (lambda (frame)
+     (if (stream-empty?
+          (qeval (negated-query operands)
+                 (singleton-stream frame)
+                 full-query)) ;; ***
+         (singleton-stream frame)
+         empty-stream))
+   frame-stream))
+
+(define (lisp-value call frame-stream full-query) ;; ***
+  (stream-flatmap
+   (lambda (frame)
+     (if (execute
+          (instantiate
+              call
+              frame
+            (lambda (v f)
+              (error "Unknown pat var: LISP-VALUE" v))))
+         (singleton-stream frame)
+         empty-stream))
+   frame-stream))
+
+(define (always-true ignore frame-stream full-query) frame-stream)
 
 (define (find-assertions pattern frame frame-stream)
   (stream-flatmap
@@ -158,7 +234,8 @@
       (if (eq? unify-result 'failed)
           empty-stream
           (qeval (rule-body clean-rule)
-                 (singleton-stream unify-result))))))
+                 (singleton-stream unify-result)
+                 (rule-body clean-rule)))))) ;; ***
 
 (define (unify-match p1 p2 frame frame-stream)
   (cond [(eq? frame 'failed) 'failed]
@@ -225,19 +302,16 @@
      (supervisor ?x ?boss)
      (job ?boss ?boss-position))
 
-;; 4.57 failed
+;; 4.57
 (assert! (rule (same ?x ?x)))
-
 (assert! (rule (replace ?person-1 ?person-2)
                (and (not (same ?person-1 ?person-2))
                     (job ?person-1 ?person-1-job)
                     (job ?person-2 ?person-2-job)
                     (or (same ?person-1-job ?person-2-job)
                         (can-do-job ?person-1-job ?person-2-job)))))
-
 ;; a:
 (replace ?x (Fect Cy D))
-
 ;; b:
 (and (lisp-value < ?a-salary ?b-salary)
      (replace ?a ?b)
