@@ -1,6 +1,6 @@
 #lang racket/base
 (require compatibility/mlist) ;; list->mlist
-;; https://github.com/racket/compatibility/blob/master/compatibility-lib/compatibility/mlist.rkt#L68
+;; https://github.com/racket/compatibility/blob/master/compatibility-lib/compatibility/mlist.rkt#L63
 (require racket/list) ;; shuffle
 ;; https://github.com/racket/racket/blob/master/racket/collects/racket/list.rkt#L606
 
@@ -82,7 +82,7 @@
 (define (cond->if exp) (expand-clauses (cond-clauses exp)))
 (define (expand-clauses clauses)
   (if (null? clauses)
-      '#f ;; no else clause
+      'false ;; no else clause
       (let ([first (car clauses)]
             [rest (cdr clauses)])
         (if (cond-else-clause? first)

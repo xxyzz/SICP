@@ -2,14 +2,16 @@
 
 Exercises of the *[Wizard Book](https://mitpress.mit.edu/sites/default/files/sicp/index.html)*.
 
-Install [Racket](https://racket-lang.org) with your favorite package manager or from https://download.racket-lang.org before you getting started.
+Install [Racket](https://racket-lang.org) via your favorite package manager or from https://download.racket-lang.org before you getting started.
 
 ```
 // Homebrew
 $ brew cask install racket
 ```
 
-1. [Building Abstractions with Procedures](./1_Building_Abstractions_with_Procedures)
+## Chapters
+
+1. Building Abstractions with Procedures
 
     - 1.1 [The Elements of Programming](./1_Building_Abstractions_with_Procedures/1.1_The_Elements_of_Programming)
 
@@ -17,7 +19,7 @@ $ brew cask install racket
 
     - 1.3 [Formulating Abstractions with Higher-Order Procedures](./1_Building_Abstractions_with_Procedures/1.3_Formulating_Abstractions_with_Higher-Order_Procedures)
 
-2. [Building Abstractions with Data](./2_Building_Abstractions_with_Data)
+2. Building Abstractions with Data
 
     - 2.1 [Introduction to Data Abstraction](./2_Building_Abstractions_with_Data/2.1_Introduction_to_Data_Abstraction)
 
@@ -29,7 +31,7 @@ $ brew cask install racket
 
     - 2.5 [Systems with Generic Operations](./2_Building_Abstractions_with_Data/2.5_Systems_with_Generic_Operations)
 
-3. [Modularity, Objects, and State](./3_Modularity_Objects_and_State)
+3. Modularity, Objects, and State
 
     - 3.1 [Assignment and Local State](./3_Modularity_Objects_and_State/3.1_Assignment_and_Local_State)
 
@@ -41,7 +43,7 @@ $ brew cask install racket
 
     - 3.5 [Streams](/3_Modularity_Objects_and_State/3.5_Streams)
 
-4. [Metalinguistic Abstraction](.4_Metalinguistic_Abstraction)
+4. Metalinguistic Abstraction
 
     - 4.1 [The Metacircular Evaluator](.4_Metalinguistic_Abstraction/4.1_The_Metacircular_Evaluator)
 

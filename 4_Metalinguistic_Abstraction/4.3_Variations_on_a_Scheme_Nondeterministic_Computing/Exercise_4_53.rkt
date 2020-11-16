@@ -1,6 +1,6 @@
 #lang racket/base
 (require math/number-theory) ;; prime?
-;; https://github.com/racket/math/blob/master/math-lib/math/private/number-theory/number-theory.rkt
+;; https://github.com/racket/math/blob/master/math-lib/math/private/number-theory/number-theory.rkt#L193
 
 ;; add prime? to primitive-procedures
 

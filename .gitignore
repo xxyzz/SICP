@@ -1,4 +1,10 @@
+# lame file
 .DS_Store
+
+# emacs
 *~
 \#*\#
 .\#*
+
+# vmd
+*.temp
