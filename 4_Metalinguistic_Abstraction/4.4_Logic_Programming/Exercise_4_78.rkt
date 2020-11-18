@@ -25,6 +25,7 @@
         (list 'equal? equal?)
         (list 'append append)
         (list 'pair? pair?)
+        (list 'symbol? symbol?)
         (list 'symbol->string symbol->string)
         (list 'string=? string=?)
         (list 'substring substring)
@@ -34,20 +35,24 @@
         (list 'number? number?)
         (list 'number->string number->string)
         (list 'error error)
-        (list 'assoc assoc)))
+        (list 'assoc assoc)
+        (list 'cadr cadr)
+        (list 'caddr caddr)
+        (list 'cddr cddr)
+        (list 'read read)))
 
 (define (setup-environment)
   (let ([initial-env
          (extend-environment (primitive-procedure-names)
                              (primitive-procedure-objects)
                              the-empty-environment)])
-    (define-variable! 'true #t initial-env) ;; '#t is #t
+    (define-variable! 'true #t initial-env)
     (define-variable! 'false #f initial-env)
     (define-variable! 'null null initial-env)
     (define-variable! 'user-initial-environment (make-base-namespace) initial-env)
     initial-env))
 
-(define (ensure-fail? exp) (tagged-list? exp 'ensure-fail?))
+(define (ensure-fail? exp) (tagged-list? exp 'ensure-fail))
 (define (analyze-ensure-fail exp)
   (let ([proc (analyze (cadr exp))])
     (lambda (env succeed fail)
@@ -136,7 +141,7 @@
 (define (get op type)
   (if (hash-has-key? table (list op type))
       (hash-ref table (list op type))
-      true)) ;; ***
+      false)) ;; ***
 
 (define (prompt-for-input string)
   (newline) (newline) (display string) (newline))
@@ -148,7 +153,8 @@
 (define (query-driver-loop)
   (prompt-for-input input-prompt)
   (let ([q (query-syntax-process (read))])
-    (cond [(assertion-to-be-added? q)
+    (cond [(eq? q 'try-again) (amb)]
+          [(assertion-to-be-added? q)
            (add-rule-or-assertion! (add-assertion-body q))
            (newline)
            (display "Assertion added to data base.")
@@ -198,9 +204,9 @@
 (put 'or 'qeval disjoin)
 
 (define (negate operands frame) ;; ***
-   (require (not (qeval (negated-query operands)
-                        frame)))
-   frame)
+  (ensure-fail (qeval (negated-query operands)
+                      frame))
+  frame)
 (put 'not 'qeval negate)
 
 (define (lisp-value call frame) ;; ***
@@ -377,7 +383,7 @@
                      current-rule-list)))))))
 
 ;; rest query evaluator code(exercise 4.72) unchanged
-;; except replace #t and #f and without steams code
+;; except these two and without steams code
 (define (tagged-list? exp tag)
   (if (pair? exp)
       (eq? (car exp) tag)
@@ -386,5 +392,5 @@
   (permanent-set! rule-counter (+ 1 rule-counter)) ;; ***
   rule-counter)
 
-;; add data
+;; add data: exercise 4.55
 (query-driver-loop)
