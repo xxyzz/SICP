@@ -35,23 +35,27 @@ $ brew cask install racket
 
     - 3.1 [Assignment and Local State](./3_Modularity_Objects_and_State/3.1_Assignment_and_Local_State)
 
-    - 3.2 [The Environment Model of Evaluation](/3_Modularity_Objects_and_State/3.2_The_Environment_Model_of_Evaluation)
+    - 3.2 [The Environment Model of Evaluation](./3_Modularity_Objects_and_State/3.2_The_Environment_Model_of_Evaluation)
 
-    - 3.3 [Modeling with Mutable Data](/3_Modularity_Objects_and_State/3.3_Modeling_with_Mutable_Data)
+    - 3.3 [Modeling with Mutable Data](./3_Modularity_Objects_and_State/3.3_Modeling_with_Mutable_Data)
 
-    - 3.4 [Concurrency: Time Is of the Essence](/3_Modularity_Objects_and_State/3.4_Concurrency_Time_Is_of_the_Essence)
+    - 3.4 [Concurrency: Time Is of the Essence](./3_Modularity_Objects_and_State/3.4_Concurrency_Time_Is_of_the_Essence)
 
-    - 3.5 [Streams](/3_Modularity_Objects_and_State/3.5_Streams)
+    - 3.5 [Streams](./3_Modularity_Objects_and_State/3.5_Streams)
 
 4. Metalinguistic Abstraction
 
-    - 4.1 [The Metacircular Evaluator](.4_Metalinguistic_Abstraction/4.1_The_Metacircular_Evaluator)
+    - 4.1 [The Metacircular Evaluator](./4_Metalinguistic_Abstraction/4.1_The_Metacircular_Evaluator)
 
-    - 4.2 [Variations on a Scheme — Lazy Evaluation](.4_Metalinguistic_Abstraction/4.2_Variations_on_a_Scheme_Lazy_Evaluation)
+    - 4.2 [Variations on a Scheme — Lazy Evaluation](./4_Metalinguistic_Abstraction/4.2_Variations_on_a_Scheme_Lazy_Evaluation)
 
     - 4.3 [Variations on a Scheme — Nondeterministic Computing](./4_Metalinguistic_Abstraction/4.3_Variations_on_a_Scheme_Nondeterministic_Computing)
 
     - 4.4 [Logic Programming](./4_Metalinguistic_Abstraction/4.4_Logic_Programming)
+
+5. Computing with Register Machines
+
+    - 5.1 [Designing Register Machines](./5_Computing_with_Register_Machines/5.1_Designing_Register_Machines)
 
 ## License
 

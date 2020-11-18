@@ -153,7 +153,7 @@
 (define (query-driver-loop)
   (prompt-for-input input-prompt)
   (let ([q (query-syntax-process (read))])
-    (cond [(eq? q 'try-again) (amb)]
+    (cond [(eq? q 'try-again) (amb)] ;; ***
           [(assertion-to-be-added? q)
            (add-rule-or-assertion! (add-assertion-body q))
            (newline)
