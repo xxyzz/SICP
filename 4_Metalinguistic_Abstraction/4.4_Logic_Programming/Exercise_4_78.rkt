@@ -394,3 +394,7 @@
 
 ;; add data: exercise 4.55
 (query-driver-loop)
+
+;; it won't interleave results
+;; run the test at the bottom of exercise 4.72
+;; it will always return the same result
