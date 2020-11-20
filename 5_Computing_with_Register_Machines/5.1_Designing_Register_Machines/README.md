@@ -57,3 +57,22 @@ Design a register machine to compute factorials using the iterative algorithm sp
 |                         \|/
 |--------------------------
 ```
+
+## 5.1.1 A Language for Describing Register Machines
+
+### Exercise 5.2:
+
+Use the register-machine language to describe the iterative factorial machine of Exercise 5.1.
+
+```
+(controller
+  (assign product (const 1))
+  (assign counter (const 1))
+  test-counter
+    (test (op >) (reg counter) (reg n))
+    (branch (label factorial-done))
+    (assign product (op *) (reg product) (reg counter))
+    (assign counter (op +) (reg counter) (const 1))
+    (goto (label test-counter))
+  factorial-done)
+```
