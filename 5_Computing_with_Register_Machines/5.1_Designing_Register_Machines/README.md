@@ -36,7 +36,7 @@ Design a register machine to compute factorials using the iterative algorithm sp
       |
      \|/
  --------------
-| produce <- 1 |
+| product <- 1 |
  --------------
       |
      \|/
@@ -126,3 +126,62 @@ Begin by assuming that `good-enough?` and `improve` operations are available as 
 ```
 
 ## 5.1.3 Subroutines
+
+## 5.1.4 Using a Stack to Implement Recursion
+
+### Exercise 5.4:
+
+Specify register machines that implement each of the following procedures. For each machine, write a controller instruction sequence and draw a diagram showing the data paths.
+
+a. Recursive exponentiation:
+
+```scheme
+(define (expt b n)
+  (if (= n 0)
+      1
+      (* b (expt b (- n 1)))))
+```
+
+b. Iterative exponentiation:
+
+```scheme
+(define (expt b n)
+  (define (expt-iter counter product)
+    (if (= counter 0)
+        product
+        (expt-iter (- counter 1)
+                   (* b product))))
+  (expt-iter n 1))
+```
+
+```
+;; a
+(controller
+    (assign continue (label expt-done))
+  expt
+    (test (op =) (reg n) (const 0))
+    (branch (label base-case))
+    (save continue)
+    (assign continue (label after-expt))
+    (assign n (op -) (reg n) (const 1))
+    (goto (label expt))
+  after-expt
+    (restore continue)
+    (assign val (op *) (reg b) (reg val))
+    (goto (reg continue))
+  base-case
+    (assign val (const 1))
+    (goto (reg continue))
+  expt-done)
+  
+;; b
+(controller
+    (assign product (const 1))
+  expt
+    (test (op =) (reg n) (const 0))
+    (branch (label expt-done))
+    (assign n (op -) (reg n) (const 1))
+    (assign product (op *) (reg b) (reg product))
+    (goto (label expt))
+  expt-done)
+```
