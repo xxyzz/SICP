@@ -23,7 +23,7 @@ Design a register machine to compute factorials using the iterative algorithm sp
  ^    |   ----------| |  /\  ^      ---
  |    |   |           | /1 \ |       ^
  |    |   |           | ---- |       |
- |   \|/ \|/         \|/\|/  |      ---
+ |    v   v           v  v   |      ---
  |   -------        -------  |     | n |
  |   \  *  /        \  +  /  |      ---
  |    -----          -----   |
@@ -34,27 +34,27 @@ Design a register machine to compute factorials using the iterative algorithm sp
 
     start
       |
-     \|/
+      v
  --------------
 | product <- 1 |
  --------------
       |
-     \|/
+      v
  --------------
 | counter <- 1 |
  --------------
       |
-     \|/
+      v
      /\
     /  \  no   ------------------------------
 -->/    \---> | product <- product * counter |
 |  \  > /      ------------------------------
 |   \  /                   |
-|    \/                   \|/
-|    | yes     -----------------------------
-|   \|/       | counter <- counter + 1      |
-|   done       -----------------------------
-|                         \|/
+|    \/                    v
+|    | yes     ------------------------------
+|    v        | counter <- counter + 1       |
+|   done       ------------------------------
+|                          v
 |--------------------------
 ```
 
@@ -185,3 +185,124 @@ b. Iterative exponentiation:
     (goto (label expt))
   expt-done)
 ```
+
+### Exercise 5.5:
+
+Hand-simulate the factorial and Fibonacci machines, using some nontrivial input (requiring execution of at least one recursive call). Show the contents of the stack at each significant point in the execution.
+
+3!:
+
+```
+(controller
+    (assign continue (label fact-done)) ;set up final return address  L1
+  fact-loop
+    (test (op =) (reg n) (const 1))
+    (branch (label base-case))
+    ;; Set up for the recursive call by saving n and continue.
+    ;; Set up continue so that the computation will continue
+    ;; at after-fact when the subroutine returns.
+    (save continue)                                                   L2
+    (save n)                                                          L3
+    (assign n (op -) (reg n) (const 1))                               L4
+    (assign continue (label after-fact))                              L5
+    (goto (label fact-loop))
+  after-fact
+    (restore n)                                                       L6
+    (restore continue)                                                L7
+    (assign val (op *) (reg n) (reg val)) ;val now contains n(n - 1)! L8
+    (goto (reg continue))                 ;return to caller
+  base-case
+    (assign val (const 1))                ;base case: 1! = 1          L9
+    (goto (reg continue))                 ;return to caller
+  fact-done)
+```
+
+| stack continue        | stack n | reg continue | reg n | value | line |
+|-----------------------|---------|--------------|-------|-------|------|
+|                       |         | fact-done    |     3 |       | L1   |
+| fact-done             |         | fact-done    |     3 |       | L2   |
+| fact-done             |       3 | fact-done    |     3 |       | L3   |
+| fact-done             |       3 | fact-done    |     2 |       | L4   |
+| fact-done             |       3 | after-fact   |     2 |       | L5   |
+| after-fact->fact-done |       3 | after-fact   |     2 |       | L2   |
+| after-fact->fact-done |    2->3 | after-fact   |     2 |       | L3   |
+| after-fact->fact-done |    2->3 | after-fact   |     1 |       | L4   |
+| after-fact->fact-done |    2->3 | after-fact   |     1 |       | L5   |
+| after-fact->fact-done |    2->3 | after-fact   |     1 |     1 | L9   |
+| after-fact->fact-done |       3 | after-fact   |     2 |     1 | L6   |
+| fact-done             |       3 | after-fact   |     2 |     1 | L7   |
+| fact-done             |       3 | after-fact   |     2 |     2 | L8   |
+| fact-done             |         | after-fact   |     3 |     2 | L6   |
+|                       |         | fact-done    |     3 |     2 | L7   |
+|                       |         | fact-done    |     3 |     6 | L8   |
+
+fib 3:
+
+```
+(controller
+    (assign continue (label fib-done))                               L1
+  fib-loop
+    (test (op <) (reg n) (const 2))
+    (branch (label immediate-answer))
+    ;; set up to compute Fib(n − 1)
+    (save continue)                                                  L2
+    (assign continue (label afterfib-n-1))                           L3
+    (save n)                 ; save old value of n                   L4
+    (assign n (op -) (reg n) (const 1)) ; clobber n to n-1           L5
+    (goto (label fib-loop))  ; perform recursive call
+  afterfib-n-1     ; upon return, val contains Fib(n − 1)
+    (restore n)                                                      L6
+    (restore continue)                                               L7
+    ;; set up to compute Fib(n − 2)
+    (assign n (op -) (reg n) (const 2))                              L8
+    (save continue)                                                  L9
+    (assign continue (label afterfib-n-2))                           L10
+    (save val)               ; save Fib(n − 1)                       L11
+    (goto (label fib-loop))
+  afterfib-n-2     ; upon return, val contains Fib(n − 2)
+    (assign n (reg val))       ; n now contains Fib(n − 2)           L12
+    (restore val)              ; val now contains Fib(n − 1)         L13
+    (restore continue)                                               L14
+    (assign val                ; Fib(n − 1) + Fib(n − 2)             L15
+            (op +) (reg val) (reg n))
+    (goto (reg continue))      ; return to caller, answer is in val
+  immediate-answer
+    (assign val (reg n))       ; base case: Fib(n) = n               L16
+    (goto (reg continue))
+  fib-done)
+```
+
+| stack continue         | stack n | stack val | reg continue | reg n | reg val | line |
+|------------------------|---------|-----------|--------------|-------|---------|------|
+|                        |         |           | fib-done     |     3 |         | L1   |
+| fib-done               |         |           | fib-done     |     3 |         | L2   |
+| fib-done               |         |           | afterfib-n-1 |     3 |         | L3   |
+| fib-done               |       3 |           | afterfib-n-1 |     3 |         | L4   |
+| fib-done               |       3 |           | afterfib-n-1 |     2 |         | L5   |
+| afterfib-n-1->fib-done |       3 |           | afterfib-n-1 |     2 |         | L2   |
+| afterfib-n-1->fib-done |       3 |           | afterfib-n-1 |     2 |         | L3   |
+| afterfib-n-1->fib-done |    2->3 |           | afterfib-n-1 |     2 |         | L4   |
+| afterfib-n-1->fib-done |    2->3 |           | afterfib-n-1 |     1 |         | L5   |
+| afterfib-n-1->fib-done |    2->3 |           | afterfib-n-1 |     1 |       1 | L16  |
+| afterfib-n-1->fib-done |       3 |           | afterfib-n-1 |     2 |       1 | L6   |
+| fib-done               |       3 |           | afterfib-n-1 |     2 |       1 | L7   |
+| fib-done               |       3 |           | afterfib-n-1 |     0 |       1 | L8   |
+| afterfib-n-1->fib-done |       3 |           | afterfib-n-1 |     0 |       1 | L9   |
+| afterfib-n-1->fib-done |       3 |           | afterfib-n-2 |     0 |       1 | L10  |
+| afterfib-n-1->fib-done |       3 |         1 | afterfib-n-2 |     0 |       1 | L11  |
+| afterfib-n-1->fib-done |       3 |         1 | afterfib-n-2 |     0 |       0 | L16  |
+| afterfib-n-1->fib-done |       3 |         1 | afterfib-n-2 |     0 |       0 | L12  |
+| afterfib-n-1->fib-done |       3 |           | afterfib-n-2 |     0 |       1 | L13  |
+| fib-done               |       3 |         1 | afterfib-n-1 |     0 |       1 | L14  |
+| fib-done               |       3 |         1 | afterfib-n-1 |     0 |       1 | L15  |
+| fib-done               |         |         1 | afterfib-n-1 |     3 |       1 | L6   |
+|                        |         |         1 | fib-done     |     3 |       1 | L7   |
+|                        |         |         1 | fib-done     |     1 |       1 | L8   |
+| fib-done               |         |         1 | fib-done     |     1 |       1 | L9   |
+| fib-done               |         |         1 | afterfib-n-2 |     1 |       1 | L10  |
+| fib-done               |         |      1->1 | afterfib-n-2 |     1 |       1 | L11  |
+| fib-done               |         |      1->1 | afterfib-n-2 |     1 |       1 | L16  |
+| fib-done               |         |      1->1 | afterfib-n-2 |     1 |       1 | L12  |
+| fib-done               |         |         1 | afterfib-n-2 |     1 |       1 | L13  |
+|                        |         |         1 | fib-done     |     1 |       1 | L14  |
+|                        |         |         1 | fib-done     |     1 |       2 | L15  |
