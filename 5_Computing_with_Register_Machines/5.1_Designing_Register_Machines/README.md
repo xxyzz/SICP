@@ -306,3 +306,11 @@ fib 3:
 | fib-done               |         |         1 | afterfib-n-2 |     1 |       1 | L13  |
 |                        |         |         1 | fib-done     |     1 |       1 | L14  |
 |                        |         |         1 | fib-done     |     1 |       2 | L15  |
+
+### Exercise 5.6:
+
+Ben Bitdiddle observes that the Fibonacci machine’s controller sequence has an extra `save` and an extra `restore`, which can be removed to make a faster machine. Where are these instructions?
+
+`save` at L9, `restore` at L7.
+
+## 5.1.5 Instruction Summary
