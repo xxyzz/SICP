@@ -57,6 +57,8 @@ $ brew cask install racket
 
     - 5.1 [Designing Register Machines](./5_Computing_with_Register_Machines/5.1_Designing_Register_Machines)
 
+    - 5.2 [A Register-Machine Simulator](./5_Computing_with_Register_Machines/5.2_A_Register-Machine_Simulator)
+
 ## License
 
 This work is licensed under the GPLv3 or any later version.
