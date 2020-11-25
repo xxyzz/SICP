@@ -25,3 +25,9 @@ there
 ```
 
 With the simulator as written, what will the contents of register `a` be when control reaches `there`? Modify the `extract-labels` procedure so that the assembler will signal an error if the same label name is used to indicate two different locations.
+
+## 5.2.3 Generating Execution Procedures for Instructions
+
+### Exercise 5.9:
+
+The treatment of machine operations above permits them to operate on labels as well as on constants and the contents of registers. Modify the expression-processing procedures to enforce the condition that operations can be used only with registers and constants.
