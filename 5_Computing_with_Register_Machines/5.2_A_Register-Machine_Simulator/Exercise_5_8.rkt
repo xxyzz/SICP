@@ -1,7 +1,9 @@
 #lang racket/base
 
-;; `assoc`(in `lookup-label`) returns the first matching element,
-;; therefore the first label is used, `a` is 3.
+;; `assoc`(in `lookup-label`) returns the first matching element
+;; and latter labels are `cons` before former labels
+;; therefore the second label is used, `a` is 4.
+;; need to check it after reading this chapter
 
 (define (extract-labels text receive)
   (if (null? text)
