@@ -31,3 +31,7 @@ With the simulator as written, what will the contents of register `a` be when co
 ### Exercise 5.9:
 
 The treatment of machine operations above permits them to operate on labels as well as on constants and the contents of registers. Modify the expression-processing procedures to enforce the condition that operations can be used only with registers and constants.
+
+### Exercise 5.10:
+
+Design a new syntax for register-machine instructions and modify the simulator to use your new syntax. Can you implement your new syntax without changing any part of the simulator except the syntax procedures in this section?
