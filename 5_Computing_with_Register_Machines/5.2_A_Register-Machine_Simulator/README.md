@@ -63,3 +63,7 @@ The simulator can be used to help determine the data paths required for implemen
 - a list (without duplicates) of the registers that are `saved` or `restored`;
 
 - for each register, a list (without duplicates) of the sources from which it is assigned (for example, the sources for register `val` in the factorial machine of Figure 5.11 are `(const 1)` and `((op *) (reg n) (reg val))`).
+
+### Exercise 5.13:
+
+Modify the simulator so that it uses the controller sequence to determine what registers the machine has rather than requiring a list of registers as an argument to `make-machine`. Instead of pre-allocating the registers in `make-machine`, you can allocate them one at a time when they are first seen during assembly of the instructions.

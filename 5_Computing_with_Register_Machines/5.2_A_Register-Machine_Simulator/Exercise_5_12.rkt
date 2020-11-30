@@ -41,8 +41,10 @@
               [(eq? message 'install-instruction-sequence)
                (lambda (seq)
                  (set! the-instruction-sequence seq))]
-              [(eq? message 'allocate-register) allocate-register]
-              [(eq? message 'get-register) lookup-register]
+              [(eq? message 'allocate-register)
+               allocate-register]
+              [(eq? message 'get-register)
+               lookup-register]
               [(eq? message 'install-operations)
                (lambda (ops)
                  (set! the-ops (append the-ops ops)))]
