@@ -1,10 +1,13 @@
 #lang racket/base
 
 ;; a: use restore as assign
+;; origin code:
 ;; afterfib-n-2     ; upon return, val contains Fib(n − 2)
-;;  (assign n (reg val))       ; n now contains Fib(n − 2)
-;;  (restore val)              ; val now contains Fib(n − 1)
+;;   (assign n (reg val))       ; n now contains Fib(n − 2)
+;;   (restore val)              ; val now contains Fib(n − 1)
+;;   (restore continue)
 ;;
+;; optimized code:
 ;; afterfib-n-2
 ;;   (restore n) ;; n now contains Fib(n - 1) and (reg val) now contains Fib(n - 2)
 ;;   (restore continue)
