@@ -39,8 +39,11 @@
         [stacks null] ;; ***
         [the-instruction-sequence '()])
     (let ([the-ops
-           (list (list 'initialize-stack
-                       (lambda () (stack 'initialize))))]
+           (list (list 'initialize-stacks
+                       (lambda ()
+                         (for-each (lambda (stack)
+                                     (stack 'initialize))
+                                   stacks))))]
           [register-table
            (list (list 'pc pc) (list 'flag flag))])
       (define (allocate-register name)
