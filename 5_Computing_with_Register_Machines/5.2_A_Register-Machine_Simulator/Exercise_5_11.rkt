@@ -113,7 +113,7 @@
          [reg (get-register machine reg-name)]
          [stack (find-reg-stack reg-name stacks)])
     (lambda ()
-      (push stack (cons reg-name (get-contents reg)))
+      (push stack (get-contents reg))
       (advance-pc pc))))
 (define (make-restore inst machine stacks pc)
   (let* ([reg-name (stack-inst-reg-name inst)]
