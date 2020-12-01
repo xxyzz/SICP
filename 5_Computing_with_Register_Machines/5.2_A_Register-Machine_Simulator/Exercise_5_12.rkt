@@ -145,13 +145,20 @@
        (lambda (insts labels)
          (let ([next-inst (car text)])
            (if (symbol? next-inst)
-               (receive insts
-                        (cons (make-label-entry next-inst
-                                                insts)
-                              labels))
+               (begin
+                 (duplicate-label? next-inst labels)
+                 (receive insts
+                     (cons (make-label-entry next-inst
+                                             insts)
+                           labels)))
                (receive (cons (make-instruction next-inst)
                               insts)
-                        labels)))))))
+                   labels)))))))
+
+(define (duplicate-label? label-name labels)
+  (when (assoc label-name labels)
+    (error "Duplicated label: ASSEMBLE"
+           label-name)))
 
 (define (update-insts! insts labels machine)
   (let ([pc (get-register machine 'pc)]
@@ -366,7 +373,9 @@
                          operations)]
         [aprocs
          (map (lambda (e)
-                (make-primitive-exp e machine labels))
+                (if (or (register-exp? e) (constant-exp? e))
+                    (make-primitive-exp e machine labels)
+                    (error "Invalid operation argument: ASSEMBLE")))
               (operation-exp-operands exp))])
     (lambda ()
       (apply op (map (lambda (p) (p)) aprocs)))))
