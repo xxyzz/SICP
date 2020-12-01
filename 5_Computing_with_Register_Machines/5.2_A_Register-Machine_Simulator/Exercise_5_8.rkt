@@ -1,9 +1,32 @@
 #lang racket/base
 
 ;; `assoc`(in `lookup-label`) returns the first matching element
-;; and latter labels are `cons` before former labels
-;; therefore the second label is used, `a` is 4.
-;; need to check it after reading this chapter
+;; labels of the dumb machine, the first `here` is used
+;; ((controller
+;;   {(goto (label here))}
+;;   {(assign a (const 3))}
+;;   {(goto (label there))}
+;;   {(assign a (const 4))}
+;;   {(goto (label there))})
+
+;;  (start
+;;   {(goto (label here))}
+;;   {(assign a (const 3))}
+;;   {(goto (label there))}
+;;   {(assign a (const 4))}
+;;   {(goto (label there))})
+
+;;  (here
+;;   {(assign a (const 3))}
+;;   {(goto (label there))}
+;;   {(assign a (const 4))}
+;;   {(goto (label there))})
+
+;;  (here
+;;   {(assign a (const 4))}
+;;   {(goto (label there))})
+
+;;  (there))
 
 (define (extract-labels text receive)
   (if (null? text)
@@ -27,3 +50,23 @@
   (when (assoc label-name labels)
     (error "Duplicated label: ASSEMBLE"
            label-name)))
+
+;; test
+(define dumb-machine
+  (make-machine
+   '(a)
+   null
+   '(controller
+     start
+     (goto (label here))
+     here
+     (assign a (const 3))
+     (goto (label there))
+     here
+     (assign a (const 4))
+     (goto (label there))
+     there)))
+(start dumb-machine)
+;; 'done
+(get-register-contents dumb-machine 'a)
+;; 3

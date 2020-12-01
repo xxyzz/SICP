@@ -22,10 +22,14 @@
      (assign val (const 1))
      (goto (reg continue))
      expt-done)))
-(set-register-contents! recursive-expt-machine 'a 42)
+(set-register-contents! recursive-expt-machine 'n 42)
+;; 'done
 (set-register-contents! recursive-expt-machine 'b 42)
+;; 'done
 (start recursive-expt-machine)
+;; 'done
 (get-register-contents recursive-expt-machine 'val)
+;; 150130937545296572356771972164254457814047970568738777235893533016064
 
 ;; b
 (define iterative-expt-machine
@@ -42,6 +46,10 @@
      (goto (label expt))
      expt-done)))
 (set-register-contents! iterative-expt-machine 'n 42)
+;; 'done
 (set-register-contents! iterative-expt-machine 'b 42)
+;; 'done
 (start iterative-expt-machine)
+;; 'done
 (get-register-contents iterative-expt-machine 'product)
+;; 150130937545296572356771972164254457814047970568738777235893533016064
