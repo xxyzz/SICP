@@ -79,3 +79,11 @@ Measure the number of pushes and the maximum stack depth required to compute *n*
 ### Exercise 5.15:
 
 Add *instruction counting* to the register machine simulation. That is, have the machine model keep track of the number of instructions executed. Extend the machine model’s interface to accept a new message that prints the value of the instruction count and resets the count to zero.
+
+### Exercise 5.16:
+
+Augment the simulator to provide for *instruction tracing*. That is, before each instruction is executed, the simulator should print the text of the instruction. Make the machine model accept `trace-on` and `trace-off` messages to turn tracing on and off.
+
+### Exercise 5.17:
+
+Extend the instruction tracing of Exercise 5.16 so that before printing an instruction, the simulator prints any labels that immediately precede that instruction in the controller sequence. Be careful to do this in a way that does not interfere with instruction counting (Exercise 5.15). You will have to make the simulator retain the necessary label information.
