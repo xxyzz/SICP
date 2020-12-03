@@ -63,3 +63,11 @@
               [else (error "Unknown request: MACHINE"
                            message)]))
       dispatch)))
+
+(define (trace-on machine)
+  (machine 'trace-on)
+  'machine-trace-on)
+
+(define (trace-off machine)
+  (machine 'trace-off)
+  'machine-trace-off)
