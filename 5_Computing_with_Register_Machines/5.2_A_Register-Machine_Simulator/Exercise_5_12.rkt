@@ -55,7 +55,7 @@
 (define (make-new-machine)
   (let ([pc (make-register 'pc)]
         [flag (make-register 'flag)]
-        [stack (make-stack)]
+        [stacks null]
         [the-instruction-sequence '()]
         [sorted-insts null] ;; new lists
         [entry-point-regs null]
