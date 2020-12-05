@@ -59,6 +59,8 @@ $ brew cask install racket
 
     - 5.2 [A Register-Machine Simulator](./5_Computing_with_Register_Machines/5.2_A_Register-Machine_Simulator)
 
+    - 5.3 [Storage Allocation and Garbage Collection](./5_Computing_with_Register_Machines/5.3_Storage_Allocation_and_Garbage_Collection)
+
 ## License
 
 This work is licensed under the GPLv3 or any later version.
