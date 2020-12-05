@@ -43,7 +43,7 @@
         [the-instruction-sequence '()])
     (let ([the-ops
            (list (list 'initialize-stacks
-                       (lambda ()
+                       (lambda () ;; ***
                          (for-each (lambda (stack)
                                      (stack 'initialize))
                                    stacks))))]
@@ -108,16 +108,16 @@
   (let ([stack-pair (assoc reg-name stacks)])
     (cdr stack-pair)))
 
-(define (make-save inst machine stacks pc)
+(define (make-save inst machine stacks pc) ;; ***
   (let* ([reg-name (stack-inst-reg-name inst)]
          [reg (get-register machine reg-name)]
-         [stack (find-reg-stack reg-name stacks)])
+         [stack (find-reg-stack reg-name stacks)]) ;; ***
     (lambda ()
       (push stack (get-contents reg))
       (advance-pc pc))))
-(define (make-restore inst machine stacks pc)
+(define (make-restore inst machine stacks pc) ;; ***
   (let* ([reg-name (stack-inst-reg-name inst)]
-         [reg (get-register machine reg-name)]
+         [reg (get-register machine reg-name)] ;; ***
          [stack (find-reg-stack reg-name stacks)])
     (lambda ()
       (set-contents! reg (pop stack))

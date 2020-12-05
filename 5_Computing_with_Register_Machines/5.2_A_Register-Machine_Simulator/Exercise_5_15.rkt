@@ -3,12 +3,15 @@
 (define (make-new-machine)
   (let ([pc (make-register 'pc)]
         [flag (make-register 'flag)]
-        [stack (make-stack)]
+        [stacks null]
         [the-instruction-sequence '()]
         [inst-counts 0]) ;; ***
     (let ([the-ops
            (list (list 'initialize-stack
-                       (lambda () (stack 'initialize)))
+                       (lambda ()
+                         (for-each (lambda (stack)
+                                     (stack 'initialize))
+                                   stacks)))
                  (list 'print-stack-statistics
                        (lambda () (stack 'print-statistics))))]
           [register-table
@@ -16,15 +19,21 @@
       (define (allocate-register name)
         (if (assoc name register-table)
             (error "Multiply defined register: " name)
-            (set! register-table
-                  (cons (list name (make-register name))
-                        register-table)))
+            (begin
+              (set! stacks
+                    (cons (cons name (make-stack))
+                          stacks))
+              (set! register-table
+                    (cons (list name (make-register name))
+                          register-table))))
         'register-allocated)
       (define (lookup-register name)
         (let ([val (assoc name register-table)])
           (if val
               (cadr val)
-              (error "Unknown register:" name))))
+              (begin ;; create new register if not exist
+                (allocate-register name)
+                (lookup-register name)))))
       (define (execute)
         (let ([insts (get-contents pc)])
           (if (null? insts)
@@ -40,14 +49,12 @@
               [(eq? message 'install-instruction-sequence)
                (lambda (seq)
                  (set! the-instruction-sequence seq))]
-              [(eq? message 'allocate-register)
-               allocate-register]
               [(eq? message 'get-register)
                lookup-register]
               [(eq? message 'install-operations)
                (lambda (ops)
                  (set! the-ops (append the-ops ops)))]
-              [(eq? message 'stack) stack]
+              [(eq? message 'stacks) stacks]
               [(eq? message 'operations) the-ops]
               [(eq? message 'print-inst-counts)
                (displayln (list 'inst-counts '= inst-counts))] ;; ***

@@ -63,15 +63,22 @@
         [reg-sources null])
     (let ([the-ops
            (list (list 'initialize-stack
-                       (lambda () (stack 'initialize))))]
+                       (lambda ()
+                         (for-each (lambda (stack)
+                                     (stack 'initialize))
+                                   stacks))))]
           [register-table
            (list (list 'pc pc) (list 'flag flag))])
       (define (allocate-register name)
         (if (assoc name register-table)
             (error "Multiply defined register: " name)
-            (set! register-table
-                  (cons (list name (make-register name))
-                        register-table)))
+            (begin
+              (set! stacks
+                    (cons (cons name (make-stack))
+                          stacks))
+              (set! register-table
+                    (cons (list name (make-register name))
+                          register-table))))
         'register-allocated)
       (define (lookup-register name)
         (let ([val (assoc name register-table)])
@@ -99,7 +106,7 @@
               [(eq? message 'install-operations)
                (lambda (ops)
                  (set! the-ops (append the-ops ops)))]
-              [(eq? message 'stack) stack]
+              [(eq? message 'stacks) stacks]
               [(eq? message 'operations) the-ops]
               [(eq? message 'sorted-insts) sorted-insts] ;; get and set new lists
               [(eq? message 'set-sorted-insts!)
@@ -163,7 +170,7 @@
 (define (update-insts! insts labels machine)
   (let ([pc (get-register machine 'pc)]
         [flag (get-register machine 'flag)]
-        [stack (machine 'stack)]
+        [stacks (machine 'stacks)]
         [ops (machine 'operations)])
     (for-each
      (lambda (inst)
@@ -183,7 +190,7 @@
         inst
         (make-execution-procedure
          (instruction-text inst)
-         labels machine pc flag stack ops)))
+         labels machine pc flag stacks ops)))
      insts)))
 
 (define (make-instruction text) (mcons text null))
@@ -310,9 +317,14 @@
 (define (goto-dest goto-instruction)
   (cadr goto-instruction))
 
-(define (make-save inst machine stack pc)
+(define (find-reg-stack reg-name stacks)
+  (let ([stack-pair (assoc reg-name stacks)])
+    (cdr stack-pair)))
+
+(define (make-save inst machine stacks pc)
   (let* ([reg-name (stack-inst-reg-name inst)]
          [reg (get-register machine reg-name)]
+         [stack (find-reg-stack reg-name stacks)]
          [saved-restored-regs (machine 'saved-restored-regs)])
     ;; add saved register to list
     (when (not (assoc reg-name saved-restored-regs))
@@ -322,9 +334,10 @@
     (lambda ()
       (push stack (get-contents reg))
       (advance-pc pc))))
-(define (make-restore inst machine stack pc)
+(define (make-restore inst machine stacks pc)
   (let* ([reg-name (stack-inst-reg-name inst)]
          [reg (get-register machine reg-name)]
+         [stack (find-reg-stack reg-name stacks)]
          [saved-restored-regs (machine 'saved-restored-regs)])
     ;; add restored register to list
     (when (not (assoc reg-name saved-restored-regs))
