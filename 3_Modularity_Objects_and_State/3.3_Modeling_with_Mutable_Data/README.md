@@ -71,7 +71,7 @@ Ben Bitdiddle decides to write a procedure to count the number of pairs in any l
       0
       (+ (count-pairs (car x))
          (count-pairs (cdr x))
-      1)))
+         1)))
 ```
 
 Show that this procedure is not correct. In particular, draw box-and-pointer diagrams representing list structures made up of exactly three pairs for which Ben’s procedure would return 3; return 4; return 7; never return at all.
