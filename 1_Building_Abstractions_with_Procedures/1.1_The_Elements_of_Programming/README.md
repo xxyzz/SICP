@@ -69,7 +69,9 @@ Then he evaluates the expression
 
 What behavior will Ben observe with an interpreter that uses applicative-order evaluation? What behavior will he observe with an interpreter that uses normal-order evaluation? Explain your answer. (Assume that the evaluation rule for the special form if is the same whether the interpreter is using normal or applicative order: The predicate expression is evaluated first, and the result determines whether to evaluate the consequent or the alternative expression.)
 
-Applicative-order: 0, normal-order evaluation: infinite loop inside p procedure.
+Applicative-order: infinite loop inside p procedure
+
+Normal-order evaluation: 0
 
 ### Exercise 1.6:
 
