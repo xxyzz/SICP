@@ -61,6 +61,8 @@ $ brew cask install racket
 
     - 5.3 [Storage Allocation and Garbage Collection](./5_Computing_with_Register_Machines/5.3_Storage_Allocation_and_Garbage_Collection)
 
+    - 5.4 [The Explicit-Control Evaluator](./5_Computing_with_Register_Machines/5.4_The_Explicit-Control_Evaluator)
+
 ## License
 
 This work is licensed under the GPLv3 or any later version.
