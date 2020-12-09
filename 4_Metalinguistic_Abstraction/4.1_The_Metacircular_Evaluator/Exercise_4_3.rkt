@@ -61,7 +61,7 @@
   (define (definition-value exp)
     (if (symbol? (cadr exp))
         (caddr exp)
-        (make-lambda (cdadr exp)       ; formal parameters 
+        (make-lambda (cdadr exp)       ; formal parameters
                      (cddr exp))))     ; body
   (define (make-lambda parameters body)
     (cons 'lambda (cons parameters body)))
