@@ -40,6 +40,10 @@ ev-let
 
 (cond [else 2])
 ;; 2
+(define a 1)
+(cond [(= a 1) a]
+      [(= 1 1) 1]
+      [else a])
 
 (let ([a 1]
       [b 2])
