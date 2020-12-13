@@ -42,3 +42,16 @@ run-action
 (assign unev (op cond-actions) (reg exp))
 (save continue)
 (goto (label ev-sequence))
+
+;; add these to eceval-operations
+(list 'cond-clauses cond-clauses)
+(list 'cond-else-clause? cond-else-clause?)
+(list 'cond-predicate cond-predicate)
+(list 'cond-actions cond-actions)
+(list 'null? null?)
+(list 'car car)
+(list 'cdr cdr)
+
+;; add to eval-dispatch
+(test (op cond?) (reg exp))
+(branch (label ev-cond))
