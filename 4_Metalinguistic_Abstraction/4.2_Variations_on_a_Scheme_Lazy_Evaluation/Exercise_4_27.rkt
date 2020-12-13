@@ -5,12 +5,6 @@
 (define (true? x) (not (eq? x #f)))
 (define (false? x) (eq? x #f))
 
-(define (list-of-values exps env)
-  (if (no-operands? exps)
-      '()
-      (cons (eval (first-operand exps) env)
-            (list-of-values (rest-operands exps) env))))
-
 (define (eval-if exp env)
   (if (true? (actual-value (if-predicate exp) env))
       (eval (if-consequent exp) env)
