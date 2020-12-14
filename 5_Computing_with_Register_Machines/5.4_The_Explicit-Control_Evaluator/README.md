@@ -170,3 +170,78 @@ Modify the definition of the evaluator by changing `eval-sequence` as described 
 |---------------------|---------------|------------------|
 | Recursive factorial | 8 * n + 3     | 34 * n - 16      |
 | Iterative factorial | 3 * n + 14    | 37 * n + 33      |
+
+### Exercise 5.29:
+
+Monitor the stack operations in the tree-recursive Fibonacci computation:
+
+```scheme
+(define (fib n)
+  (if (< n 2)
+     n
+     (+ (fib (- n 1)) (fib (- n 2)))))
+```
+
+a. Give a formula in terms of *n* for the maximum depth of the stack required to compute Fib(*n*) for *n* ≥ 2. Hint: In Section 1.2.2 we argued that the space used by this process grows linearly with *n*.
+
+b. Give a formula for the total number of pushes used to compute Fib(*n*) for *n* > 2. You should find that the number of pushes (which correlates well with the time used) grows exponentially with *n*. Hint: Let S(*n*) be the number of pushes used in computing Fib(*n*). You should be able to argue that there is a formula that expresses S(*n*) in terms of S(*n* - 1), S(*n* - 2), and some fixed "overhead" constant *k* that is independent of *n*. Give the formula, and say what *k* is. Then show that S(*n*) can be expressed as a·Fib(*n* + 1) + *b* and give the values of *a* and *b*.
+
+```scheme
+;;EC-Eval input:
+(fib 2)
+
+(total-pushes = 72 maximum-depth = 13)
+
+;;EC-Eval value:
+1
+
+;;EC-Eval input:
+(fib 3)
+
+(total-pushes = 128 maximum-depth = 18)
+
+;;EC-Eval value:
+2
+
+;;EC-Eval input:
+(fib 4)
+
+(total-pushes = 240 maximum-depth = 23)
+
+;;EC-Eval value:
+3
+
+;;EC-Eval input:
+(fib 5)
+
+(total-pushes = 408 maximum-depth = 28)
+
+;;EC-Eval value:
+5
+```
+
+max depth = 5 \* n + 3
+
+total pushes = 56 \* Fib(n + 1) - 40
+
+Deduced from code: S(n) = S(n - 1) + S(n - 2) + k
+
+When n = 4, k = S(4) - S(2) - S(3) = 240 - 72 - 128 = 40
+
+Assume S(n) = 56 \* Fib(n + 1) - 40 for n >= 2.
+
+When n = 2, S(2) = 72 = 56 \* Fib(3) - 40 = 56 \* 3 - 40 = 72.
+
+When n = n + 1, need to prove S(n + 1) = 56 \* Fib(n + 2) - 40
+
+S(n + 1) = S(n) + S(n - 1) + 40
+
+= 56 \* Fib(n + 1) - 40 + 56 \* Fib(n) - 40 + 40
+
+= 56 \* (Fib(n + 1) + Fib(n)) - 40
+
+= 56 \* Fib(n + 2) - 40
+
+By deduction, assumption is true.
+
+According to Exercise 1.13, Fib(n) = (φ<sup>n</sup> - ψ<sup>n</sup>)/√5 therefore S(n) grows exponentially with *n*.
