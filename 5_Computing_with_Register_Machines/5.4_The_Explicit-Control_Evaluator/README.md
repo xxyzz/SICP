@@ -245,3 +245,7 @@ S(n + 1) = S(n) + S(n - 1) + 40
 By deduction, assumption is true.
 
 According to Exercise 1.13, Fib(n) = (φ<sup>n</sup> - ψ<sup>n</sup>)/√5 therefore S(n) grows exponentially with *n*.
+
+### Exercise 5.30:
+
+Page 766
