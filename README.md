@@ -63,6 +63,8 @@ $ brew cask install racket
 
     - 5.4 [The Explicit-Control Evaluator](./5_Computing_with_Register_Machines/5.4_The_Explicit-Control_Evaluator)
 
+    - 5.5 [Compilation](./5_Computing_with_Register_Machines/5.5_Compilation)
+
 ## License
 
 This work is licensed under the GPLv3 or any later version.
