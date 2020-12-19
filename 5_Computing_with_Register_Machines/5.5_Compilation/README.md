@@ -43,3 +43,24 @@ Using the `preserving` mechanism, the compiler will avoid saving and restoring `
 a. Extend the explicit-control evaluator to recognize as a separate class of expressions combinations whose operator is a symbol, and to take advantage of this fact in evaluating such expressions.
 
 b. Alyssa P. Hacker suggests that by extending the evaluator to recognize more and more special cases we could incorporate all the compiler’s optimizations, and that this would eliminate the advantage of compilation altogether. What do you think of this idea?
+
+## 5.5.2 Compiling Expressions
+
+## 5.5.3 Compiling Combinations
+
+## 5.5.4 Combining Instruction Sequences
+
+## 5.5.5 An Example of Compiled Code
+
+### Exercise 5.33:
+
+Consider the following definition of a factorial procedure, which is slightly different from the one given above:
+
+```scheme
+(define (factorial-alt n)
+  (if (= n 1)
+    1
+    (* n (factorial-alt (- n 1)))))
+```
+
+Compile this procedure and compare the resulting code with that produced for `factorial`. Explain any differences you find. Does either program execute more efficiently than the other?
