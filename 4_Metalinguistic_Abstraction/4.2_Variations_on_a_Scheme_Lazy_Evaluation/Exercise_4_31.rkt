@@ -110,7 +110,7 @@
 (define (cond->if exp) (expand-clauses (cond-clauses exp)))
 (define (expand-clauses clauses)
   (if (null? clauses)
-      '#f ;; no else clause
+      'false ;; no else clause
       (let ([first (car clauses)]
             [rest (cdr clauses)])
         (if (cond-else-clause? first)
