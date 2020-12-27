@@ -155,3 +155,9 @@ One way to understand the compiler's `preserving` mechanism for optimizing stack
 ### Exercise 5.38:
 
 Page 814
+
+## 5.5.6 Lexical Addressing
+
+### Exercise 5.39:
+
+Page 820
