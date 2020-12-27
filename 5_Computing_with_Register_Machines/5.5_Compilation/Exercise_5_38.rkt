@@ -147,3 +147,69 @@
    after-lambda2
    (perform (op define-variable!) (const factorial) (reg val) (reg env))
    (assign val (const ok))))
+
+;; d:
+(define (spread-arguments operand-list)
+  (cons (compile (car operand-list) 'arg1 'next)
+        (map (lambda (operand)
+               (compile operand 'arg2 'next))
+             (cdr operand-list))))
+
+(define (compile-open-code exp target linkage)
+  (define (compile-rest-open-codes operand-codes)
+    (if (null? (cdr operand-codes))
+        (preserving '(arg1)
+                    (car operand-codes)
+                    (make-instruction-sequence
+                     '(arg1 arg2)
+                     (list target)
+                     `((assign ,target
+                               (op ,(operator exp))
+                               (reg arg1)
+                               (reg arg2)))))
+        (preserving '(env arg1)
+                    (car operand-codes)
+                    (append-instruction-sequences
+                     (make-instruction-sequence
+                      '(arg1 arg2)
+                      '(arg1)
+                      `((assign arg1
+                                (op ,(operator exp))
+                                (reg arg1)
+                                (reg arg2))))
+                     (compile-rest-open-codes
+                      (cdr operand-codes))))))
+  (let ([operand-codes (spread-arguments (operands exp))])
+    (end-with-linkage
+     linkage
+     (preserving
+      '(env)
+      (car operand-codes)
+      (compile-rest-open-codes (cdr operand-codes))))))
+
+;; test
+(define test-d-1
+  (make-machine
+   all-regs
+   (list (list '+ +))
+   (statements
+    (compile
+     '(+ 1 2 3 4)
+     'val
+     'next))))
+(start test-d-1)
+(get-register-contents test-d-1 'val)
+;; 10
+
+(define test-d-2
+  (make-machine
+   all-regs
+   (list (list '+ +))
+   (statements
+    (compile
+     '(+ 1 2 (+ 3 4))
+     'val
+     'next))))
+(start test-d-2)
+(get-register-contents test-d-2 'val)
+;; 10
