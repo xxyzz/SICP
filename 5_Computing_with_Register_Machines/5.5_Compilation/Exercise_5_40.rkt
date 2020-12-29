@@ -35,7 +35,7 @@
               [else
                (scan (cdr vars) (add1 nth-var))])))
     (if (eq? env the-empty-environment)
-        (error "not-found" exp)
+        'not-found
         (scan (first-frame env) 0)))
   (env-loop exp compile-env 0))
 
@@ -43,13 +43,19 @@
   (let ([address (find-variable exp compile-env)])
     (end-with-linkage
      linkage
-     (make-instruction-sequence
-      '(env)
-      (list target)
-      `((assign ,target
-                (op lexical-address-lookup) ;; ***
-                (const ,address) ;; ***
-                (reg env)))))))
+     (if (eq? address 'not-found)
+         (make-instruction-sequence
+          '()
+          (list target 'env)
+          `((assign env (op get-global-environment))
+            (assign ,target (op lookup-variable-value) (const ,exp) (reg env))))
+         (make-instruction-sequence
+          '(env)
+          (list target)
+          `((assign ,target
+                    (op lexical-address-lookup) ;; ***
+                    (const ,address) ;; ***
+                    (reg env))))))))
 
 (define (compile-assignment exp target linkage compile-env)
   (let ([var (assignment-variable exp)]
@@ -61,14 +67,24 @@
      (preserving
       '(env)
       get-value-code
-      (make-instruction-sequence
-       '(env val)
-       (list target)
-       `((perform (op lexical-address-set!) ;; ***
-                  (const ,address) ;; ***
-                  (reg val)
-                  (reg env))
-         (assign ,target (const ok))))))))
+      (if (eq? address 'not-found)
+          (make-instruction-sequence
+           '(env val)
+           (list target 'env)
+           `((assign env (op get-global-environment))
+             (perform (op set-variable-value!)
+                      (const ,var)
+                      (reg val)
+                      (reg env))
+             (assign ,target (const ok))))
+          (make-instruction-sequence
+           '(env val)
+           (list target)
+           `((perform (op lexical-address-set!) ;; ***
+                      (const ,address) ;; ***
+                      (reg val)
+                      (reg env))
+             (assign ,target (const ok)))))))))
 (define (compile-definition exp target linkage compile-env)
   (let ([var (definition-variable exp)]
         [get-value-code
@@ -235,3 +251,31 @@
 (start test)
 (get-register-contents test 'val)
 ;; 45
+
+;; test exercise 5.42:
+(define test-2
+  (make-machine
+   all-regs
+   (list (list '+ +)
+         (list 'make-compiled-procedure make-compiled-procedure)
+         (list 'compiled-procedure-env compiled-procedure-env)
+         (list 'extend-environment extend-environment)
+         (list 'lexical-address-lookup lexical-address-lookup)
+         (list 'primitive-procedure? primitive-procedure?)
+         (list 'compiled-procedure-entry compiled-procedure-entry)
+         (list 'apply-primitive-procedure apply-primitive-procedure)
+         (list 'define-variable! define-variable!)
+         (list 'get-global-environment get-global-environment)
+         (list 'lookup-variable-value lookup-variable-value))
+   (cons '(assign env (op get-global-environment))
+         (statements
+          (compile
+           '(begin
+              (define a 1)
+              (+ a 1))
+           'val
+           'next
+           the-empty-environment)))))
+(start test-2)
+(get-register-contents test-2 'val)
+;; 2

@@ -180,3 +180,7 @@ not-found
 ```
 
 Already implemented in exercise 5.40
+
+### Exercise 5.42:
+
+Page 821
