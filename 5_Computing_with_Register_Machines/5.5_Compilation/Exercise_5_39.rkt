@@ -1,9 +1,11 @@
 #lang racket/base
 
+(define (make-lexical-address nth-frame nth-var)
+  (cons nth-frame nth-var))
 (define (lexical-frame address) (car address))
 (define (lexical-var address) (cdr address))
 
-(define (travsersing-env end-proc find-proc env address)
+(define (travsersing-compile-env end-proc find-proc env address)
   (define (env-loop env nth-frame nth-var)
     (define (scan pairs nth-pair)
       (let ([current-pair (if (mpair? pairs) (mcar pairs) null)])
@@ -26,17 +28,18 @@
             (lexical-var address)))
 
 (define (lexical-address-lookup address env)
-  (travsersing-env
+  (travsersing-compile-env
    (lambda () (error "Unbound variable" address))
    (lambda (current-pair)
-     (if (eq? val '*unassigned*)
-         (error "Variable is unassigned at" address)
-         (frame-unit-value current-pair)))
+     (let ([value (frame-unit-value current-pair)])
+       (if (eq? value '*unassigned*)
+           (error "Variable is unassigned at" address)
+           value)))
    env
    address))
 
 (define (lexical-address-set! address val env)
-  (travsersing-env
+  (travsersing-compile-env
    (lambda () (error "Unbound variable at: SET!" address))
     (lambda (current-pair) (set-mcdr! current-pair val))
    env

@@ -160,4 +160,8 @@ Page 814
 
 ### Exercise 5.39:
 
-Page 820
+Write a procedure `lexical-address-lookup` that implements the new lookup operation. It should take two arguments—a lexical address and a run-time environment—and return the value of the variable stored at the specified lexical address. `lexical-address-lookup` should signal an error if the value of the variable is the symbol \*unassigned\*. Also write a procedure `lexical-address-set!` that implements the operation that changes the value of the variable at a specified lexical address.
+
+### Exercise 5.40:
+
+Modify the compiler to maintain the compile-time environment as described above. That is, add a compile-time-environment argument to `compile` and the various code generators, and extend it in `compile-lambda-body`.
