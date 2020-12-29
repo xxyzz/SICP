@@ -24,7 +24,7 @@
         [else
          (error "Unknown expression type: COMPILE" exp)]))
 
-(define (find-lexical-address exp compile-env)
+(define (find-variable exp compile-env)
   (define (env-loop exp env nth-frame)
     (define (scan vars nth-var)
       (let ([current-var (if (pair? vars) (car vars) null)])
@@ -35,12 +35,12 @@
               [else
                (scan (cdr vars) (add1 nth-var))])))
     (if (eq? env the-empty-environment)
-        (error "Unbound variable" exp)
+        (error "not-found" exp)
         (scan (first-frame env) 0)))
   (env-loop exp compile-env 0))
 
 (define (compile-variable exp target linkage compile-env)
-  (let ([address (find-lexical-address exp compile-env)])
+  (let ([address (find-variable exp compile-env)])
     (end-with-linkage
      linkage
      (make-instruction-sequence
@@ -55,7 +55,7 @@
   (let ([var (assignment-variable exp)]
         [get-value-code
          (compile (assignment-value exp) 'val 'next compile-env)] ;; ***
-        [address (find-lexical-address exp compile-env)]) ;; ***
+        [address (find-variable exp compile-env)]) ;; ***
     (end-with-linkage
      linkage
      (preserving

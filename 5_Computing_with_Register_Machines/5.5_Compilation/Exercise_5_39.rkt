@@ -1,9 +1,9 @@
 #lang racket/base
 
 (define (make-lexical-address nth-frame nth-var)
-  (cons nth-frame nth-var))
+  (list nth-frame nth-var))
 (define (lexical-frame address) (car address))
-(define (lexical-var address) (cdr address))
+(define (lexical-var address) (cadr address))
 
 (define (travsersing-compile-env end-proc find-proc env address)
   (define (env-loop env nth-frame nth-var)

@@ -165,3 +165,18 @@ Write a procedure `lexical-address-lookup` that implements the new lookup operat
 ### Exercise 5.40:
 
 Modify the compiler to maintain the compile-time environment as described above. That is, add a compile-time-environment argument to `compile` and the various code generators, and extend it in `compile-lambda-body`.
+
+### Exercise 5.41:
+
+Write a procedure `find-variable` that takes as arguments a variable and a compile-time environment and returns the lexical address of the variable with respect to that environment. For example, in the program fragment that is shown above, the compile-time environment during the compilation of expression ⟨*e1*⟩ is `((y z) (a b c d e) (x y))`. `find-variable` should produce
+
+```scheme
+(find-variable 'c '((y z) (a b c d e) (x y)))
+(1 2)
+(find-variable 'x '((y z) (a b c d e) (x y)))
+(2 0)
+(find-variable 'w '((y z) (a b c d e) (x y)))
+not-found
+```
+
+Already implemented in exercise 5.40
