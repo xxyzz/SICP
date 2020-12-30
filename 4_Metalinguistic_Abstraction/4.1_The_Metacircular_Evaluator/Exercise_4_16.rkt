@@ -40,7 +40,9 @@
           [else (body-loop (cdr b)
                            vars
                            vals
-                           (cons (car b) restp))]))
+                           (if (null? rest-exp)
+                               (list (car body))
+                               (append rest-exp (list (car body)))))]))
   (body-loop body null null null))
 
 ;; test

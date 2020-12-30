@@ -58,10 +58,10 @@
                     (reg env))))))))
 
 (define (compile-assignment exp target linkage compile-env)
-  (let ([var (assignment-variable exp)]
-        [get-value-code
-         (compile (assignment-value exp) 'val 'next compile-env)] ;; ***
-        [address (find-variable exp compile-env)]) ;; ***
+  (let* ([var (assignment-variable exp)]
+         [get-value-code
+          (compile (assignment-value exp) 'val 'next compile-env)] ;; ***
+         [address (find-variable var compile-env)]) ;; ***
     (end-with-linkage
      linkage
      (preserving
