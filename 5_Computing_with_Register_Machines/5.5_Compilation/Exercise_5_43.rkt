@@ -59,20 +59,18 @@
          (list 'primitive-procedure? primitive-procedure?)
          (list 'compiled-procedure-entry compiled-procedure-entry)
          (list 'apply-primitive-procedure apply-primitive-procedure)
-         (list 'get-global-environment get-global-environment)
          (list 'list list)
          (list 'cons cons)
          (list 'lexical-address-set! lexical-address-set!))
-   (cons '(assign env (op get-global-environment))
-         (statements
-          (compile
-           '((lambda ()
-               (define a 1)
-               (define b 2)
-               (+ a b)))
-           'val
-           'next
-           the-empty-environment)))))
+   (statements
+    (compile
+     '((lambda ()
+         (define a 1)
+         (define b 2)
+         (+ a b)))
+     'val
+     'next
+     the-empty-environment))))
 (start test)
 (get-register-contents test 'val)
 ;; 3
