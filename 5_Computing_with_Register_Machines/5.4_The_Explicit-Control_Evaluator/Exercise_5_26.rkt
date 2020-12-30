@@ -229,7 +229,8 @@
      register-names)
     ((machine 'install-operations) ops)
     ((machine 'install-instruction-sequence)
-     (assemble controller-text machine)) machine))
+     (assemble controller-text machine))
+    machine))
 
 (define (make-register name)
   (let ([contents '*unassigned*])

@@ -192,3 +192,9 @@ We argued in Section 4.1.6 that internal definitions for block structure should 
 ### Exercise 5.44:
 
 Page 822
+
+## 5.5.7 Interfacing Compiled Code to the Evaluator
+
+### Exercise 5.45:
+
+Page 829

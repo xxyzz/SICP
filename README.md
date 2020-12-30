@@ -1,12 +1,11 @@
 # Structure and Interpretation of Computer Programs(SICP)
 
-Exercises of the *[Wizard Book](https://mitpress.mit.edu/sites/default/files/sicp/index.html)*.
+Exercise solutions of the *[Wizard Book](https://mitpress.mit.edu/sites/default/files/sicp/index.html)*.
 
-Install [Racket](https://racket-lang.org) via your favorite package manager or from https://download.racket-lang.org before you getting started.
+Install [Racket](https://racket-lang.org):
 
 ```
-// Homebrew
-$ brew cask install racket
+$ brew install racket
 ```
 
 ## Chapters

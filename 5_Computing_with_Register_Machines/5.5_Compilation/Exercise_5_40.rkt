@@ -45,10 +45,9 @@
      linkage
      (if (eq? address 'not-found)
          (make-instruction-sequence
-          '()
-          (list target 'env)
-          `((assign env (op get-global-environment))
-            (assign ,target (op lookup-variable-value) (const ,exp) (reg env))))
+          '(env)
+          (list target)
+          `((assign ,target (op lookup-variable-value) (const ,exp) (reg env))))
          (make-instruction-sequence
           '(env)
           (list target)
@@ -109,7 +108,7 @@
         [after-if (make-label 'after-if)])
     (let ([consequent-linkage
            (if (eq? linkage 'next) after-if linkage)])
-      (let ([p-code (compile (if-predicate exp) 'val 'next)]
+      (let ([p-code (compile (if-predicate exp) 'val 'next compile-env)] ;; ***
             [c-code
              (compile
               (if-consequent exp) target consequent-linkage compile-env)] ;; ***
