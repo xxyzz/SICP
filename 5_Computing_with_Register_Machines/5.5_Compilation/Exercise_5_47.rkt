@@ -60,6 +60,7 @@
          (error "return linkage, target not val -- COMPILE"
                 target)]))
 
+;; add compapp to make-machine's registers
 ;; test
 (compile-and-go
  '(define (f n)
