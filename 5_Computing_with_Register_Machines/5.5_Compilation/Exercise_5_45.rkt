@@ -1160,10 +1160,13 @@
         (list 'lexical-address-lookup lexical-address-lookup)
         (list 'false? false?)
         (list 'list list)
+        (list 'cons cons)
         ;; open-code
         (list '= =)
         (list '* *)
-        (list '- -)))
+        (list '- -)
+        (list '+ +)
+        (list '< <)))
 
 (define eceval
   (make-machine
