@@ -48,14 +48,16 @@ Draw box-and-pointer diagrams to explain the effect of `set-to-wow!` on the stru
 
 z1->⬛ ⬛
     |  |
+    |---
+    |
  x->⬛ ⬛->⬛ 🛑
     |      |
    wow     b
 
 z2->⬛ ⬛->⬛ ⬛->⬛ 🛑
-    |      |       |
-    |     wow      b
-    |              |
+    |      |      |
+    |      a      b
+    |             |
     ------>⬛ ⬛->⬛ 🛑
            |
           wow
