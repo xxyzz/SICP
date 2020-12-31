@@ -213,3 +213,7 @@ Carry out an analysis like the one in Exercise 5.45 to determine the effectivene
 ```
 
 compared to the effectiveness of using the special-purpose Fibonacci machine of Figure 5.12. (For measurement of the interpreted performance, see Exercise 5.29.) For Fibonacci, the time resource used is not linear in *n*; hence the ratios of stack operations will not approach a limiting value that is independent of *n*.
+
+### Exercise 5.47:
+
+Page 831
