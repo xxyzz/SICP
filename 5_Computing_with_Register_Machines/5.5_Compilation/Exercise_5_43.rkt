@@ -13,12 +13,16 @@
                                            vars
                                            vals)
                                       rest-exp))
-                 (map (lambda (x) '(quote *unassigned*) vars)))))]
+                 (map (lambda (x) ''*unassigned*) vars))))]
           [(definition? (car exp))
-           (body-loop (cdr exp)
-                      (cons (cadar exp) vars)
-                      (cons (caddar exp) vals)
-                      rest-exp)]
+           (let* ([current-exp (car exp)]
+                  [value (definition-value current-exp)])
+             (body-loop (cdr exp)
+                        (cons (definition-variable current-exp) vars)
+                        (if (null? vals)
+                            (list value)
+                            (cons vals (list value)))
+                        rest-exp))]
           [else (body-loop (cdr exp)
                            vars
                            vals
@@ -47,6 +51,10 @@
 (scan-out-defines '((define a 1) (define b 2) (+ a b) (- a b)))
 ;; '(((lambda (b a) (set! b 2) (set! a 1) (+ a b) (- a b))
 ;;   '*unassigned* '*unassigned*))
+(scan-out-defines '((define (derp x) (add1 x)) (derp 1)))
+;; '(((lambda (derp)
+;;      (set! derp (lambda (x) (add1 x)))
+;;      (derp 1)) '*unassigned*))
 
 (define test
   (make-machine
