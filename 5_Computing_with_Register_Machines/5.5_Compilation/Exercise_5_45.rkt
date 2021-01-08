@@ -94,6 +94,16 @@
                      (sequence->exp (cond-actions first))
                      (expand-clauses rest))))))
 
+(define (let? exp) (tagged-list? exp 'let))
+(define (let->combination exp)
+  (let* ([bindings (cadr exp)]
+         [var-list (map car bindings)]
+         [exp-list (map cadr bindings)]
+         [body (cddr exp)])
+    (cons (make-lambda var-list body) exp-list)))
+(define (make-let bindings body)
+  (cons 'let (cons bindings body)))
+
 (define (primitive-procedure? proc)
   (tagged-list? proc 'primitive))
 (define (primitive-implementation proc) (cadr proc))
@@ -588,6 +598,8 @@
           (begin-actions exp) target linkage compile-env)]
         [(cond? exp)
          (compile (cond->if exp) target linkage compile-env)]
+        [(let? exp)
+         (compile (let->combination exp) target linkage compile-env)]
         [(open-code? exp compile-env)
          (compile-open-code exp target linkage compile-env)]
         [(application? exp)
@@ -1054,30 +1066,32 @@
   (env-loop exp compile-env 0))
 
 (define (scan-out-defines body)
-  (define (body-loop exp vars vals rest-exp)
-    (cond [(null? exp)
+  (define (body-loop exps vars vals rest-exps)
+    (cond [(null? exps)
            (if (null? vars)
-               rest-exp
-               (list
-                (cons
-                 (make-lambda vars
-                              (append (map (lambda (x y)
-                                             (list 'set! x y))
-                                           vars
-                                           vals)
-                                      rest-exp))
-                 (map (lambda (x) '(quote *unassigned*)) vars))))]
-          [(definition? (car exp))
-           (body-loop (cdr exp)
-                      (cons (cadar exp) vars)
-                      (cons (caddar exp) vals)
-                      rest-exp)]
-          [else (body-loop (cdr exp)
+               rest-exps
+               (list (make-let
+                      (map (lambda (x) (list x ''*unassigned*)) vars)
+                      (append (map (lambda (x y) (list 'set! x y)) vars vals)
+                              rest-exps))))]
+          [(definition? (car exps))
+           (let* ([current-exp (car exps)]
+                  [var (definition-variable current-exp)]
+                  [val-list (definition-value current-exp)])
+             (body-loop (cdr exps)
+                        (if (null? vars)
+                            (list var)
+                            (append vars (list var)))
+                        (if (null? vals)
+                            (list val-list)
+                            (append vals (list val-list)))
+                        rest-exps))]
+          [else (body-loop (cdr exps)
                            vars
                            vals
-                           (if (null? rest-exp)
-                               (list (car exp))
-                               (append rest-exp (list (car exp)))))]))
+                           (if (null? rest-exps)
+                               (list (car exps))
+                               (append rest-exps (list (car exps)))))]))
   (body-loop body null null null))
 
 (define eceval-operations

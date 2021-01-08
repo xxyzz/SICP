@@ -1,36 +1,6 @@
 #lang racket/base
 
-(define (scan-out-defines body)
-  (define (body-loop exp vars vals rest-exp)
-    (cond [(null? exp)
-           (if (null? vars)
-               rest-exp
-               (list
-                (cons
-                 (make-lambda vars
-                              (append (map (lambda (x y)
-                                             (list 'set! x y))
-                                           vars
-                                           vals)
-                                      rest-exp))
-                 (map (lambda (x) ''*unassigned*) vars))))]
-          [(definition? (car exp))
-           (let* ([current-exp (car exp)]
-                  [value (definition-value current-exp)])
-             (body-loop (cdr exp)
-                        (cons (definition-variable current-exp) vars)
-                        (if (null? vals)
-                            (list value)
-                            (cons vals (list value)))
-                        rest-exp))]
-          [else (body-loop (cdr exp)
-                           vars
-                           vals
-                           (if (null? rest-exp)
-                               (list (car exp))
-                               (append rest-exp (list (car exp)))))]))
-  (body-loop body null null null))
-
+;; use exercise 4.16's scan-out-defines
 (define (compile-lambda-body exp proc-entry compile-env)
   (let ([formals (lambda-parameters exp)])
     (append-instruction-sequences
@@ -46,16 +16,7 @@
                        'val
                        'return
                        (cons formals compile-env)))))
-
 ;; test
-(scan-out-defines '((define a 1) (define b 2) (+ a b) (- a b)))
-;; '(((lambda (b a) (set! b 2) (set! a 1) (+ a b) (- a b))
-;;   '*unassigned* '*unassigned*))
-(scan-out-defines '((define (derp x) (add1 x)) (derp 1)))
-;; '(((lambda (derp)
-;;      (set! derp (lambda (x) (add1 x)))
-;;      (derp 1)) '*unassigned*))
-
 (define test
   (make-machine
    all-regs
