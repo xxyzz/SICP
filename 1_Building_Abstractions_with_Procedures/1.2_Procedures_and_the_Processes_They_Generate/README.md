@@ -212,7 +212,9 @@ a. How many times is the procedure `p` applied when `(sine 12.15)` is evaluated?
 (p (p (p (p (p (sin 0.05))))))
 ```
 
-log3(12.15 / 0.1) = log(121.5) / log(3) = 4.369
+angle / 3ⁿ < 0.1
+
+log₃(12.15 / 0.1) = log(121.5) / log(3) = 4.369
 
 Five times.
 
