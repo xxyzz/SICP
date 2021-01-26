@@ -31,3 +31,11 @@
 ;; 9
 (exp 3 0)
 ;; 1
+
+;; why it's called right-to-left binary method:
+;; 23=(10111)₂=16+4+2+1
+;; x²³ = x¹⁶ * x⁴ * x² * x
+;; x -> x² -> x⁴ -> x⁸ -> x¹⁶
+;; it takes 3 + 4 + 1(x * 1, step A3) multiplications
+;; the algorithm takes ⌊lg n⌋ + ν(n) multiplications
+;; ν(n) is the number of ones in the binary representation of n
