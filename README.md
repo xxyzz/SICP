@@ -5,7 +5,7 @@ Exercise solutions of the *[Wizard Book](https://mitpress.mit.edu/sites/default/
 Install [Racket](https://racket-lang.org):
 
 ```
-$ brew install racket
+$ brew install --cask racket
 ```
 
 ## Chapters
