@@ -98,3 +98,17 @@
 ;; RTFM
 ;; https://github.com/xxyzz/c/blob/master/2/2-1.c
 ;; https://en.wikipedia.org/wiki/Unit_in_the_last_place
+
+;; smallest positive integer that can't be represented by flonum
+;; which has 53(52)-bit significand
+;; Computer Systems: A Programmer's Perspective, chapter 2.4.3, practice problem 2.49
+(expt 2.0 53)
+;; 9007199254740992.0
+(+ (expt 2.0 53) 1)
+;; 9007199254740992.0, the "gap" is 2
+(+ (expt 2.0 53) 2)
+;; 9007199254740994.0
+
+(require math/bigfloat)
+(bf+ (bf (expt 2.0 53)) (bf 1))
+;; (bf 9007199254740993)
